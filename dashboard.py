@@ -5,13 +5,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
 
-st.set_page_config(page_title="Dashboard Prediksi Prestasi", page_icon="🎯", layout="wide")
+st.set_page_config(page_title="Dashboard Analisis Prestasi", page_icon="🔍", layout="wide")
 
 # ================================================================
-# DATA BASELINE & BOBOT
+# DATA BASELINE & BOBOT (DARI HASIL ANALISIS)
 # ================================================================
 
-BASELINE = {
+BASELINE_ASPEK = {
     'Self-Efficacy Akademik': 4.63,
     'Keterlibatan Orang Tua': 4.35,
     'Harapan Orang Tua': 3.45,
@@ -22,85 +22,99 @@ BASELINE = {
     'Fasilitas Sekolah': 4.88,
 }
 
+# Bobot pengaruh (dari ATE × SHAP)
 BOBOT_PENGARUH = {
-    'Self-Efficacy Akademik': 2.0698 * 0.8008,
-    'Keterlibatan Orang Tua': 2.2100 * 0.6806,
-    'Harapan Orang Tua': -1.5323 * 0.5823,
-    'Dukungan Sekolah': -3.8797 * 0.4352,
-    'Motivasi Belajar': -0.2850 * 0.3667,
-    'Kecemasan Akademik': 0.4522 * 0.1308,
-    'Fasilitas Sekolah': 2.4295 * 0.0654,
-    'Kemalasan Belajar': -0.0902 * 0.0793,
+    'Self-Efficacy Akademik': 2.0698 * 0.8008,   # +1.658
+    'Keterlibatan Orang Tua': 2.2100 * 0.6806,   # +1.504
+    'Harapan Orang Tua': -1.5323 * 0.5823,       # -0.892
+    'Dukungan Sekolah': -3.8797 * 0.4352,        # -1.688
+    'Motivasi Belajar': -0.2850 * 0.3667,        # -0.105
+    'Kecemasan Akademik': 0.4522 * 0.1308,       # +0.059
+    'Fasilitas Sekolah': 2.4295 * 0.0654,        # +0.159
+    'Kemalasan Belajar': -0.0902 * 0.0793,       # -0.007
 }
 
 RATA_RATA_NILAI = 83.78
+STD_NILAI = 3.64
 
 # ================================================================
-# SESSION STATE (Penyimpanan sementara)
+# SESSION STATE
 # ================================================================
 
 if 'database_siswa' not in st.session_state:
     st.session_state.database_siswa = []
 
 # ================================================================
-# FUNGSI PREDIKSI
+# FUNGSI ANALISIS KAUSAL
 # ================================================================
 
-def hitung_prediksi(input_data):
-    """Menghitung prediksi nilai berdasarkan input siswa"""
-    delta_nilai = 0
-    faktor_pengaruh = {}
+def analisis_kausal(nilai_akademik, profil_siswa):
+    """
+    Menganalisis faktor penyebab nilai akademik siswa
+    berdasarkan perbandingan profil dengan baseline
+    """
+    selisih_nilai = nilai_akademik - RATA_RATA_NILAI
     
-    for konstruk, nilai_input in input_data.items():
-        selisih = nilai_input - BASELINE[konstruk]
-        pengaruh = selisih * BOBOT_PENGARUH[konstruk]
-        delta_nilai += pengaruh
-        faktor_pengaruh[konstruk] = pengaruh
+    kontribusi = {}
+    for aspek, nilai_input in profil_siswa.items():
+        selisih_aspek = nilai_input - BASELINE_ASPEK[aspek]
+        # Kontribusi = selisih × bobot
+        kontribusi[aspek] = selisih_aspek * BOBOT_PENGARUH[aspek]
     
-    delta_nilai = delta_nilai / 2
-    prediksi_nilai = RATA_RATA_NILAI + delta_nilai
-    prediksi_nilai = max(77.0, min(94.0, prediksi_nilai))
+    # Normalisasi kontribusi agar total = selisih nilai
+    total_kontribusi = sum(kontribusi.values())
     
-    return prediksi_nilai, delta_nilai, faktor_pengaruh
+    if abs(total_kontribusi) > 0.01:
+        # Skala faktor agar proporsional
+        skala = selisih_nilai / total_kontribusi
+        kontribusi = {k: v * skala for k, v in kontribusi.items()}
+    
+    return selisih_nilai, kontribusi
 
 
 def kategori_nilai(nilai):
-    """Menentukan kategori nilai"""
+    """Kategori posisi nilai siswa"""
     if nilai >= 88:
-        return "🌟 Sangat Baik"
-    elif nilai >= 83:
-        return "✅ Baik"
+        return "🌟 Sangat Baik", "success"
+    elif nilai >= 84:
+        return "✅ Baik", "info"
     elif nilai >= 80:
-        return "⚠️ Cukup"
+        return "⚠️ Cukup", "warning"
     else:
-        return "❗ Perlu Perhatian"
+        return "❗ Perlu Perhatian", "error"
 
 # ================================================================
 # SIDEBAR
 # ================================================================
 
-st.sidebar.title("🎯 Navigasi")
+st.sidebar.title("🔍 Navigasi")
 menu = st.sidebar.radio(
     "Pilih Menu",
-    ["📝 Input Nilai Siswa", "🗄️ Database Siswa", "📊 Analisis Kausal", "📈 Analisis SHAP", "💡 Rekomendasi"]
+    ["🔍 Analisis Sebab-Akibat", "🗄️ Database Siswa", "📊 Analisis Kausal Global", "📈 Analisis SHAP"]
 )
 
 st.sidebar.markdown("---")
-st.sidebar.info("**SMP Negeri 6 Salatiga**\n\nDashboard Prediksi Prestasi Akademik\n\n2026")
+st.sidebar.info(
+    "**SMP Negeri 6 Salatiga**\n\n"
+    "Dashboard Analisis Sebab-Akibat Prestasi Akademik\n\n"
+    "© 2026"
+)
 
 # ================================================================
-# MENU 1: INPUT NILAI SISWA
+# MENU 1: ANALISIS SEBAB-AKIBAT
 # ================================================================
 
-if menu == "📝 Input Nilai Siswa":
-    st.title("📝 Input Nilai Siswa")
-    st.markdown("### Masukkan data siswa dan nilai setiap aspek")
+if menu == "🔍 Analisis Sebab-Akibat":
+    st.title("🔍 Analisis Sebab-Akibat Nilai Siswa")
+    st.markdown("### Masukkan data siswa untuk menganalisis faktor penyebab nilai akademiknya")
     
     st.markdown("---")
     
-    # FORM DATA DIRI
-    st.subheader("👤 Data Siswa")
+    # ============================================================
+    # FORM DATA SISWA
+    # ============================================================
     
+    st.subheader("👤 Data Siswa")
     col1, col2, col3 = st.columns(3)
     with col1:
         nama_siswa = st.text_input("Nama Siswa", placeholder="Contoh: Ahmad Rizki")
@@ -114,115 +128,240 @@ if menu == "📝 Input Nilai Siswa":
     
     st.markdown("---")
     
-    # FORM NILAI KONSTRUK
-    st.subheader("📊 Penilaian Aspek Siswa")
+    # ============================================================
+    # INPUT NILAI AKADEMIK RIIL
+    # ============================================================
+    
+    st.subheader("📊 Nilai Akademik Siswa")
+    st.caption(f"Rata-rata nilai rapor siswa (baseline sekolah: {RATA_RATA_NILAI})")
+    
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        nilai_akademik = st.number_input(
+            "Nilai Akademik (dari rapor)",
+            min_value=60.0,
+            max_value=100.0,
+            value=83.78,
+            step=0.01,
+            format="%.2f"
+        )
+    with col2:
+        st.metric(
+            "Posisi Nilai",
+            f"{nilai_akademik - RATA_RATA_NILAI:+.2f}",
+            "dari rata-rata"
+        )
+    
+    st.markdown("---")
+    
+    # ============================================================
+    # INPUT PROFIL SISWA
+    # ============================================================
+    
+    st.subheader("📝 Profil Siswa")
     st.caption("Skala 1-5 (1=Sangat Rendah, 5=Sangat Tinggi)")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("**🧠 Aspek Internal Siswa**")
-        input_self_efficacy = st.slider(
-            "Self-Efficacy Akademik", 1.0, 5.0, 4.63, 0.1,
-            help="Keyakinan siswa terhadap kemampuan sendiri"
-        )
-        input_motivasi = st.slider(
-            "Motivasi Belajar", 1.0, 5.0, 2.52, 0.1,
-            help="Dorongan internal untuk belajar"
-        )
-        input_kecemasan = st.slider(
-            "Kecemasan Akademik", 1.0, 5.0, 2.89, 0.1,
-            help="Tingkat kecemasan menghadapi ujian"
-        )
-        input_kemalasan = st.slider(
-            "Kemalasan Belajar", 1.0, 5.0, 1.49, 0.1,
-            help="Tingkat kemalasan siswa"
-        )
+        st.markdown("**🧠 Aspek Internal**")
+        input_self_efficacy = st.slider("Self-Efficacy Akademik", 1.0, 5.0, 4.63, 0.1)
+        input_motivasi = st.slider("Motivasi Belajar", 1.0, 5.0, 2.52, 0.1)
+        input_kecemasan = st.slider("Kecemasan Akademik", 1.0, 5.0, 2.89, 0.1)
+        input_kemalasan = st.slider("Kemalasan Belajar", 1.0, 5.0, 1.49, 0.1)
     
     with col2:
-        st.markdown("**🌍 Aspek Eksternal Siswa**")
-        input_keterlibatan = st.slider(
-            "Keterlibatan Orang Tua", 1.0, 5.0, 4.35, 0.1,
-            help="Seberapa aktif orang tua mendampingi belajar"
-        )
-        input_harapan = st.slider(
-            "Harapan Orang Tua", 1.0, 5.0, 3.45, 0.1,
-            help="Tingkat tuntutan/ekspektasi orang tua"
-        )
-        input_dukungan_sekolah = st.slider(
-            "Dukungan Sekolah", 1.0, 5.0, 4.60, 0.1,
-            help="Perhatian guru dan suasana sekolah"
-        )
-        input_fasilitas = st.slider(
-            "Fasilitas Sekolah", 1.0, 5.0, 4.88, 0.1,
-            help="Kualitas fasilitas belajar di sekolah"
-        )
+        st.markdown("**🌍 Aspek Eksternal**")
+        input_keterlibatan = st.slider("Keterlibatan Orang Tua", 1.0, 5.0, 4.35, 0.1)
+        input_harapan = st.slider("Harapan Orang Tua", 1.0, 5.0, 3.45, 0.1)
+        input_dukungan = st.slider("Dukungan Sekolah", 1.0, 5.0, 4.60, 0.1)
+        input_fasilitas = st.slider("Fasilitas Sekolah", 1.0, 5.0, 4.88, 0.1)
     
-    # ============================================================
-    # PROSES PREDIKSI
-    # ============================================================
-    
-    input_data = {
+    profil_siswa = {
         'Self-Efficacy Akademik': input_self_efficacy,
         'Keterlibatan Orang Tua': input_keterlibatan,
         'Harapan Orang Tua': input_harapan,
-        'Dukungan Sekolah': input_dukungan_sekolah,
+        'Dukungan Sekolah': input_dukungan,
         'Motivasi Belajar': input_motivasi,
         'Kecemasan Akademik': input_kecemasan,
         'Fasilitas Sekolah': input_fasilitas,
         'Kemalasan Belajar': input_kemalasan,
     }
     
-    prediksi_nilai, delta_nilai, faktor_pengaruh = hitung_prediksi(input_data)
-    kategori = kategori_nilai(prediksi_nilai)
+    # ============================================================
+    # PROSES ANALISIS KAUSAL
+    # ============================================================
     
-    # ============================================================
-    # HASIL PREDIKSI
-    # ============================================================
+    selisih_nilai, kontribusi = analisis_kausal(nilai_akademik, profil_siswa)
+    kategori, tipe = kategori_nilai(nilai_akademik)
     
     st.markdown("---")
-    st.subheader("🎯 Hasil Prediksi")
     
-    # Nama siswa
+    # ============================================================
+    # HASIL ANALISIS
+    # ============================================================
+    
+    st.subheader("🎯 Hasil Analisis Sebab-Akibat")
+    
     if nama_siswa:
         st.markdown(f"**Siswa**: {nama_siswa} | **Kelas**: {kelas_siswa} | **Absen**: {absen_siswa}")
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("📊 Prediksi Nilai", f"{prediksi_nilai:.2f}", f"{delta_nilai:+.2f}")
+        st.metric("📊 Nilai Akademik", f"{nilai_akademik:.2f}")
     with col2:
-        st.metric("📈 Kategori", kategori)
+        delta_text = f"{selisih_nilai:+.2f} dari rata-rata"
+        st.metric("📈 Posisi", delta_text)
     with col3:
-        st.metric("🎯 Baseline", f"{RATA_RATA_NILAI:.2f}")
+        st.metric("🏆 Kategori", kategori)
     
     # ============================================================
-    # VISUALISASI PENGARUH
+    # GRAFIK POSISI NILAI
     # ============================================================
     
     st.markdown("---")
-    st.subheader("🔍 Faktor yang Mempengaruhi")
+    st.subheader("📍 Posisi Nilai Siswa")
     
-    faktor_df = pd.DataFrame([
-        {'Konstruk': k, 'Pengaruh': v, 'Nilai': input_data[k]}
-        for k, v in faktor_pengaruh.items()
-    ]).sort_values('Pengaruh', key=abs, ascending=True)
+    fig, ax = plt.subplots(figsize=(12, 2.5))
     
-    fig, ax = plt.subplots(figsize=(10, 6))
-    colors = ['green' if x > 0 else 'red' for x in faktor_df['Pengaruh']]
-    bars = ax.barh(faktor_df['Konstruk'], faktor_df['Pengaruh'], color=colors, alpha=0.7)
-    ax.axvline(x=0, color='black', linestyle='-', alpha=0.5)
-    ax.set_xlabel('Pengaruh terhadap Nilai (poin)')
-    ax.set_title('Kontribusi Setiap Faktor')
+    # Range nilai
+    nilai_min, nilai_max = 75, 95
     
-    for bar, val in zip(bars, faktor_df['Pengaruh']):
-        pos = val + 0.05 if val > 0 else val - 0.15
-        ax.text(pos, bar.get_y() + bar.get_height()/2, f'{val:+.2f}', va='center', fontsize=9)
+    # Warna background
+    ax.barh(0, RATA_RATA_NILAI - nilai_min, left=nilai_min, 
+            color='lightcoral', alpha=0.3, label='Di bawah rata-rata')
+    ax.barh(0, nilai_max - RATA_RATA_NILAI, left=RATA_RATA_NILAI,
+            color='lightgreen', alpha=0.3, label='Di atas rata-rata')
+    
+    # Garis rata-rata
+    ax.axvline(RATA_RATA_NILAI, color='red', linestyle='--', linewidth=2, 
+               label=f'Rata-rata ({RATA_RATA_NILAI})')
+    
+    # Titik nilai siswa
+    ax.scatter(nilai_akademik, 0, s=300, color='blue', zorder=5, 
+               edgecolors='black', linewidth=2, label=f'Nilai {nama_siswa or "Siswa"}')
+    
+    ax.set_xlim(nilai_min, nilai_max)
+    ax.set_ylim(-0.5, 0.5)
+    ax.set_yticks([])
+    ax.set_xlabel('Nilai Akademik', fontsize=12)
+    ax.set_title(f'Posisi Nilai: {nilai_akademik:.2f} (selisih {selisih_nilai:+.2f})', fontsize=14)
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.4), ncol=4)
     
     plt.tight_layout()
     st.pyplot(fig)
     
     # ============================================================
-    # TOMBOL SIMPAN KE DATABASE
+    # ANALISIS FAKTOR PENYEBAB
+    # ============================================================
+    
+    st.markdown("---")
+    st.subheader("🔍 Faktor Penyebab Nilai Siswa")
+    st.caption(f"Nilai siswa berada {abs(selisih_nilai):.2f} poin {'di atas' if selisih_nilai > 0 else 'di bawah'} rata-rata. Berikut faktor yang mempengaruhinya:")
+    
+    # Buat DataFrame kontribusi
+    df_kontribusi = pd.DataFrame([
+        {
+            'Aspek': k, 
+            'Kontribusi': v,
+            'Nilai_Siswa': profil_siswa[k],
+            'Baseline': BASELINE_ASPEK[k],
+            'Selisih': profil_siswa[k] - BASELINE_ASPEK[k]
+        }
+        for k, v in kontribusi.items()
+    ]).sort_values('Kontribusi', key=abs, ascending=True)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        fig, ax = plt.subplots(figsize=(10, 6))
+        colors = ['green' if x > 0 else 'red' for x in df_kontribusi['Kontribusi']]
+        bars = ax.barh(df_kontribusi['Aspek'], df_kontribusi['Kontribusi'], 
+                       color=colors, alpha=0.7, edgecolor='black')
+        ax.axvline(x=0, color='black', linestyle='-', alpha=0.5)
+        ax.set_xlabel('Kontribusi terhadap Nilai (poin)', fontsize=12)
+        ax.set_title('Kontribusi Setiap Faktor', fontsize=14)
+        
+        for bar, val in zip(bars, df_kontribusi['Kontribusi']):
+            pos = val + 0.05 if val > 0 else val - 0.15
+            ax.text(pos, bar.get_y() + bar.get_height()/2, 
+                    f'{val:+.2f}', va='center', fontsize=10, fontweight='bold')
+        
+        plt.tight_layout()
+        st.pyplot(fig)
+    
+    with col2:
+        st.markdown("### 📖 Cara Membaca")
+        st.markdown("""
+        **🟢 Hijau (Positif)**:
+        Faktor ini **meningkatkan** nilai siswa
+        
+        **🔴 Merah (Negatif)**:
+        Faktor ini **menurunkan** nilai siswa
+        
+        **Angka**:
+        Kontribusi dalam **poin nilai**
+        """)
+    
+    # ============================================================
+    # TABEL DETAIL
+    # ============================================================
+    
+    st.markdown("---")
+    st.subheader("📋 Detail Perbandingan dengan Rata-rata Sekolah")
+    
+    tabel = df_kontribusi.copy()
+    tabel['Status'] = tabel['Selisih'].apply(
+        lambda x: '⬆️ Di atas rata-rata' if x > 0 else '⬇️ Di bawah rata-rata' if x < 0 else '➡️ Sama'
+    )
+    tabel = tabel[['Aspek', 'Nilai_Siswa', 'Baseline', 'Selisih', 'Kontribusi', 'Status']]
+    tabel.columns = ['Aspek', 'Nilai Siswa', 'Rata-rata Sekolah', 'Selisih', 'Kontribusi (poin)', 'Status']
+    tabel = tabel.sort_values('Kontribusi (poin)', key=abs, ascending=False)
+    
+    st.dataframe(tabel, use_container_width=True, hide_index=True)
+    
+    # ============================================================
+    # REKOMENDASI PERSONAL
+    # ============================================================
+    
+    st.markdown("---")
+    st.subheader("💡 Rekomendasi Personal")
+    
+    faktor_positif = df_kontribusi[df_kontribusi['Kontribusi'] > 0.3].sort_values('Kontribusi', ascending=False)
+    faktor_negatif = df_kontribusi[df_kontribusi['Kontribusi'] < -0.3].sort_values('Kontribusi')
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.success("### ✅ KEKUATAN SISWA")
+        st.caption("Faktor yang sudah baik dan meningkatkan nilai:")
+        if len(faktor_positif) > 0:
+            for _, row in faktor_positif.iterrows():
+                st.markdown(f"""
+                **{row['Aspek']}** 
+                - Kontribusi: **{row['Kontribusi']:+.2f} poin**
+                - Nilai: {row['Nilai_Siswa']:.2f} (baseline: {row['Baseline']:.2f})
+                - 📌 **Pertahankan!**
+                """)
+        else:
+            st.info("Belum ada faktor kekuatan dominan")
+    
+    with col2:
+        st.error("### ⚠️ PERLU DIPERBAIKI")
+        st.caption("Faktor yang menurunkan nilai siswa:")
+        if len(faktor_negatif) > 0:
+            for _, row in faktor_negatif.iterrows():
+                st.markdown(f"""
+                **{row['Aspek']}**
+                - Kontribusi: **{row['Kontribusi']:+.2f} poin**
+                - Nilai: {row['Nilai_Siswa']:.2f} (baseline: {row['Baseline']:.2f})
+                - 📌 **Perlu ditingkatkan!**
+                """)
+        else:
+            st.info("Tidak ada faktor negatif signifikan")
+    
+    # ============================================================
+    # SIMPAN KE DATABASE
     # ============================================================
     
     st.markdown("---")
@@ -233,34 +372,35 @@ if menu == "📝 Input Nilai Siswa":
     else:
         col1, col2 = st.columns([1, 3])
         with col1:
-            tombol_simpan = st.button("💾 Simpan Data Siswa", type="primary", use_container_width=True)
+            tombol = st.button("💾 Simpan Data", type="primary", use_container_width=True)
         
-        if tombol_simpan:
-            # Cek duplikat
+        if tombol:
             duplikat = any(
                 s['Nama'] == nama_siswa and s['Kelas'] == kelas_siswa
                 for s in st.session_state.database_siswa
             )
             
             if duplikat:
-                st.warning(f"⚠️ Siswa **{nama_siswa}** di kelas **{kelas_siswa}** sudah ada di database.")
+                st.warning(f"⚠️ Siswa **{nama_siswa}** ({kelas_siswa}) sudah ada.")
             else:
-                # Simpan data
                 data_baru = {
                     'Timestamp': datetime.now().strftime("%Y-%m-%d %H:%M"),
                     'Nama': nama_siswa,
                     'Kelas': kelas_siswa,
                     'Absen': absen_siswa,
+                    'Nilai Akademik': round(nilai_akademik, 2),
+                    'Selisih dari Rata-rata': round(selisih_nilai, 2),
+                    'Kategori': kategori,
                     'Self-Efficacy': input_self_efficacy,
                     'Keterlibatan Ortu': input_keterlibatan,
                     'Harapan Ortu': input_harapan,
-                    'Dukungan Sekolah': input_dukungan_sekolah,
+                    'Dukungan Sekolah': input_dukungan,
                     'Motivasi': input_motivasi,
                     'Kecemasan': input_kecemasan,
                     'Fasilitas': input_fasilitas,
                     'Kemalasan': input_kemalasan,
-                    'Prediksi Nilai': round(prediksi_nilai, 2),
-                    'Kategori': kategori,
+                    'Faktor Positif Terkuat': faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else '-',
+                    'Faktor Negatif Terkuat': faktor_negatif.iloc[0]['Aspek'] if len(faktor_negatif) > 0 else '-',
                 }
                 
                 st.session_state.database_siswa.append(data_baru)
@@ -278,7 +418,7 @@ elif menu == "🗄️ Database Siswa":
     st.markdown("---")
     
     if len(st.session_state.database_siswa) == 0:
-        st.info("📭 Belum ada data siswa. Silakan input data terlebih dahulu di menu **📝 Input Nilai Siswa**.")
+        st.info("📭 Belum ada data siswa. Silakan input di menu **🔍 Analisis Sebab-Akibat**.")
     else:
         df_db = pd.DataFrame(st.session_state.database_siswa)
         
@@ -287,11 +427,11 @@ elif menu == "🗄️ Database Siswa":
         with col1:
             st.metric("👥 Total Siswa", len(df_db))
         with col2:
-            st.metric("📊 Rata-rata Prediksi", f"{df_db['Prediksi Nilai'].mean():.2f}")
+            st.metric("📊 Rata-rata Nilai", f"{df_db['Nilai Akademik'].mean():.2f}")
         with col3:
-            st.metric("🏆 Nilai Tertinggi", f"{df_db['Prediksi Nilai'].max():.2f}")
+            st.metric("🏆 Nilai Tertinggi", f"{df_db['Nilai Akademik'].max():.2f}")
         with col4:
-            st.metric("📉 Nilai Terendah", f"{df_db['Prediksi Nilai'].min():.2f}")
+            st.metric("📉 Nilai Terendah", f"{df_db['Nilai Akademik'].min():.2f}")
         
         st.markdown("---")
         
@@ -303,42 +443,37 @@ elif menu == "🗄️ Database Siswa":
                 ["Semua"] + sorted(df_db['Kelas'].unique().tolist())
             )
         
-        if filter_kelas != "Semua":
-            df_tampil = df_db[df_db['Kelas'] == filter_kelas]
-        else:
-            df_tampil = df_db
+        df_tampil = df_db if filter_kelas == "Semua" else df_db[df_db['Kelas'] == filter_kelas]
         
-        # Tampilkan tabel
         st.subheader(f"📋 Daftar Siswa ({len(df_tampil)} siswa)")
         st.dataframe(df_tampil, use_container_width=True, hide_index=True)
         
         st.markdown("---")
         
-        # Unduh CSV
-        csv = df_tampil.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            label="📥 Download Data (CSV)",
-            data=csv,
-            file_name=f"database_siswa_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
-            mime="text/csv",
-        )
+        col1, col2 = st.columns(2)
+        with col1:
+            csv = df_tampil.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📥 Download CSV",
+                data=csv,
+                file_name=f"database_siswa_{datetime.now().strftime('%Y%m%d')}.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
         
-        st.markdown("---")
-        
-        # Hapus data
-        with st.expander("🗑️ Hapus Data"):
-            if st.button("Hapus Semua Data", type="secondary"):
-                st.session_state.database_siswa = []
-                st.success("✅ Semua data dihapus.")
-                st.rerun()
+        with col2:
+            with st.expander("🗑️ Hapus Data"):
+                if st.button("Hapus Semua", type="secondary"):
+                    st.session_state.database_siswa = []
+                    st.rerun()
 
 # ================================================================
-# MENU 3: ANALISIS KAUSAL
+# MENU 3: ANALISIS KAUSAL GLOBAL
 # ================================================================
 
-elif menu == "📊 Analisis Kausal":
-    st.title("📊 Analisis Kausal (ATE)")
-    st.markdown("### Efek Kausal Setiap Faktor terhadap Prestasi Akademik")
+elif menu == "📊 Analisis Kausal Global":
+    st.title("📊 Analisis Kausal Global")
+    st.markdown("### Efek Kausal Setiap Faktor (dari seluruh data)")
     
     ATE_DATA = {
         'Self-Efficacy Akademik': 2.0698,
@@ -372,7 +507,7 @@ elif menu == "📊 Analisis Kausal":
 # MENU 4: ANALISIS SHAP
 # ================================================================
 
-elif menu == "📈 Analisis SHAP":
+else:
     st.title("📈 Analisis SHAP")
     st.markdown("### Kontribusi Prediktif Setiap Faktor")
     
@@ -401,45 +536,3 @@ elif menu == "📈 Analisis SHAP":
     
     st.pyplot(fig)
     st.dataframe(df_shap, use_container_width=True, hide_index=True)
-
-# ================================================================
-# MENU 5: REKOMENDASI
-# ================================================================
-
-else:
-    st.title("💡 Rekomendasi Intervensi")
-    st.markdown("### Berdasarkan Hasil Analisis Keseluruhan")
-    
-    st.markdown("---")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.success("""
-        ### ✅ PRIORITAS TINGGI
-        
-        **1. Fasilitas Sekolah** (ATE: +2.43)
-        - Tingkatkan kualitas perpustakaan
-        - Optimalkan laboratorium
-        
-        **2. Keterlibatan Orang Tua** (ATE: +2.21)
-        - Program parenting
-        - Komunikasi rutin sekolah-orang tua
-        
-        **3. Self-Efficacy Akademik** (ATE: +2.07)
-        - Program penguatan kepercayaan diri
-        - Pelatihan motivasi belajar
-        """)
-    
-    with col2:
-        st.warning("""
-        ### ⚠️ PERLU EVALUASI
-        
-        **1. Dukungan Sekolah** (ATE: -3.88)
-        - Evaluasi program pendampingan
-        - Kurangi intervensi berlebihan
-        
-        **2. Harapan Orang Tua** (ATE: -1.53)
-        - Edukasi orang tua
-        - Target realistis
-        """)
