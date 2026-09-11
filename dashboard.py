@@ -13,30 +13,34 @@ st.set_page_config(
 )
 
 # ================================================================
-# CUSTOM CSS - MODERN ACADEMIC ANALYTICS
+# CUSTOM CSS - EDITORIAL / MAGAZINE STYLE
 # ================================================================
+
 
 st.markdown("""
 <style>
+/* ============================================================
+   MODERN ACADEMIC DASHBOARD
+   Clean / premium / restrained — no excessive decoration
+   ============================================================ */
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
 
 :root {
-    --bg: #f5f7fb;
-    --surface: #ffffff;
-    --surface-2: #f8fafc;
     --ink: #172033;
     --muted: #667085;
-    --line: #e6eaf0;
+    --line: #E6EAF0;
+    --surface: #FFFFFF;
+    --canvas: #F6F8FB;
     --navy: #172554;
-    --blue: #315efb;
-    --blue-soft: #eef2ff;
-    --teal: #0f766e;
-    --teal-soft: #ecfdf5;
-    --amber: #b7791f;
-    --amber-soft: #fffbeb;
-    --red: #c83b4a;
-    --red-soft: #fff1f2;
-    --shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+    --blue: #315EFB;
+    --blue-soft: #EEF3FF;
+    --teal: #0F766E;
+    --teal-soft: #ECFDF8;
+    --red: #C83B4A;
+    --red-soft: #FFF1F3;
+    --amber: #B7791F;
+    --amber-soft: #FFF8E7;
 }
 
 html, body, [class*="css"] {
@@ -45,50 +49,57 @@ html, body, [class*="css"] {
 }
 
 .stApp {
-    background: var(--bg);
+    background: var(--canvas);
 }
 
 .main {
-    background: var(--bg);
+    background: var(--canvas);
 }
 
-#MainMenu, footer, header {
-    visibility: hidden;
+.block-container {
+    max-width: 1440px;
+    padding: 2rem 3rem 4rem 3rem;
 }
 
-/* ---------- TYPOGRAPHY ---------- */
+/* Hide Streamlit chrome */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* ---------- Typography ---------- */
 .masthead {
     font-family: 'Manrope', sans-serif;
-    font-size: clamp(2.4rem, 4vw, 4rem);
+    font-size: clamp(2.7rem, 5vw, 4.4rem);
     font-weight: 800;
-    line-height: 1.02;
-    letter-spacing: -2.5px;
+    line-height: .98;
+    letter-spacing: -3px;
     color: var(--ink);
     margin: 0;
 }
 
 .masthead-accent {
     color: var(--blue);
+    font-style: normal;
 }
 
 .kicker {
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.68rem;
+    font-size: .68rem;
     font-weight: 700;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.7px;
     text-transform: uppercase;
     color: var(--blue);
-    margin-bottom: 0.55rem;
+    margin-bottom: .65rem;
 }
 
 .kicker-line {
     display: inline-block;
-    width: 22px;
+    width: 24px;
     height: 2px;
-    background: currentColor;
+    background: var(--blue);
     vertical-align: middle;
-    margin-right: 8px;
-    margin-bottom: 3px;
+    margin-right: 9px;
+    margin-bottom: 2px;
 }
 
 .deck {
@@ -98,30 +109,29 @@ html, body, [class*="css"] {
     line-height: 1.65;
     color: var(--muted);
     max-width: 760px;
-    margin-top: 0.9rem;
+    margin-top: 1rem;
 }
 
 .section-title {
     font-family: 'Manrope', sans-serif;
-    font-size: 1.45rem;
+    font-size: 1.55rem;
     font-weight: 800;
     color: var(--ink);
-    letter-spacing: -0.5px;
-    line-height: 1.2;
+    letter-spacing: -.7px;
+    line-height: 1.15;
     margin: 0;
 }
 
 .section-sub {
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.68rem;
+    font-size: .68rem;
     color: var(--muted);
-    letter-spacing: 1.2px;
+    letter-spacing: 1.3px;
     text-transform: uppercase;
-    font-weight: 600;
-    margin-top: 3px;
+    font-weight: 700;
+    margin-top: .35rem;
 }
 
-/* ---------- DIVIDERS ---------- */
 .rule-thick {
     height: 1px;
     background: var(--line);
@@ -132,105 +142,116 @@ html, body, [class*="css"] {
 .rule-thin {
     height: 1px;
     background: var(--line);
-    margin: 1.5rem 0;
+    margin: 1.7rem 0;
     border: none;
 }
 
 .rule-red {
-    height: 2px;
+    height: 3px;
     background: var(--blue);
-    width: 38px;
-    margin: 0.7rem 0 1.25rem 0;
+    width: 42px;
+    margin: .8rem 0 1.4rem 0;
     border: none;
+    border-radius: 99px;
 }
 
-/* ---------- CARDS ---------- */
+/* ---------- Header ---------- */
+[data-testid="stVerticalBlock"] .dashboard-header {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 2rem 2.2rem;
+    box-shadow: 0 8px 28px rgba(23,32,51,.045);
+}
+
+/* ---------- Cards ---------- */
 .article-card,
 .article-card-red,
-.article-card-black {
-    border-radius: 14px;
-    padding: 1.25rem 1.35rem;
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-    position: relative;
+.article-card-black,
+.stat-card,
+.process-box {
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(23,32,51,.045);
 }
 
 .article-card {
     background: var(--surface);
-    color: var(--ink);
+    border: 1px solid var(--line);
+    padding: 1.35rem 1.5rem;
+    position: relative;
+}
+
+.article-card::before {
+    display: none;
 }
 
 .article-card-red {
     background: var(--red-soft);
     color: var(--ink);
-    border-color: #fecdd3;
+    border: 1px solid #F5CDD2;
+    padding: 1.35rem 1.5rem;
 }
 
 .article-card-black {
     background: var(--navy);
-    color: #ffffff;
-    border-color: var(--navy);
-    box-shadow: 0 12px 30px rgba(23, 37, 84, 0.14);
+    color: #fff;
+    border: 1px solid var(--navy);
+    padding: 1.7rem 1.8rem;
 }
 
-.article-card::before,
-.article-card-red::before,
-.article-card-black::before {
-    display: none;
-}
-
-/* ---------- STAT CARDS ---------- */
 .stat-card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-top: 3px solid var(--blue);
-    border-radius: 12px;
-    padding: 1rem 1.1rem;
-    min-height: 112px;
-    box-shadow: 0 4px 14px rgba(23, 32, 51, 0.045);
+    padding: 1.15rem 1.25rem;
+    min-height: 108px;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(23,32,51,.08);
 }
 
 .stat-card-red { border-top-color: var(--red); }
-.stat-card-yellow { border-top-color: #d99a27; }
+.stat-card-yellow { border-top-color: var(--amber); }
 .stat-card-blue { border-top-color: var(--blue); }
 .stat-card-green { border-top-color: var(--teal); }
 
 .stat-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.67rem;
-    letter-spacing: 1px;
+    font-size: .68rem;
+    letter-spacing: 1.15px;
     text-transform: uppercase;
     color: var(--muted);
     font-weight: 700;
-    margin-bottom: 0.45rem;
+    margin-bottom: .55rem;
 }
 
 .stat-value {
     font-family: 'Manrope', sans-serif;
     font-size: 2rem;
     font-weight: 800;
-    line-height: 1.05;
+    line-height: 1;
     color: var(--ink);
     letter-spacing: -1px;
 }
 
 .stat-unit {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem;
+    font-size: .78rem;
     color: var(--muted);
-    margin-top: 0.35rem;
+    margin-top: .45rem;
 }
 
-/* ---------- ALERTS ---------- */
+/* ---------- Alerts ---------- */
 .alert {
-    padding: 0.95rem 1.1rem;
+    padding: .95rem 1.1rem;
     border: 1px solid var(--line);
-    border-left: 3px solid var(--blue);
-    border-radius: 10px;
+    border-left: 4px solid var(--blue);
+    border-radius: 12px;
     background: var(--surface);
-    margin: 0.8rem 0;
-    font-size: 0.86rem;
-    line-height: 1.55;
+    margin: 1rem 0;
+    font-size: .88rem;
+    box-shadow: 0 5px 18px rgba(23,32,51,.035);
 }
 
 .alert-info { border-left-color: var(--blue); background: var(--blue-soft); }
@@ -241,99 +262,89 @@ html, body, [class*="css"] {
 .alert-title {
     font-family: 'Manrope', sans-serif;
     font-weight: 800;
-    font-size: 0.92rem;
-    margin-bottom: 0.25rem;
+    font-size: .95rem;
+    margin-bottom: .25rem;
 }
 
-/* ---------- SIDEBAR ---------- */
+/* ---------- Sidebar ---------- */
 [data-testid="stSidebar"] {
-    background: #ffffff;
-    border-right: 1px solid var(--line);
+    background: var(--navy);
+    border-right: 0;
 }
 
 [data-testid="stSidebar"] > div:first-child {
-    padding-top: 1.2rem;
+    padding: 1.25rem 1rem;
 }
 
 [data-testid="stSidebar"] * {
-    color: var(--ink);
+    color: #E8ECF7 !important;
 }
 
 [data-testid="stSidebar"] .kicker {
-    color: var(--blue) !important;
+    color: #9DB5FF !important;
 }
 
-[data-testid="stSidebar"] .stRadio label {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 600;
-    font-size: 0.88rem;
-    padding: 0.7rem 0.8rem;
-    margin: 0.15rem 0;
-    border-radius: 9px;
-    border-bottom: none;
-    transition: all 0.18s ease;
+[data-testid="stSidebar"] .kicker-line {
+    background: #9DB5FF !important;
 }
 
-[data-testid="stSidebar"] .stRadio label:hover {
-    background: #f1f5f9;
-    color: var(--blue) !important;
-}
-
-[data-testid="stSidebar"] .stRadio [data-testid="stMarkdownContainer"] p {
-    margin: 0;
-}
-
-[data-testid="stSidebar"] hr {
-    border-top-color: var(--line) !important;
-}
-
-/* ---------- BUTTONS ---------- */
-.stButton > button,
-.stDownloadButton > button,
-.stFormSubmitButton > button {
-    border-radius: 9px !important;
-    border: 1px solid var(--blue) !important;
-    background: var(--blue) !important;
-    color: #ffffff !important;
-    font-family: 'DM Sans', sans-serif !important;
+[data-testid="stSidebar"] .stRadio > label {
+    font-size: .67rem !important;
     font-weight: 700 !important;
-    font-size: 0.84rem !important;
-    letter-spacing: 0.2px !important;
-    padding: 0.55rem 1rem !important;
-    min-height: 42px !important;
-    box-shadow: none !important;
-    transition: all 0.18s ease !important;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #AAB5CB !important;
+    margin-bottom: .5rem;
 }
 
-.stButton > button:hover,
-.stDownloadButton > button:hover,
-.stFormSubmitButton > button:hover {
-    background: #244bd3 !important;
-    border-color: #244bd3 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 12px rgba(49, 94, 251, 0.16) !important;
+[data-testid="stSidebar"] .stRadio [role="radiogroup"] {
+    gap: .35rem;
 }
 
-.stButton > button:active,
-.stDownloadButton > button:active {
-    transform: translateY(0);
+[data-testid="stSidebar"] .stRadio [role="radiogroup"] label {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: .72rem .75rem !important;
+    transition: all .15s ease;
 }
 
-.stButton > button[kind="secondary"] {
-    background: #ffffff !important;
-    color: var(--ink) !important;
-    border-color: var(--line) !important;
+[data-testid="stSidebar"] .stRadio [role="radiogroup"] label:hover {
+    background: rgba(255,255,255,.07);
+    border-color: rgba(255,255,255,.08);
 }
 
-/* ---------- INPUTS ---------- */
+[data-testid="stSidebar"] .stRadio [role="radiogroup"] label[data-checked="true"] {
+    background: rgba(49,94,251,.22);
+    border-color: rgba(157,181,255,.2);
+}
+
+[data-testid="stSidebar"] .stButton > button {
+    background: rgba(255,255,255,.06);
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    box-shadow: none;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+[data-testid="stSidebar"] .stButton > button:hover {
+    background: rgba(255,255,255,.11);
+    border-color: rgba(255,255,255,.2);
+    transform: none;
+    box-shadow: none;
+}
+
+/* ---------- Inputs ---------- */
 .stTextInput > div > div > input,
 .stNumberInput > div > div > input,
 .stSelectbox > div > div > div {
-    background: #ffffff !important;
-    border: 1px solid #d9dee8 !important;
-    border-radius: 9px !important;
+    background: var(--surface) !important;
+    border: 1px solid #D7DDE8 !important;
+    border-radius: 10px !important;
     font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.9rem !important;
+    font-size: .9rem !important;
     color: var(--ink) !important;
     min-height: 42px;
 }
@@ -341,78 +352,134 @@ html, body, [class*="css"] {
 .stTextInput > div > div > input:focus,
 .stNumberInput > div > div > input:focus {
     border-color: var(--blue) !important;
-    box-shadow: 0 0 0 3px rgba(49, 94, 251, 0.10) !important;
+    box-shadow: 0 0 0 3px rgba(49,94,251,.10) !important;
 }
 
 .stTextInput label,
 .stNumberInput label,
-.stSelectbox label,
-.stSlider label {
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.8rem !important;
-    color: var(--ink) !important;
+.stSelectbox label {
+    font-size: .72rem !important;
+    color: #475467 !important;
     font-weight: 700 !important;
+    letter-spacing: .2px !important;
 }
 
-/* ---------- SLIDER ---------- */
-.stSlider [data-baseweb="slider"] [role="slider"] {
+/* ---------- Sliders ---------- */
+.stSlider label {
+    font-size: .82rem !important;
+    font-weight: 700 !important;
+    color: var(--ink) !important;
+}
+
+.stSlider [data-baseweb="slider"] div[role="slider"] {
     background: var(--blue) !important;
-    border-color: var(--blue) !important;
 }
 
-.stSlider [data-baseweb="slider"] > div > div {
-    background: #dbe3ff !important;
+/* ---------- Buttons ---------- */
+.stButton > button,
+.stDownloadButton > button,
+button[kind="primary"] {
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: .82rem;
+    min-height: 42px;
+    box-shadow: none;
+    transition: all .15s ease;
 }
 
-/* ---------- DATAFRAME ---------- */
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    transform: translateY(-1px);
+}
+
+button[kind="primary"] {
+    background: var(--blue) !important;
+    border: 1px solid var(--blue) !important;
+    color: #fff !important;
+}
+
+/* ---------- Tables ---------- */
 .stDataFrame {
     border: 1px solid var(--line) !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(23,32,51,.035);
+}
+
+/* ---------- Login ---------- */
+.login-hero {
+    background: var(--navy);
+    color: #fff;
+    padding: 3rem 2rem;
+    text-align: left;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 20px;
+    box-shadow: 0 18px 50px rgba(23,37,84,.16);
+    position: relative;
     overflow: hidden;
 }
 
-/* ---------- LOGIN ---------- */
-.login-hero {
-    background: var(--navy);
-    color: #ffffff;
-    padding: 3rem 2rem 2.8rem;
-    text-align: center;
-    border: 1px solid #243568;
-    border-radius: 18px;
-    box-shadow: 0 18px 45px rgba(23, 37, 84, 0.16);
+.login-hero::before {
+    content: '';
+    position: absolute;
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    border: 1px solid rgba(157,181,255,.18);
+    right: -90px;
+    top: -90px;
 }
 
-.login-hero::before,
 .login-hero::after {
-    display: none;
+    content: 'ACADEMIC ANALYTICS';
+    position: absolute;
+    bottom: 18px;
+    right: 24px;
+    font-size: .58rem;
+    letter-spacing: 1.7px;
+    color: #9DB5FF;
 }
 
 .login-title-main {
     font-family: 'Manrope', sans-serif;
-    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-size: clamp(2.8rem, 6vw, 4rem);
     font-weight: 800;
-    line-height: 1;
-    letter-spacing: -2px;
+    line-height: .98;
+    letter-spacing: -2.5px;
     margin: 0;
 }
 
 .login-title-main em {
-    color: #8fa7ff;
+    color: #9DB5FF;
     font-style: normal;
 }
 
-.login-hero .kicker {
-    color: #9fb1ff !important;
+/* ---------- Tags ---------- */
+.label-tag {
+    display: inline-block;
+    padding: .35rem .65rem;
+    background: var(--blue-soft);
+    color: var(--blue);
+    border: 1px solid #D8E2FF;
+    border-radius: 999px;
+    font-size: .62rem;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    font-weight: 800;
 }
 
-/* ---------- PROCESS / TAGS ---------- */
+.label-tag-red { background: var(--red-soft); color: var(--red); border-color: #F5CDD2; }
+.label-tag-yellow { background: var(--amber-soft); color: var(--amber); border-color: #F4DFAB; }
+.label-tag-green { background: var(--teal-soft); color: var(--teal); border-color: #BFE8DF; }
+.label-tag-blue { background: var(--blue-soft); color: var(--blue); border-color: #D8E2FF; }
+
+/* ---------- Process ---------- */
 .process-box {
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 1.1rem;
-    margin: 0.7rem 0;
-    box-shadow: 0 4px 14px rgba(23, 32, 51, 0.04);
+    padding: 1.2rem;
+    margin: .8rem 0;
 }
 
 .process-box-number {
@@ -423,61 +490,19 @@ html, body, [class*="css"] {
     line-height: 1;
 }
 
-.label-tag {
-    display: inline-block;
-    padding: 0.28rem 0.65rem;
-    background: var(--blue-soft);
-    color: var(--navy);
-    border: 1px solid #dbe3ff;
-    border-radius: 999px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.66rem;
-    letter-spacing: 0.7px;
-    text-transform: uppercase;
-    font-weight: 700;
-}
-
-.label-tag-red { background: var(--red-soft); color: var(--red); border-color: #fecdd3; }
-.label-tag-yellow { background: var(--amber-soft); color: var(--amber); border-color: #fde68a; }
-.label-tag-green { background: var(--teal-soft); color: var(--teal); border-color: #a7f3d0; }
-.label-tag-blue { background: var(--blue-soft); color: var(--blue); border-color: #dbe3ff; }
-
-/* ---------- SPACING / CONTAINERS ---------- */
-.block-container {
-    max-width: 1440px;
-    padding-top: 2.2rem;
-    padding-bottom: 3rem;
-}
-
-div[data-testid="stVerticalBlock"] > div:has(> div.stMarkdown) {
-    scroll-margin-top: 20px;
-}
-
-/* ---------- MOBILE ---------- */
+/* ---------- Responsive ---------- */
 @media (max-width: 900px) {
     .block-container {
-        padding: 1.2rem 1rem 2rem;
+        padding: 1.25rem 1rem 3rem 1rem;
     }
 
     .masthead {
-        font-size: 2.45rem;
-        letter-spacing: -1.5px;
-    }
-
-    .deck {
-        font-size: 0.92rem;
-    }
-
-    .section-title {
-        font-size: 1.25rem;
-    }
-
-    .stat-value {
-        font-size: 1.7rem;
+        letter-spacing: -2px;
     }
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 # ================================================================
 # HASH PASSWORD
@@ -558,13 +583,13 @@ def analisis_kausal(nilai_akademik, profil_siswa):
 
 def kategori_nilai(nilai):
     if nilai >= 88:
-        return "Sangat Baik", "#0f766e", "▲"
+        return "Sangat Baik", "#166534", "▲"
     elif nilai >= 84:
-        return "Baik", "#315efb", "●"
+        return "Baik", "#1e40af", "●"
     elif nilai >= 80:
-        return "Cukup", "#d99a27", "◆"
+        return "Cukup", "#eab308", "◆"
     else:
-        return "Perlu Perhatian", "#315efb", "▼"
+        return "Perlu Perhatian", "#dc2626", "▼"
 
 
 def editorial_header(kicker, title, subtitle, issue="EDISI 2026 / SMPN 6 SALATIGA"):
@@ -586,7 +611,7 @@ def section_header(num, title, subtitle):
     st.markdown(f"""
     <div style="margin: 2.5rem 0 1.5rem 0;">
         <div style="display: flex; align-items: baseline; gap: 1rem;">
-            <span style="font-family: 'Fraunces', serif; font-size: 3rem; font-weight: 900; color: #315efb; line-height: 1;">{num}</span>
+            <span style="font-family: 'Fraunces', serif; font-size: 3rem; font-weight: 900; color: #dc2626; line-height: 1;">{num}</span>
             <div>
                 <h2 class="section-title">{title}</h2>
                 <div class="section-sub">{subtitle}</div>
@@ -617,8 +642,8 @@ def halaman_login():
     with col2:
         st.markdown("""
         <div class="login-hero">
-            <div class="kicker" style="color: #315efb; text-align: center; margin-bottom: 1rem;">
-                <span class="kicker-line" style="background: #315efb;"></span>SISTEM INFORMASI AKADEMIK
+            <div class="kicker" style="color: #dc2626; text-align: center; margin-bottom: 1rem;">
+                <span class="kicker-line" style="background: #dc2626;"></span>SISTEM INFORMASI AKADEMIK
             </div>
             <h1 class="login-title-main">
                 Prestasi<br>
@@ -634,7 +659,7 @@ def halaman_login():
         st.markdown('<div style="height: 2rem;"></div>', unsafe_allow_html=True)
         
         with st.form("login_form"):
-            st.markdown('<div class="kicker" style="color: #172033;"><span class="kicker-line" style="background: #172033;"></span>MASUK</div>', unsafe_allow_html=True)
+            st.markdown('<div class="kicker" style="color: #1a1a1a;"><span class="kicker-line" style="background: #1a1a1a;"></span>MASUK</div>', unsafe_allow_html=True)
             username = st.text_input("Username", placeholder="Masukkan username")
             password = st.text_input("Password", type="password", placeholder="Masukkan password")
             submit = st.form_submit_button("MASUK →", use_container_width=True)
@@ -669,9 +694,9 @@ if not st.session_state.logged_in:
 with st.sidebar:
     st.markdown(f"""
     <div style="padding: 1rem 0;">
-        <div class="kicker" style="color: #315efb;"><span class="kicker-line" style="background: #315efb;"></span>DASHBOARD</div>
-        <h1 style="font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; line-height: 1; letter-spacing: -1px; margin: 0.3rem 0; color: #f5f7fb;">
-            Prestasi<br><em style="color: #315efb;">Akademik.</em>
+        <div class="kicker" style="color: #dc2626;"><span class="kicker-line" style="background: #dc2626;"></span>DASHBOARD</div>
+        <h1 style="font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; line-height: 1; letter-spacing: -1px; margin: 0.3rem 0; color: #faf6f0;">
+            Prestasi<br><em style="color: #dc2626;">Akademik.</em>
         </h1>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 2px; color: #737373; margin-top: 0.5rem;">SMPN 6 SALATIGA / 2026</div>
     </div>
@@ -680,9 +705,9 @@ with st.sidebar:
     st.markdown('<hr style="border: none; border-top: 1px solid rgba(250,246,240,0.15); margin: 1rem 0;">', unsafe_allow_html=True)
     
     st.markdown(f"""
-    <div style="background: #315efb; padding: 0.8rem; margin-bottom: 1rem;">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 2px; color: #f5f7fb; opacity: 0.8;">USER AKTIF</div>
-        <div style="font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700; color: #f5f7fb; margin-top: 0.2rem;">{st.session_state.user_nama}</div>
+    <div style="background: #dc2626; padding: 0.8rem; margin-bottom: 1rem;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 2px; color: #faf6f0; opacity: 0.8;">USER AKTIF</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700; color: #faf6f0; margin-top: 0.2rem;">{st.session_state.user_nama}</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -789,8 +814,8 @@ if menu == "01 · Analisis Sebab-Akibat":
     if nama_siswa:
         st.markdown(f"""
         <div class="article-card" style="margin-bottom: 1.5rem;">
-            <div class="kicker" style="color: #172033;"><span class="kicker-line" style="background: #172033;"></span>SUBJEK ANALISIS</div>
-            <div style="font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 700; color: #172033; line-height: 1; margin-top: 0.3rem;">{nama_siswa}</div>
+            <div class="kicker" style="color: #1a1a1a;"><span class="kicker-line" style="background: #1a1a1a;"></span>SUBJEK ANALISIS</div>
+            <div style="font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 700; color: #1a1a1a; line-height: 1; margin-top: 0.3rem;">{nama_siswa}</div>
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #737373; margin-top: 0.5rem; letter-spacing: 1px;">
                 {kelas_siswa} · ABSEN {absen_siswa:02d}
             </div>
@@ -820,20 +845,20 @@ if menu == "01 · Analisis Sebab-Akibat":
     st.markdown('<div style="height: 2rem;"></div>', unsafe_allow_html=True)
     
     fig, ax = plt.subplots(figsize=(14, 2.8))
-    fig.patch.set_facecolor('#f5f7fb')
-    ax.set_facecolor('#f5f7fb')
+    fig.patch.set_facecolor('#F6F8FB')
+    ax.set_facecolor('#F6F8FB')
     
     nilai_min, nilai_max = 75, 95
     ax.barh(0, RATA_RATA_NILAI - nilai_min, left=nilai_min, 
-            color='#fecaca', alpha=0.7, height=0.35, edgecolor='#172033', linewidth=1.5)
+            color='#fecaca', alpha=0.7, height=0.35, edgecolor='#1a1a1a', linewidth=1.5)
     ax.barh(0, nilai_max - RATA_RATA_NILAI, left=RATA_RATA_NILAI,
-            color='#bbf7d0', alpha=0.7, height=0.35, edgecolor='#172033', linewidth=1.5)
+            color='#bbf7d0', alpha=0.7, height=0.35, edgecolor='#1a1a1a', linewidth=1.5)
     
-    ax.axvline(RATA_RATA_NILAI, color='#172033', linestyle='--', linewidth=2.5, 
+    ax.axvline(RATA_RATA_NILAI, color='#1a1a1a', linestyle='--', linewidth=2.5, 
                label=f'Rata-rata: {RATA_RATA_NILAI}')
     
-    ax.scatter(nilai_akademik, 0, s=500, color='#315efb', zorder=5, 
-               edgecolors='#315efb', linewidth=3, marker='D', label=f'Nilai: {nilai_akademik:.2f}')
+    ax.scatter(nilai_akademik, 0, s=500, color='#dc2626', zorder=5, 
+               edgecolors='#1a1a1a', linewidth=3, marker='D', label=f'Nilai: {nilai_akademik:.2f}')
     
     ax.set_xlim(nilai_min, nilai_max)
     ax.set_ylim(-0.5, 0.5)
@@ -843,7 +868,7 @@ if menu == "01 · Analisis Sebab-Akibat":
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
-    ax.spines['bottom'].set_color('#172033')
+    ax.spines['bottom'].set_color('#1a1a1a')
     plt.tight_layout()
     st.pyplot(fig)
     
@@ -859,13 +884,13 @@ if menu == "01 · Analisis Sebab-Akibat":
     col1, col2 = st.columns([2.2, 1])
     with col1:
         fig, ax = plt.subplots(figsize=(10, 6.5))
-        fig.patch.set_facecolor('#f5f7fb')
-        ax.set_facecolor('#f5f7fb')
+        fig.patch.set_facecolor('#F6F8FB')
+        ax.set_facecolor('#F6F8FB')
         
-        colors = ['#0f766e' if x > 0 else '#c83b4a' for x in df_kontribusi['Kontribusi']]
+        colors = ['#166534' if x > 0 else '#dc2626' for x in df_kontribusi['Kontribusi']]
         bars = ax.barh(df_kontribusi['Aspek'], df_kontribusi['Kontribusi'], 
-                       color=colors, edgecolor='#172033', linewidth=1.5, height=0.65)
-        ax.axvline(x=0, color='#172033', linestyle='-', linewidth=2)
+                       color=colors, edgecolor='#1a1a1a', linewidth=1.5, height=0.65)
+        ax.axvline(x=0, color='#1a1a1a', linestyle='-', linewidth=2)
         ax.set_xlabel('KONTRIBUSI (POIN NILAI)', fontsize=11, fontweight='bold', fontfamily='JetBrains Mono', labelpad=10)
         ax.set_title('Kontribusi Kausal Setiap Faktor', fontsize=15, fontweight='bold', fontfamily='Fraunces', pad=15, loc='left')
         
@@ -873,13 +898,13 @@ if menu == "01 · Analisis Sebab-Akibat":
             pos = val + 0.05 if val > 0 else val - 0.15
             ha = 'left' if val > 0 else 'right'
             ax.text(pos, bar.get_y() + bar.get_height()/2, f'{val:+.2f}', 
-                    va='center', ha=ha, fontsize=10, fontweight='bold', fontfamily='JetBrains Mono', color='#172033')
+                    va='center', ha=ha, fontsize=10, fontweight='bold', fontfamily='JetBrains Mono', color='#1a1a1a')
         
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
-        ax.spines['left'].set_color('#172033')
-        ax.spines['bottom'].set_color('#172033')
-        ax.tick_params(colors='#172033')
+        ax.spines['left'].set_color('#1a1a1a')
+        ax.spines['bottom'].set_color('#1a1a1a')
+        ax.tick_params(colors='#1a1a1a')
         plt.tight_layout()
         st.pyplot(fig)
     
@@ -888,9 +913,9 @@ if menu == "01 · Analisis Sebab-Akibat":
         <div class="alert alert-info">
             <div class="alert-title">📖 Cara Membaca</div>
             <div style="font-size: 0.85rem; line-height: 1.6; margin-top: 0.5rem;">
-            <b style="color: #0f766e;">▲ HIJAU (Positif)</b><br>
+            <b style="color: #166534;">▲ HIJAU (Positif)</b><br>
             Meningkatkan nilai siswa<br><br>
-            <b style="color: #315efb;">▼ MERAH (Negatif)</b><br>
+            <b style="color: #dc2626;">▼ MERAH (Negatif)</b><br>
             Menurunkan nilai siswa<br><br>
             <b>ANGKA</b><br>
             Kontribusi dalam poin nilai
@@ -919,38 +944,38 @@ if menu == "01 · Analisis Sebab-Akibat":
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('<div class="kicker" style="color: #0f766e;"><span class="kicker-line" style="background: #0f766e;"></span>KEKUATAN</div>', unsafe_allow_html=True)
+        st.markdown('<div class="kicker" style="color: #166534;"><span class="kicker-line" style="background: #166534;"></span>KEKUATAN</div>', unsafe_allow_html=True)
         if len(faktor_positif) > 0:
             for _, row in faktor_positif.iterrows():
                 st.markdown(f"""
-                <div class="article-card" style="border-color: #0f766e; margin-top: 1rem;">
+                <div class="article-card" style="border-color: #166534; margin-top: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: baseline;">
                         <b style="font-family: 'Fraunces', serif; font-size: 1.1rem;">{row['Aspek']}</b>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #0f766e;">{row['Kontribusi']:+.2f}</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #166534;">{row['Kontribusi']:+.2f}</span>
                     </div>
                     <div style="font-size: 0.85rem; color: #404040; margin-top: 0.5rem;">
                         Nilai: <b>{row['Nilai_Siswa']:.2f}</b> · Baseline: {row['Baseline']:.2f}
                     </div>
-                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 1px; margin-top: 0.5rem; color: #0f766e;">▲ PERTAHANKAN</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 1px; margin-top: 0.5rem; color: #166534;">▲ PERTAHANKAN</div>
                 </div>
                 """, unsafe_allow_html=True)
         else:
             st.markdown('<div class="alert alert-info">Belum ada faktor kekuatan dominan.</div>', unsafe_allow_html=True)
     
     with col2:
-        st.markdown('<div class="kicker" style="color: #315efb;"><span class="kicker-line" style="background: #315efb;"></span>PERLU DIPERBAIKI</div>', unsafe_allow_html=True)
+        st.markdown('<div class="kicker" style="color: #dc2626;"><span class="kicker-line" style="background: #dc2626;"></span>PERLU DIPERBAIKI</div>', unsafe_allow_html=True)
         if len(faktor_negatif) > 0:
             for _, row in faktor_negatif.iterrows():
                 st.markdown(f"""
-                <div class="article-card" style="border-color: #c83b4a; margin-top: 1rem;">
+                <div class="article-card" style="border-color: #dc2626; margin-top: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: baseline;">
                         <b style="font-family: 'Fraunces', serif; font-size: 1.1rem;">{row['Aspek']}</b>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #315efb;">{row['Kontribusi']:+.2f}</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #dc2626;">{row['Kontribusi']:+.2f}</span>
                     </div>
                     <div style="font-size: 0.85rem; color: #404040; margin-top: 0.5rem;">
                         Nilai: <b>{row['Nilai_Siswa']:.2f}</b> · Baseline: {row['Baseline']:.2f}
                     </div>
-                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 1px; margin-top: 0.5rem; color: #315efb;">▼ TINGKATKAN</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 1px; margin-top: 0.5rem; color: #dc2626;">▼ TINGKATKAN</div>
                 </div>
                 """, unsafe_allow_html=True)
         else:
@@ -1009,7 +1034,7 @@ elif menu == "02 · Database Siswa":
     if len(st.session_state.database_siswa) == 0:
         st.markdown("""
         <div class="article-card" style="text-align: center; padding: 3rem;">
-            <div style="font-family: 'Fraunces', serif; font-size: 3rem; color: #315efb;">◯</div>
+            <div style="font-family: 'Fraunces', serif; font-size: 3rem; color: #dc2626;">◯</div>
             <div style="font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; margin-top: 1rem;">Belum Ada Data</div>
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #737373; letter-spacing: 2px; margin-top: 0.5rem;">SILAKAN INPUT DI MENU 01</div>
         </div>
@@ -1038,7 +1063,7 @@ elif menu == "02 · Database Siswa":
         
         df_tampil = df_db if filter_kelas == "Semua" else df_db[df_db['Kelas'] == filter_kelas]
         
-        st.markdown(f'<div class="kicker" style="color: #172033;"><span class="kicker-line" style="background: #172033;"></span>{len(df_tampil)} SISWA DITEMUKAN</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="kicker" style="color: #1a1a1a;"><span class="kicker-line" style="background: #1a1a1a;"></span>{len(df_tampil)} SISWA DITEMUKAN</div>', unsafe_allow_html=True)
         st.markdown('<div style="height: 1rem;"></div>', unsafe_allow_html=True)
         st.dataframe(df_tampil, use_container_width=True, hide_index=True)
         
@@ -1086,11 +1111,11 @@ elif menu == "03 · Analisis Kausal":
     ]).sort_values('ATE', ascending=True)
     
     fig, ax = plt.subplots(figsize=(11, 6.5))
-    fig.patch.set_facecolor('#f5f7fb')
-    ax.set_facecolor('#f5f7fb')
-    colors = ['#0f766e' if x > 0 else '#315efb' for x in df_ate['ATE']]
-    bars = ax.barh(df_ate['Konstruk'], df_ate['ATE'], color=colors, edgecolor='#172033', linewidth=1.5, height=0.65)
-    ax.axvline(x=0, color='#172033', linestyle='-', linewidth=2)
+    fig.patch.set_facecolor('#F6F8FB')
+    ax.set_facecolor('#F6F8FB')
+    colors = ['#166534' if x > 0 else '#dc2626' for x in df_ate['ATE']]
+    bars = ax.barh(df_ate['Konstruk'], df_ate['ATE'], color=colors, edgecolor='#1a1a1a', linewidth=1.5, height=0.65)
+    ax.axvline(x=0, color='#1a1a1a', linestyle='-', linewidth=2)
     ax.set_xlabel('ATE (AVERAGE TREATMENT EFFECT)', fontsize=11, fontweight='bold', fontfamily='JetBrains Mono', labelpad=10)
     ax.set_title('Efek Kausal terhadap Prestasi Akademik', fontsize=16, fontweight='bold', fontfamily='Fraunces', pad=15, loc='left')
     for bar, val in zip(bars, df_ate['ATE']):
@@ -1132,10 +1157,10 @@ elif menu == "04 · Analisis SHAP":
     ]).sort_values('Mean_SHAP', ascending=True)
     
     fig, ax = plt.subplots(figsize=(11, 6.5))
-    fig.patch.set_facecolor('#f5f7fb')
-    ax.set_facecolor('#f5f7fb')
+    fig.patch.set_facecolor('#F6F8FB')
+    ax.set_facecolor('#F6F8FB')
     bars = ax.barh(df_shap['Konstruk'], df_shap['Mean_SHAP'], 
-                   color='#315efb', edgecolor='#172033', linewidth=1.5, height=0.65)
+                   color='#315EFB', edgecolor='#D7DDE8', linewidth=1.5, height=0.65)
     ax.set_xlabel('MEAN |SHAP VALUE|', fontsize=11, fontweight='bold', fontfamily='JetBrains Mono', labelpad=10)
     ax.set_title('Kontribusi Fitur terhadap Prediksi', fontsize=16, fontweight='bold', fontfamily='Fraunces', pad=15, loc='left')
     for bar, val in zip(bars, df_shap['Mean_SHAP']):
@@ -1162,27 +1187,27 @@ else:
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("""
-        <div class="article-card" style="border-color: #0f766e;">
-            <div class="kicker" style="color: #0f766e;"><span class="kicker-line" style="background: #0f766e;"></span>PRIORITAS TINGGI</div>
+        <div class="article-card" style="border-color: #166534;">
+            <div class="kicker" style="color: #166534;"><span class="kicker-line" style="background: #166534;"></span>PRIORITAS TINGGI</div>
             <div style="margin-top: 1rem;">
                 <div style="font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem;">01 · Fasilitas Sekolah</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #0f766e; letter-spacing: 1px;">ATE +2.43 · EFEK TERBESAR</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #166534; letter-spacing: 1px;">ATE +2.43 · EFEK TERBESAR</div>
                 <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #404040;">
                 Tingkatkan kualitas perpustakaan dan laboratorium untuk mendukung pembelajaran optimal.
                 </div>
             </div>
-            <hr style="border: none; border-top: 1px solid #0f766e; opacity: 0.2; margin: 1rem 0;">
+            <hr style="border: none; border-top: 1px solid #166534; opacity: 0.2; margin: 1rem 0;">
             <div>
                 <div style="font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem;">02 · Keterlibatan Orang Tua</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #0f766e; letter-spacing: 1px;">ATE +2.21 · SHAP 0.68</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #166534; letter-spacing: 1px;">ATE +2.21 · SHAP 0.68</div>
                 <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #404040;">
                 Program parenting dan komunikasi rutin sekolah-orang tua untuk pendampingan belajar.
                 </div>
             </div>
-            <hr style="border: none; border-top: 1px solid #0f766e; opacity: 0.2; margin: 1rem 0;">
+            <hr style="border: none; border-top: 1px solid #166534; opacity: 0.2; margin: 1rem 0;">
             <div>
                 <div style="font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem;">03 · Self-Efficacy</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #0f766e; letter-spacing: 1px;">ATE +2.07 · SHAP 0.80</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #166534; letter-spacing: 1px;">ATE +2.07 · SHAP 0.80</div>
                 <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #404040;">
                 Penguatan kepercayaan diri siswa melalui mentoring dan pelatihan motivasi.
                 </div>
@@ -1192,19 +1217,19 @@ else:
     
     with col2:
         st.markdown("""
-        <div class="article-card" style="border-color: #315efb;">
-            <div class="kicker" style="color: #315efb;"><span class="kicker-line" style="background: #315efb;"></span>PERLU EVALUASI</div>
+        <div class="article-card" style="border-color: #dc2626;">
+            <div class="kicker" style="color: #dc2626;"><span class="kicker-line" style="background: #dc2626;"></span>PERLU EVALUASI</div>
             <div style="margin-top: 1rem;">
                 <div style="font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem;">01 · Dukungan Sekolah</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #315efb; letter-spacing: 1px;">ATE -3.88 · ANOMALI</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #dc2626; letter-spacing: 1px;">ATE -3.88 · ANOMALI</div>
                 <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #404040;">
                 Over-support dari sekolah menurunkan kemandirian. Evaluasi program pendampingan.
                 </div>
             </div>
-            <hr style="border: none; border-top: 1px solid #315efb; opacity: 0.2; margin: 1rem 0;">
+            <hr style="border: none; border-top: 1px solid #dc2626; opacity: 0.2; margin: 1rem 0;">
             <div>
                 <div style="font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem;">02 · Harapan Orang Tua</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #315efb; letter-spacing: 1px;">ATE -1.53</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #dc2626; letter-spacing: 1px;">ATE -1.53</div>
                 <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #404040;">
                 Tekanan berlebihan menimbulkan kecemasan. Edukasi target realistis.
                 </div>
@@ -1216,11 +1241,11 @@ else:
     
     st.markdown("""
     <div class="article-card-black">
-        <div class="kicker" style="color: #315efb;"><span class="kicker-line" style="background: #315efb;"></span>KESIMPULAN PENELITIAN</div>
+        <div class="kicker" style="color: #dc2626;"><span class="kicker-line" style="background: #dc2626;"></span>KESIMPULAN PENELITIAN</div>
         <div style="font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 700; line-height: 1.2; margin-top: 1rem;">
         Tiga faktor terbukti secara kausal dan prediktif mempengaruhi prestasi akademik siswa SMP Negeri 6 Salatiga.
         </div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #315efb; letter-spacing: 2px; margin-top: 1.5rem;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #dc2626; letter-spacing: 2px; margin-top: 1.5rem;">
         ■ FASILITAS SEKOLAH · ■ KETERLIBATAN ORANG TUA · ■ SELF-EFFICACY
         </div>
     </div>
