@@ -6,14 +6,14 @@ from datetime import datetime
 import hashlib
 
 st.set_page_config(
-    page_title="Prestasi Akademik | SMPN 6 Salatiga",
-    page_icon="📚",
+    page_title="SIA.Prestasi | SMPN 6 Salatiga",
+    page_icon="🎓",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
 # ================================================================
-# VISUAL SYSTEM
+# VISUAL SYSTEM — SIASAT STYLE
 # ================================================================
 
 st.markdown("""
@@ -50,6 +50,238 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 
 .motion{animation:riseIn .5s ease both;}
 
+/* ============ LOGIN PAGE — SIASAT STYLE ============ */
+.login-page-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1rem 2rem;
+    background:#fff;
+    border-bottom:1px solid #E4EAF2;
+    margin:-1.6rem -2.7rem 0 -2.7rem;
+}
+.login-logo-area{
+    display:flex;align-items:center;gap:.8rem;
+    justify-content:flex-end;
+    width:100%;
+}
+.login-logo-icon{
+    font-size:2.2rem;
+    line-height:1;
+}
+.login-logo-text{
+    text-align:right;
+    line-height:1.15;
+}
+.login-logo-title{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:1.6rem;
+    font-weight:800;
+    color:#17233B;
+    letter-spacing:-.8px;
+}
+.login-logo-title .blue-part{color:#2563EB;}
+.login-logo-sub{
+    font-size:.72rem;
+    color:#667085;
+    letter-spacing:.3px;
+    margin-top:.15rem;
+}
+
+.login-content{
+    max-width:1050px;
+    margin:2rem auto;
+    padding:0 2rem;
+}
+
+.login-date-logout{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:.9rem 0;
+    border-bottom:2px solid #17233B;
+    margin-bottom:2rem;
+}
+.login-date{
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:.95rem;
+    color:#17233B;
+}
+.login-logout-link{
+    font-size:.8rem;
+    color:#2563EB;
+    font-weight:700;
+    padding:.35rem .8rem;
+    border-left:1px solid #E4EAF2;
+}
+
+/* Form ala SIASAT — label kiri, input kanan */
+.siasat-label{
+    font-family:'DM Sans',sans-serif;
+    font-weight:700;
+    font-size:.9rem;
+    color:#17233B;
+    padding-top:.65rem;
+}
+.siasat-label::after{
+    content:" :";
+    color:#667085;
+    font-weight:400;
+}
+
+/* Override streamlit input untuk style SIASAT */
+.siasat-input .stTextInput > div > div > input,
+.siasat-input [data-baseweb="input"] > div,
+.siasat-input [data-baseweb="base-input"]{
+    border:1.5px solid #A8B5C7 !important;
+    border-radius:4px !important;
+    padding:.55rem .85rem !important;
+    font-size:.9rem !important;
+    background:#fff !important;
+    min-height:42px !important;
+    transition:all .15s ease !important;
+    font-family:'DM Sans',sans-serif !important;
+}
+.siasat-input .stTextInput > div > div > input:focus{
+    border-color:#2563EB !important;
+    box-shadow:0 0 0 3px rgba(37,99,235,.12) !important;
+    outline:none !important;
+}
+.siasat-input .stTextInput > div > div > input::placeholder{
+    color:#98A2B3 !important;
+    font-style:italic;
+}
+.siasat-input .stTextInput > label{display:none !important;}
+
+/* Tombol SIASAT style */
+.siasat-btn-login button{
+    background:linear-gradient(180deg,#4ADE80 0%,#22C55E 100%) !important;
+    border:1px solid #16A34A !important;
+    color:#fff !important;
+    font-family:'DM Sans',sans-serif !important;
+    font-weight:700 !important;
+    font-size:.9rem !important;
+    letter-spacing:.3px !important;
+    padding:.55rem 2rem !important;
+    border-radius:5px !important;
+    min-height:44px !important;
+    box-shadow:0 2px 4px rgba(22,163,74,.2), inset 0 1px 0 rgba(255,255,255,.3) !important;
+    transition:all .15s ease !important;
+    text-transform:none !important;
+}
+.siasat-btn-login button:hover{
+    background:linear-gradient(180deg,#22C55E 0%,#16A34A 100%) !important;
+    box-shadow:0 3px 8px rgba(22,163,74,.3) !important;
+    transform:translateY(-1px) !important;
+}
+
+.siasat-btn-lupa button{
+    background:linear-gradient(180deg,#F87171 0%,#EF4444 100%) !important;
+    border:1px solid #DC2626 !important;
+    color:#fff !important;
+    font-family:'DM Sans',sans-serif !important;
+    font-weight:700 !important;
+    font-size:.9rem !important;
+    letter-spacing:.3px !important;
+    padding:.55rem 2rem !important;
+    border-radius:5px !important;
+    min-height:44px !important;
+    box-shadow:0 2px 4px rgba(220,38,38,.2), inset 0 1px 0 rgba(255,255,255,.3) !important;
+    transition:all .15s ease !important;
+    text-transform:none !important;
+}
+.siasat-btn-lupa button:hover{
+    background:linear-gradient(180deg,#EF4444 0%,#DC2626 100%) !important;
+    box-shadow:0 3px 8px rgba(220,38,38,.3) !important;
+    transform:translateY(-1px) !important;
+}
+
+.siasat-info-box{
+    background:#F7F9FC;
+    border:1px solid #E4EAF2;
+    border-left:4px solid #F6C945;
+    border-radius:6px;
+    padding:1.2rem 1.4rem;
+    margin-top:2.5rem;
+}
+.siasat-info-header{
+    display:flex;align-items:center;gap:.6rem;
+    margin-bottom:.7rem;
+}
+.siasat-info-icon{
+    font-size:1.3rem;
+    line-height:1;
+}
+.siasat-info-title{
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:.9rem;
+    color:#17233B;
+    letter-spacing:-.2px;
+}
+.siasat-info-list{
+    font-size:.8rem;
+    color:#475467;
+    line-height:1.85;
+    padding-left:.3rem;
+}
+.siasat-info-list div{
+    display:flex;
+    gap:.5rem;
+}
+.siasat-info-list .num{
+    color:#2563EB;
+    font-weight:800;
+    flex-shrink:0;
+    min-width:18px;
+}
+
+.siasat-footer{
+    text-align:center;
+    padding:2rem 0;
+    margin-top:3rem;
+    border-top:1px solid #E4EAF2;
+    font-size:.72rem;
+    color:#98A2B3;
+    letter-spacing:.3px;
+    line-height:1.8;
+}
+.siasat-footer strong{
+    color:#475467;
+    font-weight:700;
+}
+
+.siasat-alert-danger{
+    background:#FEF2F2;
+    border:1px solid #FECACA;
+    border-left:4px solid #EF4444;
+    border-radius:6px;
+    padding:.85rem 1.1rem;
+    margin-top:1rem;
+    animation:riseIn .3s ease both;
+}
+.siasat-alert-danger-title{
+    font-family:'Manrope';font-weight:800;
+    font-size:.82rem;color:#991B1B;
+}
+.siasat-alert-danger-body{
+    font-size:.75rem;color:#7F1D1D;margin-top:.25rem;
+}
+
+.siasat-alert-info{
+    background:#EFF6FF;
+    border:1px solid #BFDBFE;
+    border-left:4px solid #2563EB;
+    border-radius:6px;
+    padding:.85rem 1.1rem;
+    margin-top:1rem;
+    animation:riseIn .3s ease both;
+}
+.siasat-alert-info-title{
+    font-family:'Manrope';font-weight:800;
+    font-size:.82rem;color:#1E40AF;
+}
+.siasat-alert-info-body{
+    font-size:.75rem;color:#1E3A8A;margin-top:.25rem;
+}
+
 /* ============ TOP BAR (KEMBALI KE MENU) ============ */
 .top-bar{
     display:flex;justify-content:space-between;align-items:center;
@@ -65,13 +297,10 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 }
 .top-bar-title{
     font-family:'Manrope',sans-serif;font-weight:800;
-    font-size:.9rem;letter-spacing:-.3px;
+    font-size:.95rem;letter-spacing:-.3px;
 }
 .top-bar-sub{
     color:var(--muted);font-size:.72rem;margin-top:.1rem;
-}
-.top-bar-right{
-    display:flex;gap:.6rem;align-items:center;
 }
 
 /* ============ HERO ============ */
@@ -311,40 +540,11 @@ button[kind="primary"]{
 [data-testid="stDataFrame"]{border:1px solid var(--line);border-radius:16px;
     overflow:hidden;box-shadow:0 8px 25px rgba(30,50,90,.04);}
 
-.login-shell{max-width:930px;margin:5vh auto 0;}
-.login-panel{display:grid;grid-template-columns:1.12fr .88fr;overflow:hidden;
-    border-radius:30px;border:1px solid var(--line);
-    box-shadow:0 24px 70px rgba(24,45,82,.12);background:#fff;animation:riseIn .5s ease both;}
-.login-visual{position:relative;min-height:500px;padding:2.5rem;overflow:hidden;
-    background:linear-gradient(135deg,#17233B 0%,#1E2F50 50%,#2563EB 100%);color:#fff;}
-.login-visual:before{content:"";position:absolute;width:330px;height:330px;border-radius:50%;
-    border:50px solid rgba(79,124,255,.12);right:-145px;top:-120px;}
-.login-visual:after{content:"";position:absolute;width:9px;height:9px;left:42px;bottom:55px;
-    border-radius:50%;background:var(--yellow);
-    box-shadow:35px -22px 0 #4F7CFF,75px -4px 0 #18A77A,113px -28px 0 #7C5CFC;
-    animation:floatDot 3.2s ease-in-out infinite;}
-.login-kicker{font-size:.65rem;font-weight:800;letter-spacing:1.6px;color:#9DBBFF;}
-.login-title{font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:clamp(2.8rem,5vw,4.8rem);line-height:.95;letter-spacing:-3px;margin-top:3.2rem;}
-.login-title span{color:var(--yellow);}
-.login-copy{color:#C6D1E5;line-height:1.65;max-width:420px;margin-top:1rem;}
-.login-feature{position:absolute;bottom:34px;left:2.5rem;right:2.5rem;
-    display:flex;gap:.6rem;flex-wrap:wrap;}
-.login-feature span{padding:.45rem .65rem;border-radius:999px;
-    background:rgba(255,255,255,.08);color:#D9E3F5;font-size:.62rem;font-weight:700;}
-.login-form{padding:2.5rem;display:flex;flex-direction:column;justify-content:center;}
-.login-form-title{font-family:'Manrope',sans-serif;font-size:1.45rem;font-weight:800;}
-.login-form-sub{color:var(--muted);font-size:.78rem;margin:.35rem 0 1.4rem;}
-.demo-note{margin-top:1rem;padding:.75rem .9rem;border-radius:13px;
-    background:var(--yellow-soft);color:#725A00;font-size:.7rem;line-height:1.5;}
-
 @media(max-width:850px){
     .block-container{padding:1rem 1rem 3rem;}
-    .login-shell{margin:1rem auto 0;}
-    .login-panel{grid-template-columns:1fr;}
-    .login-visual{min-height:360px;}
-    .login-title{margin-top:2.5rem;}
-    .login-feature{position:static;margin-top:3rem;}
+    .login-page-header{margin:-1rem -1rem 0 -1rem;padding:.8rem 1rem;}
+    .login-logo-title{font-size:1.2rem;}
+    .login-content{padding:0;}
     .menu-hero{padding:2.5rem 1.7rem;}
 }
 </style>
@@ -389,7 +589,6 @@ BASELINE_ASPEK = {
     "Fasilitas Sekolah": 4.88,
 }
 
-# Nilai kekuatan pengaruh (dari ATE)
 PENGARUH_DATA = {
     "Self-Efficacy Akademik": 2.0698,
     "Keterlibatan Orang Tua": 2.2100,
@@ -401,7 +600,6 @@ PENGARUH_DATA = {
     "Fasilitas Sekolah": 2.4295,
 }
 
-# Nilai tingkat kepentingan (dari SHAP)
 KEPENTINGAN_DATA = {
     "Self-Efficacy Akademik": 0.8008,
     "Keterlibatan Orang Tua": 0.6806,
@@ -431,10 +629,6 @@ KELAS_LIST = (
     + [f"VIII-{x}" for x in "ABCDEFGH"]
     + [f"IX-{x}" for x in "ABCDEFGH"]
 )
-
-# ================================================================
-# SKALA PILIHAN INPUT
-# ================================================================
 
 SKALA_PILIHAN = {
     "Self-Efficacy Akademik": {
@@ -568,7 +762,6 @@ def section_header(num, title, subtitle):
 
 
 def top_bar(page_title, page_sub):
-    """Top bar dengan tombol kembali ke menu utama (di atas, tanpa scroll)"""
     col1, col2 = st.columns([3, 1])
     with col1:
         st.markdown(f"""
@@ -611,7 +804,6 @@ def stat_card(label, value, note="", accent="blue"):
 
 
 def notifikasi_simpan(nama, kelas):
-    """Notifikasi simpan data tanpa balon"""
     st.markdown(f"""
     <div class="notif-success">
         <div class="notif-success-title">✅ Data Berhasil Disimpan</div>
@@ -632,7 +824,6 @@ def notifikasi_simpan(nama, kelas):
 
 
 def plot_pengaruh(df):
-    """Grafik kekuatan pengaruh (dari ATE) dengan label awam"""
     df = df.sort_values("Pengaruh", ascending=True)
     fig, ax = plt.subplots(figsize=(11, 6.3))
     fig.patch.set_alpha(0)
@@ -667,7 +858,6 @@ def plot_pengaruh(df):
 
 
 def plot_kepentingan(df):
-    """Grafik tingkat kepentingan (dari SHAP) dengan label awam"""
     df = df.sort_values("Kepentingan", ascending=True)
     fig, ax = plt.subplots(figsize=(11, 6.3))
     fig.patch.set_alpha(0)
@@ -721,36 +911,83 @@ def input_kategori(key_name, faktor_name):
 
 
 # ================================================================
-# LOGIN PAGE
+# LOGIN PAGE — SIASAT STYLE
 # ================================================================
 
 def halaman_login():
-    st.markdown('<div class="login-shell">', unsafe_allow_html=True)
+    # Header dengan logo kanan atas
     st.markdown("""
-    <div class="login-panel">
-        <div class="login-visual">
-            <div class="login-kicker">SISTEM ANALITIK AKADEMIK · 2026</div>
-            <div class="login-title">Prestasi<br><span>Akademik.</span></div>
-            <div class="login-copy">
-                Dashboard analitik untuk membaca pola prestasi siswa melalui
-                pendekatan kausal dan explainable machine learning.
-            </div>
-            <div class="login-feature">
-                <span>ANALISIS SEBAB-AKIBAT</span>
-                <span>PREDIKSI</span>
-                <span>PENJELASAN</span>
-                <span>SMPN 6 SALATIGA</span>
+    <div class="login-page-header">
+        <div></div>
+        <div class="login-logo-area">
+            <div class="login-logo-icon">🎓</div>
+            <div class="login-logo-text">
+                <div class="login-logo-title">
+                    SIA.<span class="blue-part">Prestasi</span>
+                </div>
+                <div class="login-logo-sub">smpn6salatiga.sch.id</div>
             </div>
         </div>
-        <div class="login-form">
-            <div class="login-form-title">Selamat datang 👋</div>
-            <div class="login-form-sub">Masuk untuk melanjutkan ke dashboard.</div>
+    </div>
     """, unsafe_allow_html=True)
 
-    with st.form("login_form"):
-        username = st.text_input("Username", placeholder="Masukkan username")
-        password = st.text_input("Password", type="password", placeholder="Masukkan password")
-        submit = st.form_submit_button("Masuk ke Dashboard →", type="primary", use_container_width=True)
+    st.markdown('<div class="login-content">', unsafe_allow_html=True)
+
+    # Tanggal
+    hari_ini = datetime.now()
+    hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"][hari_ini.weekday()]
+    bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+             "Juli", "Agustus", "September", "Oktober", "November", "Desember"][hari_ini.month - 1]
+    tanggal_str = f"{hari}, {hari_ini.day} {bulan} {hari_ini.year}"
+
+    st.markdown(f"""
+    <div class="login-date-logout">
+        <div class="login-date">{tanggal_str}</div>
+        <div class="login-logout-link">| Logout</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Form ala SIASAT
+    with st.form("login_form_siasat", clear_on_submit=False):
+        col_label1, col_input1 = st.columns([1, 3])
+        with col_label1:
+            st.markdown('<div class="siasat-label" style="padding-top:.65rem;padding-left:.3rem;">Nama Pengguna</div>', unsafe_allow_html=True)
+        with col_input1:
+            st.markdown('<div class="siasat-input">', unsafe_allow_html=True)
+            username = st.text_input(
+                "username_siasat",
+                placeholder="Masukkan nama pengguna",
+                label_visibility="collapsed",
+                key="login_username_siasat"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        col_label2, col_input2 = st.columns([1, 3])
+        with col_label2:
+            st.markdown('<div class="siasat-label" style="padding-top:.65rem;padding-left:.3rem;">Kata Sandi</div>', unsafe_allow_html=True)
+        with col_input2:
+            st.markdown('<div class="siasat-input">', unsafe_allow_html=True)
+            password = st.text_input(
+                "password_siasat",
+                type="password",
+                placeholder="Masukkan kata sandi",
+                label_visibility="collapsed",
+                key="login_password_siasat"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div style="height:.5rem;"></div>', unsafe_allow_html=True)
+
+        col_empty, col_btn1, col_btn2, col_rest = st.columns([1, 1, 1, 2])
+        with col_btn1:
+            st.markdown('<div class="siasat-btn-login">', unsafe_allow_html=True)
+            submit = st.form_submit_button("Login", use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        with col_btn2:
+            st.markdown('<div class="siasat-btn-lupa">', unsafe_allow_html=True)
+            lupa = st.form_submit_button("Lupa Password", use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+
         if submit:
             if username in USERS and USERS[username]["password"] == hash_password(password):
                 st.session_state.logged_in = True
@@ -758,17 +995,62 @@ def halaman_login():
                 st.session_state.current_page = "home"
                 st.rerun()
             else:
-                st.error("Username atau password salah.")
+                st.markdown("""
+                <div class="siasat-alert-danger">
+                    <div class="siasat-alert-danger-title">❌ Login Gagal</div>
+                    <div class="siasat-alert-danger-body">
+                        Nama pengguna atau kata sandi salah. Silakan coba lagi.
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
 
-    st.markdown("""
-            <div class="demo-note">
-                <b>Akun demo</b><br>
-                admin / admin123 · guru / guru123 · regina / regina2026
+        if lupa:
+            st.markdown("""
+            <div class="siasat-alert-info">
+                <div class="siasat-alert-info-title">ℹ️ Lupa Password</div>
+                <div class="siasat-alert-info-body">
+                    Silakan hubungi Administrator sekolah untuk melakukan reset password.
+                    Hubungi: admin@smpn6salatiga.sch.id
+                </div>
             </div>
+            """, unsafe_allow_html=True)
+
+    # Info box
+    st.markdown("""
+    <div class="siasat-info-box">
+        <div class="siasat-info-header">
+            <div class="siasat-info-icon">💡</div>
+            <div class="siasat-info-title">Informasi Login</div>
+        </div>
+        <div class="siasat-info-list">
+            <div><span class="num">1.</span><span>Gunakan akun resmi yang diberikan oleh sekolah.</span></div>
+            <div><span class="num">2.</span><span>Hubungi Administrator jika lupa password.</span></div>
+            <div><span class="num">3.</span><span>Jangan bagikan akun kepada orang lain.</span></div>
+            <div><span class="num">4.</span><span>Logout setelah selesai menggunakan dashboard.</span></div>
+            <div><span class="num">5.</span><span>Hindari login menggunakan perangkat bersama.</span></div>
+            <div><span class="num">6.</span><span>Perhatikan keamanan data siswa saat menggunakan sistem.</span></div>
         </div>
     </div>
+    """, unsafe_allow_html=True)
+
+    with st.expander("🔑 Lihat Akun Demo"):
+        st.markdown("""
+        | Nama Pengguna | Kata Sandi | Peran |
+        |---------------|------------|-------|
+        | `admin` | `admin123` | Administrator |
+        | `guru` | `guru123` | Guru |
+        | `regina` | `regina2026` | Peneliti |
+        """)
+
+    st.markdown("""
+    <div class="siasat-footer">
+        <strong>SIA.Prestasi</strong> · Sistem Informasi Akademik<br>
+        Dikembangkan oleh Program Studi Magister Sains Data<br>
+        Universitas Kristen Satya Wacana · © 2026
     </div>
     """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 if not st.session_state.logged_in:
@@ -1185,7 +1467,6 @@ elif st.session_state.current_page == "analisis":
         </div>
         """, unsafe_allow_html=True)
     else:
-        # Cek duplikat
         duplikat = any(s["Nama"] == nama_siswa and s["Kelas"] == kelas_siswa
                        for s in st.session_state.database_siswa)
 
@@ -1220,7 +1501,6 @@ elif st.session_state.current_page == "analisis":
                 st.session_state.last_saved = {"nama": nama_siswa, "kelas": kelas_siswa}
                 st.rerun()
 
-        # Tampilkan notifikasi jika baru saja disimpan
         if st.session_state.last_saved:
             notifikasi_simpan(
                 st.session_state.last_saved["nama"],
@@ -1287,7 +1567,7 @@ elif st.session_state.current_page == "database":
                 st.rerun()
 
 # ================================================================
-# MODUL 03 — FAKTOR PENYEBAB (dari ATE)
+# MODUL 03 — FAKTOR PENYEBAB
 # ================================================================
 
 elif st.session_state.current_page == "kausal":
@@ -1367,7 +1647,7 @@ elif st.session_state.current_page == "kausal":
     """, unsafe_allow_html=True)
 
 # ================================================================
-# MODUL 04 — TINGKAT KEPENTINGAN (dari SHAP)
+# MODUL 04 — TINGKAT KEPENTINGAN
 # ================================================================
 
 elif st.session_state.current_page == "kepentingan":
