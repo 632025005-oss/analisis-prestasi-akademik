@@ -1204,14 +1204,13 @@ if st.session_state.current_page == "home":
 
     st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-line"></div>', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2 = st.columns([4, 1])
     with col2:
-        if st.button("🚪 Logoout", use_container_width=True, key="logout_home"):
+        if st.button("🚪 Logout", use_container_width=True, key="logout_home"):
             st.session_state.logged_in = False
             st.session_state.user_nama = None
             st.session_state.current_page = "home"
             st.rerun()
-
 # ================================================================
 # MODUL 01 — ANALISIS SISWA
 # ================================================================
