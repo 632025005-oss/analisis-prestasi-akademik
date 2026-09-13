@@ -1,6 +1,4 @@
-from pathlib import Path
-
-code = r'''import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -66,7 +64,6 @@ h1,h2,h3,h4{
     font-family:'Manrope',sans-serif;
 }
 
-/* ---------- subtle motion ---------- */
 @keyframes riseIn{
     from{opacity:0; transform:translateY(10px);}
     to{opacity:1; transform:translateY(0);}
@@ -205,7 +202,6 @@ h1,h2,h3,h4{
     margin-top:.9rem;
 }
 
-/* ---------- cards ---------- */
 .card{
     background:var(--surface);
     border:1px solid var(--line);
@@ -385,7 +381,6 @@ h1,h2,h3,h4{
 .positive{color:var(--mint);}
 .negative{color:var(--coral);}
 
-/* ---------- inputs ---------- */
 .stTextInput > div > div > input,
 .stNumberInput > div > div > input,
 .stSelectbox [data-baseweb="select"] > div{
@@ -430,7 +425,6 @@ button[kind="primary"]{
     color:#fff !important;
 }
 
-/* ---------- sidebar ---------- */
 [data-testid="stSidebar"]{
     background:var(--navy);
     border-right:0;
@@ -512,7 +506,6 @@ button[kind="primary"]{
     border-color:rgba(255,255,255,.12) !important;
 }
 
-/* ---------- tables ---------- */
 [data-testid="stDataFrame"]{
     border:1px solid var(--line);
     border-radius:16px;
@@ -520,7 +513,6 @@ button[kind="primary"]{
     box-shadow:0 8px 25px rgba(30,50,90,.04);
 }
 
-/* ---------- login ---------- */
 .login-shell{
     max-width:930px;
     margin:5vh auto 0;
@@ -656,7 +648,7 @@ if "database_siswa" not in st.session_state:
     st.session_state.database_siswa = []
 
 # ================================================================
-# DATA / MODEL OUTPUTS — preserved from original dashboard
+# DATA / MODEL OUTPUTS
 # ================================================================
 
 BASELINE_ASPEK = {
@@ -784,21 +776,6 @@ def stat_card(label, value, note="", accent="blue", extra_class=""):
     """, unsafe_allow_html=True)
 
 
-def factor_card(name, value, accent="blue"):
-    pct = max(0, min(100, value / 5 * 100))
-    st.markdown(f"""
-    <div class="factor-card">
-        <div class="factor-head">
-            <div class="factor-name">{name}</div>
-            <div class="factor-value">{value:.2f}</div>
-        </div>
-        <div class="factor-bar">
-            <div class="factor-fill fill-{accent}" style="width:{pct:.1f}%"></div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-
 def plot_ate(df):
     df = df.sort_values("ATE", ascending=True)
     fig, ax = plt.subplots(figsize=(11, 6.3))
@@ -901,21 +878,8 @@ def plot_shap(df):
     return fig
 
 
-def initial_profile():
-    return {
-        "Self-Efficacy Akademik": 4.63,
-        "Keterlibatan Orang Tua": 4.35,
-        "Harapan Orang Tua": 3.45,
-        "Dukungan Sekolah": 4.60,
-        "Motivasi Belajar": 2.52,
-        "Kecemasan Akademik": 2.89,
-        "Fasilitas Sekolah": 4.88,
-        "Kemalasan Belajar": 1.49,
-    }
-
-
 # ================================================================
-# LOGIN
+# LOGIN PAGE
 # ================================================================
 
 def halaman_login():
@@ -1132,23 +1096,23 @@ if menu == "01 · Analisis Sebab-Akibat":
         </div>
         """, unsafe_allow_html=True)
 
-    a,b,c = st.columns(3)
+    a, b, c = st.columns(3)
     with a:
         stat_card("Nilai Akademik", f"{nilai_akademik:.2f}", "nilai rata-rata rapor", "blue")
     with b:
         stat_card("Selisih Baseline", f"{selisih_nilai:+.2f}", "poin dari rata-rata sekolah",
                   "mint" if selisih_nilai >= 0 else "coral")
     with c:
+        accent_kategori = 'mint' if kategori == 'Sangat Baik' else 'blue' if kategori == 'Baik' else 'yellow' if kategori == 'Cukup' else 'coral'
         st.markdown(f"""
         <div class="card stat-card">
-            <div class="topline {'mint' if kategori=='Sangat Baik' else 'blue' if kategori=='Baik' else 'yellow' if kategori=='Cukup' else 'coral'}"></div>
+            <div class="topline {accent_kategori}"></div>
             <div class="card-label">KATEGORI NILAI</div>
             <div class="card-value" style="font-size:1.55rem;color:{warna_kategori};">{simbol} {kategori}</div>
             <div class="card-note">klasifikasi berdasarkan rentang nilai</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # score band
     st.markdown("<div style='height:.9rem'></div>", unsafe_allow_html=True)
     score_pct = max(0, min(100, (nilai_akademik - 60) / 40 * 100))
     baseline_pct = max(0, min(100, (RATA_RATA_NILAI - 60) / 40 * 100))
@@ -1191,10 +1155,10 @@ if menu == "01 · Analisis Sebab-Akibat":
     positive = df_kontribusi[df_kontribusi["Kontribusi"] > 0].head(4)
     negative = df_kontribusi[df_kontribusi["Kontribusi"] < 0].sort_values("Kontribusi").head(4)
 
-    c1,c2 = st.columns([1.65,1])
+    c1, c2 = st.columns([1.65, 1])
 
     with c1:
-        fig, ax = plt.subplots(figsize=(10.5,6.2))
+        fig, ax = plt.subplots(figsize=(10.5, 6.2))
         fig.patch.set_alpha(0)
         ax.set_facecolor("none")
 
@@ -1206,31 +1170,31 @@ if menu == "01 · Analisis Sebab-Akibat":
             color=["#EF5B67" if x < 0 else "#18A77A" for x in vals],
             alpha=.9
         )
-        ax.axvline(0,color="#17233B",linewidth=1.2)
-        max_abs=max(abs(vals.min()),abs(vals.max()))
-        ax.set_xlim(vals.min()-max_abs*.2,vals.max()+max_abs*.2)
+        ax.axvline(0, color="#17233B", linewidth=1.2)
+        max_abs = max(abs(vals.min()), abs(vals.max()))
+        ax.set_xlim(vals.min() - max_abs * .2, vals.max() + max_abs * .2)
 
-        for bar,val in zip(bars,vals):
-            off=max_abs*.035
+        for bar, val in zip(bars, vals):
+            off = max_abs * .035
             ax.text(
-                val+(off if val>=0 else -off),
-                bar.get_y()+bar.get_height()/2,
+                val + (off if val >= 0 else -off),
+                bar.get_y() + bar.get_height() / 2,
                 f"{val:+.2f}",
                 va="center",
-                ha="left" if val>=0 else "right",
+                ha="left" if val >= 0 else "right",
                 fontsize=9,
                 fontweight="bold"
             )
         ax.set_yticks(y)
-        ax.set_yticklabels(d["Aspek"],fontsize=8.5)
-        ax.tick_params(axis="y",length=0,pad=7)
-        ax.tick_params(axis="x",labelsize=8,colors="#667085")
-        ax.grid(axis="x",alpha=.12)
+        ax.set_yticklabels(d["Aspek"], fontsize=8.5)
+        ax.tick_params(axis="y", length=0, pad=7)
+        ax.tick_params(axis="x", labelsize=8, colors="#667085")
+        ax.grid(axis="x", alpha=.12)
         ax.set_axisbelow(True)
-        for spine in ["top","right","left"]:
+        for spine in ["top", "right", "left"]:
             ax.spines[spine].set_visible(False)
         ax.spines["bottom"].set_color("#D8E0EB")
-        ax.set_xlabel("Kontribusi (poin nilai)",fontsize=9,fontweight="bold",color="#667085")
+        ax.set_xlabel("Kontribusi (poin nilai)", fontsize=9, fontweight="bold", color="#667085")
         plt.tight_layout()
         st.pyplot(fig, use_container_width=True)
         plt.close(fig)
@@ -1241,7 +1205,7 @@ if menu == "01 · Analisis Sebab-Akibat":
             <div class="card-label">TOP POSITIVE INFLUENCES</div>
         """, unsafe_allow_html=True)
         if len(positive):
-            for i,(_,row) in enumerate(positive.iterrows(),1):
+            for i, (_, row) in enumerate(positive.iterrows(), 1):
                 st.markdown(f"""
                 <div class="rank-row">
                     <div class="rank-num">{i:02d}</div>
@@ -1263,7 +1227,7 @@ if menu == "01 · Analisis Sebab-Akibat":
             <div class="card-label">TOP NEGATIVE INFLUENCES</div>
         """, unsafe_allow_html=True)
         if len(negative):
-            for i,(_,row) in enumerate(negative.iterrows(),1):
+            for i, (_, row) in enumerate(negative.iterrows(), 1):
                 st.markdown(f"""
                 <div class="rank-row">
                     <div class="rank-num" style="background:#FFF0F2;color:#EF5B67;">{i:02d}</div>
@@ -1284,10 +1248,10 @@ if menu == "01 · Analisis Sebab-Akibat":
     tabel["Status"] = tabel["Selisih"].apply(
         lambda x: "▲ Di atas" if x > 0 else "▼ Di bawah" if x < 0 else "● Sama"
     )
-    tabel = tabel[["Aspek","Nilai_Siswa","Baseline","Selisih","Kontribusi","Status"]]
+    tabel = tabel[["Aspek", "Nilai_Siswa", "Baseline", "Selisih", "Kontribusi", "Status"]]
     tabel.columns = [
-        "Aspek","Nilai Siswa","Baseline","Selisih",
-        "Kontribusi (poin)","Status"
+        "Aspek", "Nilai Siswa", "Baseline", "Selisih",
+        "Kontribusi (poin)", "Status"
     ]
     tabel = tabel.sort_values("Kontribusi (poin)", key=abs, ascending=False)
 
@@ -1305,7 +1269,7 @@ if menu == "01 · Analisis Sebab-Akibat":
 
     section_header("06", "Rekomendasi Personal", "TITIK INTERVENSI YANG PERLU DIPERHATIKAN")
 
-    col1,col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
     with col1:
         st.markdown("""
@@ -1318,8 +1282,8 @@ if menu == "01 · Analisis Sebab-Akibat":
         </div>
         """, unsafe_allow_html=True)
 
-        faktor_positif = df_kontribusi[df_kontribusi["Kontribusi"] > .3].sort_values("Kontribusi",ascending=False)
-        for _,row in faktor_positif.iterrows():
+        faktor_positif = df_kontribusi[df_kontribusi["Kontribusi"] > .3].sort_values("Kontribusi", ascending=False)
+        for _, row in faktor_positif.iterrows():
             st.markdown(f"""
             <div class="factor-card">
                 <div class="factor-head">
@@ -1344,7 +1308,7 @@ if menu == "01 · Analisis Sebab-Akibat":
         """, unsafe_allow_html=True)
 
         faktor_negatif = df_kontribusi[df_kontribusi["Kontribusi"] < -.3].sort_values("Kontribusi")
-        for _,row in faktor_negatif.iterrows():
+        for _, row in faktor_negatif.iterrows():
             st.markdown(f"""
             <div class="factor-card">
                 <div class="factor-head">
@@ -1425,15 +1389,19 @@ elif menu == "02 · Database Siswa":
     else:
         df_db = pd.DataFrame(st.session_state.database_siswa)
 
-        a,b,c,d = st.columns(4)
-        with a: stat_card("Total Siswa", len(df_db), "siswa terarsip", "blue")
-        with b: stat_card("Rata-rata", f"{df_db['Nilai Akademik'].mean():.2f}", "nilai seluruh siswa", "mint")
-        with c: stat_card("Tertinggi", f"{df_db['Nilai Akademik'].max():.2f}", "nilai maksimum", "yellow")
-        with d: stat_card("Terendah", f"{df_db['Nilai Akademik'].min():.2f}", "nilai minimum", "coral")
+        a, b, c, d = st.columns(4)
+        with a:
+            stat_card("Total Siswa", len(df_db), "siswa terarsip", "blue")
+        with b:
+            stat_card("Rata-rata", f"{df_db['Nilai Akademik'].mean():.2f}", "nilai seluruh siswa", "mint")
+        with c:
+            stat_card("Tertinggi", f"{df_db['Nilai Akademik'].max():.2f}", "nilai maksimum", "yellow")
+        with d:
+            stat_card("Terendah", f"{df_db['Nilai Akademik'].min():.2f}", "nilai minimum", "coral")
 
         section_header("01", "Daftar Siswa", "DATA TERARSIP")
 
-        c1,c2 = st.columns([1,2])
+        c1, c2 = st.columns([1, 2])
         with c1:
             filter_kelas = st.selectbox(
                 "Filter Kelas",
@@ -1456,7 +1424,7 @@ elif menu == "02 · Database Siswa":
         )
         st.dataframe(df_tampil, use_container_width=True, hide_index=True)
 
-        c1,c2 = st.columns(2)
+        c1, c2 = st.columns(2)
         with c1:
             csv = df_tampil.to_csv(index=False).encode("utf-8")
             st.download_button(
@@ -1484,15 +1452,15 @@ elif menu == "03 · Analisis Kausal":
     )
 
     df_ate = pd.DataFrame(
-        [{"Konstruk": k, "ATE": v} for k,v in ATE_DATA.items()]
+        [{"Konstruk": k, "ATE": v} for k, v in ATE_DATA.items()]
     )
 
-    positive_ate = df_ate[df_ate["ATE"] > 0].sort_values("ATE",ascending=False)
+    positive_ate = df_ate[df_ate["ATE"] > 0].sort_values("ATE", ascending=False)
     negative_ate = df_ate[df_ate["ATE"] < 0].sort_values("ATE")
 
     section_header("01", "Gambaran Efek", "AVERAGE TREATMENT EFFECT")
 
-    a,b,c = st.columns(3)
+    a, b, c = st.columns(3)
     with a:
         top_pos = positive_ate.iloc[0]
         stat_card("Efek positif terbesar", f"+{top_pos['ATE']:.2f}", top_pos["Konstruk"], "mint")
@@ -1511,7 +1479,7 @@ elif menu == "03 · Analisis Kausal":
 
     section_header("02", "Interpretasi", "ARAH EFEK KAUSAL")
 
-    c1,c2 = st.columns(2)
+    c1, c2 = st.columns(2)
     with c1:
         st.markdown("""
         <div class="info-box mint">
@@ -1535,7 +1503,7 @@ elif menu == "03 · Analisis Kausal":
 
     st.markdown("<div style='height:.8rem'></div>", unsafe_allow_html=True)
     st.dataframe(
-        df_ate.sort_values("ATE",ascending=False),
+        df_ate.sort_values("ATE", ascending=False),
         use_container_width=True,
         hide_index=True,
         column_config={
@@ -1556,15 +1524,15 @@ elif menu == "04 · Analisis SHAP":
     )
 
     df_shap = pd.DataFrame(
-        [{"Konstruk": k, "Mean_SHAP": v} for k,v in SHAP_DATA.items()]
+        [{"Konstruk": k, "Mean_SHAP": v} for k, v in SHAP_DATA.items()]
     )
 
-    top = df_shap.sort_values("Mean_SHAP",ascending=False).iloc[0]
-    second = df_shap.sort_values("Mean_SHAP",ascending=False).iloc[1]
+    top = df_shap.sort_values("Mean_SHAP", ascending=False).iloc[0]
+    second = df_shap.sort_values("Mean_SHAP", ascending=False).iloc[1]
 
     section_header("01", "Feature Importance", "MEAN ABSOLUTE SHAP VALUE")
 
-    a,b,c = st.columns(3)
+    a, b, c = st.columns(3)
     with a:
         stat_card("Kontributor #1", f"{top['Mean_SHAP']:.4f}", top["Konstruk"], "blue")
     with b:
@@ -1581,8 +1549,8 @@ elif menu == "04 · Analisis SHAP":
 
     section_header("02", "Ranking Kontribusi", "FAKTOR PALING RELEVAN BAGI MODEL")
 
-    ranked = df_shap.sort_values("Mean_SHAP",ascending=False).reset_index(drop=True)
-    for i,row in ranked.iterrows():
+    ranked = df_shap.sort_values("Mean_SHAP", ascending=False).reset_index(drop=True)
+    for i, row in ranked.iterrows():
         pct = row["Mean_SHAP"] / ranked["Mean_SHAP"].max() * 100
         st.markdown(f"""
         <div class="factor-card">
@@ -1600,7 +1568,7 @@ elif menu == "04 · Analisis SHAP":
         """, unsafe_allow_html=True)
 
     st.dataframe(
-        df_shap.sort_values("Mean_SHAP",ascending=False),
+        df_shap.sort_values("Mean_SHAP", ascending=False),
         use_container_width=True,
         hide_index=True,
         column_config={
@@ -1622,7 +1590,7 @@ else:
 
     section_header("01", "Prioritas Intervensi", "FAKTOR DENGAN SINYAL PALING KUAT")
 
-    col1,col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
     with col1:
         st.markdown("""
@@ -1642,7 +1610,7 @@ else:
              "Dorong kepercayaan diri akademik melalui mentoring dan pengalaman belajar yang bertahap."),
         ]
 
-        for i,(name,ate,shap,desc) in enumerate(positive_priority,1):
+        for i, (name, ate, shap, desc) in enumerate(positive_priority, 1):
             st.markdown(f"""
             <div style="padding:1rem 0;border-bottom:1px solid #CBEBDD;">
                 <div style="display:flex;justify-content:space-between;gap:.7rem;">
@@ -1680,7 +1648,7 @@ else:
              "Identifikasi hambatan belajar dan gunakan pendekatan pembelajaran yang lebih relevan bagi siswa."),
         ]
 
-        for i,(name,ate,shap,desc) in enumerate(negative_priority,1):
+        for i, (name, ate, shap, desc) in enumerate(negative_priority, 1):
             st.markdown(f"""
             <div style="padding:1rem 0;border-bottom:1px solid #F1DF96;">
                 <div style="display:flex;justify-content:space-between;gap:.7rem;">
@@ -1702,7 +1670,7 @@ else:
 
     section_header("02", "Cara Membaca Dashboard", "CAUSAL + PREDICTIVE + EXPLAINABLE")
 
-    a,b,c = st.columns(3)
+    a, b, c = st.columns(3)
     with a:
         st.markdown("""
         <div class="card card-blue">
@@ -1750,9 +1718,3 @@ else:
         </div>
     </div>
     """, unsafe_allow_html=True)
-'''
-
-out = Path("/mnt/data/dashboard_prestasi_akademik_modern.py")
-out.write_text(code, encoding="utf-8")
-print(f"Created: {out}")
-print(f"Lines: {len(code.splitlines())}")
