@@ -1064,7 +1064,7 @@ if not st.session_state.logged_in:
 if st.session_state.current_page == "home":
     st.markdown("""
     <div class="menu-hero">
-        <div class="menu-hero-kicker">◆ DASHBOARD ANALITIK AKADEMIK</div>
+        <div class="menu-hero-kicker">◆ ANALISIS PRESTASI SISWA</div>
         <h1 class="menu-hero-title">
             Setiap angka punya cerita.<br>
             <em>Pahami apa yang membentuknya.</em>
