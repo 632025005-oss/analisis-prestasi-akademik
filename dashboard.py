@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # ================================================================
-# VISUAL SYSTEM — EYE-CATCHING EDITION
+# VISUAL SYSTEM — CLEAN WHITE + ANIMATION
 # ================================================================
 
 st.markdown("""
@@ -22,7 +22,7 @@ st.markdown("""
 
 :root{
     --ink:#0F1B33; --muted:#5C6B85; --line:#E4EAF2;
-    --canvas:#EEF3FB; --surface:#FFFFFF;
+    --canvas:#FFFFFF; --surface:#FFFFFF;
     --blue:#2563EB; --blue-deep:#1E3A8A; --blue-soft:#EAF1FF;
     --violet:#7C5CFC; --violet-soft:#F1EDFF;
     --yellow:#F6C945; --yellow-deep:#B8860B; --yellow-soft:#FFF7D6;
@@ -35,14 +35,13 @@ st.markdown("""
 
 html, body, [class*="css"]{font-family:'DM Sans',sans-serif;color:var(--ink);}
 
-/* ===== APP BACKGROUND — GRADIENT MESH ===== */
+/* ===== APP BACKGROUND — PUTIH BERSIH + GLOW TIPIS ===== */
 .stApp{
     background:
-        radial-gradient(circle at 12% 8%, rgba(124,92,252,.18), transparent 40rem),
-        radial-gradient(circle at 88% 12%, rgba(37,99,235,.16), transparent 42rem),
-        radial-gradient(circle at 20% 85%, rgba(236,72,153,.12), transparent 40rem),
-        radial-gradient(circle at 82% 88%, rgba(16,185,129,.14), transparent 42rem),
-        linear-gradient(135deg,#F4F7FF 0%,#EEF3FB 40%,#F6EEFF 100%);
+        radial-gradient(circle at 100% 0%, rgba(37,99,235,.07), transparent 32rem),
+        radial-gradient(circle at 0% 100%, rgba(124,92,252,.06), transparent 32rem),
+        radial-gradient(circle at 0% 0%, rgba(236,72,153,.04), transparent 28rem),
+        #FFFFFF;
     background-attachment:fixed;
 }
 .main{background:transparent;}
@@ -50,16 +49,25 @@ html, body, [class*="css"]{font-family:'DM Sans',sans-serif;color:var(--ink);}
 #MainMenu, footer, header{visibility:hidden;}
 h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 
+/* ===== KEYFRAMES ===== */
 @keyframes riseIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
 @keyframes growBar{from{transform:scaleX(0);transform-origin:left;}to{transform:scaleX(1);transform-origin:left;}}
 @keyframes floatDot{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes softBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+@keyframes rotateSlow{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 @keyframes sparkle{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.35);}}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(124,92,252,.4);}50%{box-shadow:0 0 0 14px rgba(124,92,252,0);}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(124,92,252,.35);}50%{box-shadow:0 0 0 12px rgba(124,92,252,0);}}
+@keyframes gradientShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
 @keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
 
 .motion{animation:riseIn .5s ease both;}
+.motion-slide{animation:fadeSlideIn .55s ease both;}
+.motion-bounce{animation:softBounce 2.5s ease-in-out infinite;}
+.motion-rotate{animation:rotateSlow 30s linear infinite;}
+.motion-gradient{background-size:200% 200%;animation:gradientShift 6s ease-in-out infinite;}
 
-/* ============ LOGIN — VIBRANT ============ */
+/* ============ LOGIN PAGE ============ */
 .login-page-header{
     display:flex;justify-content:space-between;align-items:center;
     padding:1rem 2rem;
@@ -87,10 +95,8 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
     display:flex;justify-content:space-between;align-items:center;
     padding:.9rem 1.1rem;
     background:linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 100%);
-    border:1px solid #DCE4F2;
-    border-left:5px solid #2563EB;
-    border-radius:12px;
-    margin-bottom:2rem;
+    border:1px solid #DCE4F2;border-left:5px solid #2563EB;
+    border-radius:12px;margin-bottom:2rem;
     box-shadow:0 6px 18px rgba(37,99,235,.06);
 }
 .login-date{font-family:'Manrope',sans-serif;font-weight:800;font-size:.95rem;color:#0F1B33;}
@@ -186,17 +192,36 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 .siasat-alert-info-title{font-family:'Manrope';font-weight:800;font-size:.82rem;color:#1E40AF;}
 .siasat-alert-info-body{font-size:.75rem;color:#1E3A8A;margin-top:.25rem;}
 
-/* ============ HERO — MEGA GRADIENT ============ */
-.menu-hero{
+/* ============ HERO DASHBOARD ============ */
+.dashboard-hero{
     position:relative;overflow:hidden;
     background:
-        radial-gradient(circle at 15% 20%, rgba(124,92,252,.5), transparent 30rem),
-        radial-gradient(circle at 85% 30%, rgba(37,99,235,.45), transparent 32rem),
-        radial-gradient(circle at 50% 100%, rgba(236,72,153,.35), transparent 30rem),
-        linear-gradient(135deg,#0B1730 0%,#16294A 45%,#1E3A8A 100%);
+        radial-gradient(circle at 90% 10%, rgba(124,92,252,.12), transparent 25rem),
+        linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 50%,#EEF3FF 100%);
+    border:1px solid #DCE4F2;border-radius:28px;padding:2.3rem 2.5rem;
+    box-shadow:0 20px 55px rgba(30,50,90,.10);animation:riseIn .5s ease both;
+}
+.dashboard-hero:before{
+    content:"";position:absolute;width:240px;height:240px;
+    right:-90px;top:-100px;border:36px solid rgba(37,99,235,.09);border-radius:50%;
+}
+.dashboard-hero:after{
+    content:"";position:absolute;width:12px;height:12px;
+    right:150px;bottom:45px;background:#F6C945;border-radius:50%;
+    box-shadow:
+        44px -24px 0 #2563EB, 82px 10px 0 #10B981, 118px -32px 0 #7C5CFC,
+        152px 6px 0 #EC4899, 186px -20px 0 #06B6D4;
+    animation:floatDot 3s ease-in-out infinite;
+}
+
+/* ============ MENU HERO ============ */
+.menu-hero{
+    position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#0B1730 0%,#16294A 30%,#1E3A8A 60%,#7C5CFC 100%);
+    background-size:200% 200%;
     border-radius:32px;padding:3.5rem 3rem;color:#fff;margin-bottom:2.5rem;
-    box-shadow:0 30px 80px rgba(11,23,48,.45), 0 0 0 1px rgba(255,255,255,.06) inset;
-    animation:riseIn .5s ease both;
+    box-shadow:0 30px 80px rgba(11,23,48,.40), 0 0 0 1px rgba(255,255,255,.06) inset;
+    animation:riseIn .5s ease both, gradientShift 10s ease-in-out infinite;
 }
 .menu-hero:before{
     content:"";position:absolute;width:500px;height:500px;border-radius:50%;
@@ -221,9 +246,11 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
     letter-spacing:-3px;font-weight:800;margin:0;max-width:900px;
 }
 .menu-hero-title em{
-    background:linear-gradient(135deg,#F6C945 0%,#FFA94D 100%);
+    background:linear-gradient(135deg,#F6C945 0%,#FFA94D 50%,#F6C945 100%);
+    background-size:200% 200%;
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
     font-style:italic;font-family:'Manrope',serif;
+    animation:gradientShift 4s ease-in-out infinite;
 }
 .menu-hero-sub{color:#C6D1E5;font-size:1.05rem;line-height:1.6;max-width:680px;margin:1.2rem 0 0;}
 .menu-hero-meta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.8rem;position:relative;z-index:1;}
@@ -231,13 +258,16 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
     padding:.55rem .9rem;border-radius:999px;
     background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
     color:#F0F5FF;font-size:.68rem;font-weight:800;letter-spacing:.7px;
-    backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);transition:all .2s ease;
+}
+.menu-hero-meta span:hover{
+    background:rgba(255,255,255,.22);transform:translateY(-2px);
 }
 
-/* ============ MENU CARDS — GLASSMORPHISM ============ */
+/* ============ MENU CARDS ============ */
 .menu-card{
     position:relative;overflow:hidden;
-    background:linear-gradient(135deg, rgba(255,255,255,.98) 0%, rgba(248,251,255,.95) 100%);
+    background:linear-gradient(135deg, #FFFFFF 0%, #FBFDFF 100%);
     border:1px solid #DCE4F2;border-radius:24px;
     padding:1.75rem 1.6rem 1.6rem;text-decoration:none;color:inherit;
     transition:transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease, border-color .3s ease;
@@ -245,64 +275,33 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
     min-height:230px;display:flex;flex-direction:column;justify-content:space-between;
     animation:riseIn .55s ease both;
 }
-.menu-card:hover{transform:translateY(-8px);box-shadow:0 28px 65px rgba(30,50,90,.18);}
+.menu-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 28px 65px rgba(30,50,90,.18);
+    animation:softBounce 1.2s ease-in-out;
+}
 
-.menu-card.mc-blue{
-    background:linear-gradient(135deg,#FFFFFF 0%,#EAF1FF 100%);
-    border-color:#D4E0FF;
-}
-.menu-card.mc-blue:hover{
-    border-color:#2563EB;
-    box-shadow:0 28px 65px rgba(37,99,235,.28);
-}
-.menu-card.mc-yellow{
-    background:linear-gradient(135deg,#FFFFFF 0%,#FFF7D6 100%);
-    border-color:#F3DF8D;
-}
-.menu-card.mc-yellow:hover{
-    border-color:#F6C945;
-    box-shadow:0 28px 65px rgba(246,201,69,.32);
-}
-.menu-card.mc-mint{
-    background:linear-gradient(135deg,#FFFFFF 0%,#E8F8F1 100%);
-    border-color:#BCE8D7;
-}
-.menu-card.mc-mint:hover{
-    border-color:#10B981;
-    box-shadow:0 28px 65px rgba(16,185,129,.28);
-}
-.menu-card.mc-purple{
-    background:linear-gradient(135deg,#FFFFFF 0%,#F1EDFF 100%);
-    border-color:#DDD5FF;
-}
-.menu-card.mc-purple:hover{
-    border-color:#7C5CFC;
-    box-shadow:0 28px 65px rgba(124,92,252,.32);
-}
-.menu-card.mc-pink{
-    background:linear-gradient(135deg,#FFFFFF 0%,#FCE7F3 100%);
-    border-color:#F8C7DF;
-}
-.menu-card.mc-pink:hover{
-    border-color:#EC4899;
-    box-shadow:0 28px 65px rgba(236,72,153,.28);
-}
-.menu-card.mc-teal{
-    background:linear-gradient(135deg,#FFFFFF 0%,#CFFAFE 100%);
-    border-color:#A5E8EF;
-}
-.menu-card.mc-teal:hover{
-    border-color:#06B6D4;
-    box-shadow:0 28px 65px rgba(6,182,212,.28);
-}
+.menu-card.mc-blue{background:linear-gradient(135deg,#FFFFFF 0%,#EAF1FF 100%);border-color:#D4E0FF;}
+.menu-card.mc-blue:hover{border-color:#2563EB;box-shadow:0 28px 65px rgba(37,99,235,.28);}
+.menu-card.mc-yellow{background:linear-gradient(135deg,#FFFFFF 0%,#FFF7D6 100%);border-color:#F3DF8D;}
+.menu-card.mc-yellow:hover{border-color:#F6C945;box-shadow:0 28px 65px rgba(246,201,69,.32);}
+.menu-card.mc-mint{background:linear-gradient(135deg,#FFFFFF 0%,#E8F8F1 100%);border-color:#BCE8D7;}
+.menu-card.mc-mint:hover{border-color:#10B981;box-shadow:0 28px 65px rgba(16,185,129,.28);}
+.menu-card.mc-purple{background:linear-gradient(135deg,#FFFFFF 0%,#F1EDFF 100%);border-color:#DDD5FF;}
+.menu-card.mc-purple:hover{border-color:#7C5CFC;box-shadow:0 28px 65px rgba(124,92,252,.32);}
+.menu-card.mc-pink{background:linear-gradient(135deg,#FFFFFF 0%,#FCE7F3 100%);border-color:#F8C7DF;}
+.menu-card.mc-pink:hover{border-color:#EC4899;box-shadow:0 28px 65px rgba(236,72,153,.28);}
+.menu-card.mc-teal{background:linear-gradient(135deg,#FFFFFF 0%,#CFFAFE 100%);border-color:#A5E8EF;}
+.menu-card.mc-teal:hover{border-color:#06B6D4;box-shadow:0 28px 65px rgba(6,182,212,.28);}
 
 .menu-card-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:.68rem;font-weight:800;
     letter-spacing:1.6px;color:var(--muted);text-transform:uppercase;}
 .menu-card-icon{
     width:56px;height:56px;border-radius:16px;display:flex;align-items:center;
     justify-content:center;font-size:1.7rem;margin:.9rem 0;
-    box-shadow:0 6px 14px rgba(0,0,0,.06);
+    box-shadow:0 6px 14px rgba(0,0,0,.06);transition:transform .3s ease;
 }
+.menu-card:hover .menu-card-icon{transform:scale(1.08) rotate(-4deg);}
 .menu-card.mc-blue .menu-card-icon{background:linear-gradient(135deg,#DBE7FF 0%,#B8CEFF 100%);color:#2563EB;}
 .menu-card.mc-yellow .menu-card-icon{background:linear-gradient(135deg,#FFF1B8 0%,#FFE37A 100%);color:#936F00;}
 .menu-card.mc-mint .menu-card-icon{background:linear-gradient(135deg,#C9F2E0 0%,#9BE5C8 100%);color:#087453;}
@@ -339,9 +338,11 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 .section-number{
     display:inline-flex;width:42px;height:42px;align-items:center;justify-content:center;
     border-radius:14px;
-    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%);
+    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 50%,#2563EB 100%);
+    background-size:200% 200%;
     color:#fff;font-size:.8rem;font-weight:800;
     box-shadow:0 10px 24px rgba(37,99,235,.35), 0 0 0 4px rgba(124,92,252,.08);
+    animation:gradientShift 4s ease-in-out infinite;
 }
 .section-title{font-size:1.45rem;letter-spacing:-.7px;margin:0;}
 .section-sub{color:var(--muted);font-size:.72rem;text-transform:uppercase;
@@ -383,46 +384,26 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
     content:"";position:absolute;width:90px;height:90px;border-radius:50%;
     right:-35px;bottom:-35px;background:radial-gradient(circle,rgba(37,99,235,.15),transparent 70%);
 }
-.stat-card .topline{width:40px;height:5px;border-radius:99px;margin-bottom:.85rem;}
-.topline.blue{background:linear-gradient(90deg,#2563EB,#7C5CFC);}
-.topline.yellow{background:linear-gradient(90deg,#F6C945,#FFA94D);}
-.topline.mint{background:linear-gradient(90deg,#10B981,#06B6D4);}
-.topline.coral{background:linear-gradient(90deg,#EF5B67,#EC4899);}
-.topline.purple{background:linear-gradient(90deg,#7C5CFC,#EC4899);}
-
-/* ============ HERO DASHBOARD ============ */
-.dashboard-hero{
-    position:relative;overflow:hidden;
-    background:
-        radial-gradient(circle at 90% 10%, rgba(124,92,252,.12), transparent 25rem),
-        linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 50%,#EEF3FF 100%);
-    border:1px solid #DCE4F2;border-radius:28px;padding:2.3rem 2.5rem;
-    box-shadow:0 20px 55px rgba(30,50,90,.10);animation:riseIn .5s ease both;
-}
-.dashboard-hero:before{
-    content:"";position:absolute;width:240px;height:240px;
-    right:-90px;top:-100px;border:36px solid rgba(37,99,235,.09);border-radius:50%;
-}
-.dashboard-hero:after{
-    content:"";position:absolute;width:12px;height:12px;
-    right:150px;bottom:45px;background:#F6C945;border-radius:50%;
-    box-shadow:
-        44px -24px 0 #2563EB, 82px 10px 0 #10B981, 118px -32px 0 #7C5CFC,
-        152px 6px 0 #EC4899, 186px -20px 0 #06B6D4;
-    animation:floatDot 3s ease-in-out infinite;
-}
+.stat-card .topline{width:40px;height:5px;border-radius:99px;margin-bottom:.85rem;background-size:200% 200%;}
+.topline.blue{background:linear-gradient(90deg,#2563EB,#7C5CFC,#2563EB);animation:gradientShift 4s ease-in-out infinite;}
+.topline.yellow{background:linear-gradient(90deg,#F6C945,#FFA94D,#F6C945);animation:gradientShift 4s ease-in-out infinite;}
+.topline.mint{background:linear-gradient(90deg,#10B981,#06B6D4,#10B981);animation:gradientShift 4s ease-in-out infinite;}
+.topline.coral{background:linear-gradient(90deg,#EF5B67,#EC4899,#EF5B67);animation:gradientShift 4s ease-in-out infinite;}
+.topline.purple{background:linear-gradient(90deg,#7C5CFC,#EC4899,#7C5CFC);animation:gradientShift 4s ease-in-out infinite;}
 
 .eyebrow{display:inline-flex;align-items:center;gap:8px;
     font-size:.68rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
     color:var(--blue);margin-bottom:.7rem;}
 .eyebrow-dot{width:8px;height:8px;background:var(--yellow);border-radius:50%;display:inline-block;
-    animation:sparkle 2s ease-in-out infinite;}
+    animation:sparkle 2s ease-in-out infinite, rotateSlow 20s linear infinite;}
 
 .hero-title{font-family:'Plus Jakarta Sans',sans-serif;
     font-size:clamp(2.15rem,4vw,3.8rem);line-height:1.02;letter-spacing:-2.4px;margin:0;max-width:850px;}
 .hero-title .accent{
     background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 50%,#EC4899 100%);
+    background-size:200% 200%;
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    animation:gradientShift 6s ease-in-out infinite;
 }
 .hero-sub{color:var(--muted);font-size:.98rem;line-height:1.65;max-width:790px;margin:.9rem 0 0;}
 .hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.25rem;}
@@ -444,9 +425,11 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 .profile-avatar{
     width:48px;height:48px;border-radius:15px;display:flex;align-items:center;
     justify-content:center;
-    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%);
+    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 50%,#EC4899 100%);
+    background-size:200% 200%;
     color:#fff;font-weight:800;font-size:1rem;
     box-shadow:0 8px 18px rgba(37,99,235,.3);
+    animation:gradientShift 6s ease-in-out infinite;
 }
 .profile-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.05rem;}
 .profile-meta{color:var(--muted);font-size:.72rem;margin-top:.2rem;}
@@ -535,8 +518,10 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 }
 button[kind="primary"]{
     background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%) !important;
+    background-size:200% 200% !important;
     border-color:#2563EB !important;color:#fff !important;
     box-shadow:0 8px 20px rgba(37,99,235,.3) !important;
+    animation:gradientShift 5s ease-in-out infinite;
 }
 button[kind="primary"]:hover{
     box-shadow:0 12px 30px rgba(37,99,235,.45) !important;
@@ -783,6 +768,40 @@ def kategori_nilai(nilai):
     return "Perlu Perhatian", "#EF5B67", "▼"
 
 
+def terjemah_ate(nilai):
+    """Terjemahkan nilai ATE ke bahasa awam untuk guru non-teknis."""
+    if nilai > 3:
+        return "🔥 Sangat kuat MENINGKATKAN nilai", "#10B981"
+    elif nilai > 2:
+        return "⬆️ Kuat meningkatkan nilai", "#10B981"
+    elif nilai > 1:
+        return "↗️ Sedang meningkatkan nilai", "#10B981"
+    elif nilai > 0.5:
+        return "↑️ Sedikit meningkatkan nilai", "#10B981"
+    elif nilai >= -0.5:
+        return "➖ Hampir tidak berpengaruh", "#5C6B85"
+    elif nilai >= -1:
+        return "↓️ Sedikit menurunkan nilai", "#EF5B67"
+    elif nilai >= -2:
+        return "↘️ Sedang menurunkan nilai", "#EF5B67"
+    elif nilai >= -3:
+        return "⬇️ Kuat menurunkan nilai", "#EF5B67"
+    else:
+        return "🚨 Sangat kuat MENURUNKAN nilai", "#EF5B67"
+
+
+def terjemah_shap(nilai):
+    """Terjemahkan nilai SHAP ke bahasa awam."""
+    if nilai > 0.7:
+        return "⭐⭐⭐ Sangat menentukan prediksi"
+    elif nilai > 0.4:
+        return "⭐⭐ Cukup menentukan prediksi"
+    elif nilai > 0.15:
+        return "⭐ Kurang menentukan prediksi"
+    else:
+        return "◦ Hampir tidak menentukan"
+
+
 def goto_page(page):
     st.session_state.current_page = page
     st.session_state.last_saved = None
@@ -881,10 +900,12 @@ def plot_pengaruh(df):
     pad = max_abs * .15
     ax.set_xlim(vals.min() - pad, vals.max() + pad)
     for bar, val in zip(bars, vals):
-        offset = .07 if val >= 0 else -.07
+        offset = max_abs * .04 if val >= 0 else -max_abs * .04
         ha = "left" if val >= 0 else "right"
-        ax.text(val + offset, bar.get_y() + bar.get_height()/2, f"{val:+.2f}",
-                va="center", ha=ha, fontsize=9.5, fontweight="bold")
+        label = f"{val:+.2f} poin"
+        ax.text(val + offset, bar.get_y() + bar.get_height()/2, label,
+                va="center", ha=ha, fontsize=9.5, fontweight="bold",
+                color="#10B981" if val >= 0 else "#EF5B67")
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=9)
     ax.tick_params(axis="y", length=0, pad=8)
@@ -894,8 +915,8 @@ def plot_pengaruh(df):
     for s in ["top", "right", "left"]:
         ax.spines[s].set_visible(False)
     ax.spines["bottom"].set_color("#D8E0EB")
-    ax.set_xlabel("Kekuatan Pengaruh (poin nilai)", fontsize=9,
-                  fontweight="bold", color="#5C6B85", labelpad=10)
+    ax.set_xlabel("← MENURUNKAN nilai    |    MENINGKATKAN nilai →",
+                  fontsize=10, fontweight="bold", color="#5C6B85", labelpad=12)
     plt.tight_layout()
     return fig
 
@@ -922,8 +943,8 @@ def plot_kepentingan(df):
     for s in ["top", "right", "left"]:
         ax.spines[s].set_visible(False)
     ax.spines["bottom"].set_color("#D8E0EB")
-    ax.set_xlabel("Tingkat Kepentingan Faktor", fontsize=9,
-                  fontweight="bold", color="#5C6B85", labelpad=10)
+    ax.set_xlabel("Semakin panjang → semakin penting untuk prediksi",
+                  fontsize=10, fontweight="bold", color="#5C6B85", labelpad=12)
     plt.tight_layout()
     return fig
 
@@ -1430,7 +1451,8 @@ elif st.session_state.current_page == "analisis":
             ax.text(val + (off if val >= 0 else -off),
                     bar.get_y()+bar.get_height()/2, f"{val:+.2f}",
                     va="center", ha="left" if val>=0 else "right",
-                    fontsize=9, fontweight="bold")
+                    fontsize=9, fontweight="bold",
+                    color="#10B981" if val >= 0 else "#EF5B67")
         ax.set_yticks(y)
         ax.set_yticklabels(d["Aspek"], fontsize=8.5)
         ax.tick_params(axis="y", length=0, pad=7)
@@ -1440,7 +1462,8 @@ elif st.session_state.current_page == "analisis":
         for s in ["top","right","left"]:
             ax.spines[s].set_visible(False)
         ax.spines["bottom"].set_color("#D8E0EB")
-        ax.set_xlabel("Pengaruh terhadap nilai (poin)", fontsize=9, fontweight="bold", color="#5C6B85")
+        ax.set_xlabel("← MENURUNKAN nilai    |    MENINGKATKAN nilai →",
+                      fontsize=10, fontweight="bold", color="#5C6B85", labelpad=10)
         plt.tight_layout()
         st.pyplot(fig, use_container_width=True)
         plt.close(fig)
@@ -1629,12 +1652,14 @@ elif st.session_state.current_page == "kausal":
     a, b, c = st.columns(3)
     with a:
         top_pos = positive_ate.iloc[0]
-        stat_card("Pendorong terbesar", f"+{top_pos['Pengaruh']:.2f}", top_pos["Faktor"], "mint")
+        stat_card("Paling MENINGKATKAN nilai", top_pos["Faktor"],
+                  f"⬆️ Kuat mendorong prestasi (skor: +{top_pos['Pengaruh']:.2f})", "mint")
     with b:
         top_neg = negative_ate.iloc[0]
-        stat_card("Penghambat terbesar", f"{top_neg['Pengaruh']:.2f}", top_neg["Faktor"], "coral")
+        stat_card("Paling MENURUNKAN nilai", top_neg["Faktor"],
+                  f"⬇️ Kuat menekan prestasi (skor: {top_neg['Pengaruh']:.2f})", "coral")
     with c:
-        stat_card("Jumlah faktor", "8", "variabel dianalisis", "blue")
+        stat_card("Jumlah faktor", "8", "variabel yang dianalisis", "blue")
 
     st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
     st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -1649,41 +1674,59 @@ elif st.session_state.current_page == "kausal":
     with c1:
         st.markdown("""
         <div class="info-box mint">
-            <div class="info-title">🟢 Faktor Pendorong</div>
+            <div class="info-title">🟢 Faktor Pendorong Nilai</div>
             <div class="info-text">
-                Faktor yang <b>meningkatkan</b> prestasi siswa.
-                Semakin panjang batangnya, semakin besar pengaruh positifnya.
+                Faktor-faktor ini <b>membantu menaikkan nilai siswa</b>.
+                Semakin hijau & semakin panjang batangnya di grafik, semakin besar bantuannya.
+                <br><br>
+                💡 <b>Contoh:</b> Fasilitas Sekolah yang bagus cenderung <b>menaikkan</b> nilai siswa.
             </div>
         </div>
         """, unsafe_allow_html=True)
     with c2:
         st.markdown("""
         <div class="info-box coral">
-            <div class="info-title">🔴 Faktor Penghambat</div>
+            <div class="info-title">🔴 Faktor Penghambat Nilai</div>
             <div class="info-text">
-                Faktor yang justru <b>menurunkan</b> prestasi siswa.
-                Semakin panjang batangnya, semakin besar pengaruh negatifnya.
+                Faktor-faktor ini <b>menekan / menghambat nilai siswa</b>.
+                Semakin merah & semakin panjang batangnya, semakin besar hambatannya.
+                <br><br>
+                💡 <b>Contoh:</b> Dukungan sekolah yang <b>terlalu berlebihan</b> justru bisa membuat
+                siswa kurang mandiri, sehingga nilainya tidak berkembang.
             </div>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown("<div style='height:.8rem'></div>", unsafe_allow_html=True)
     tabel_ate = df_ate.copy()
-    tabel_ate["Arah"] = tabel_ate["Pengaruh"].apply(lambda x: "🟢 Meningkatkan" if x>0 else "🔴 Menurunkan")
+    tabel_ate["Penjelasan"] = tabel_ate["Pengaruh"].apply(lambda x: terjemah_ate(x)[0])
+    tabel_ate["Arah"] = tabel_ate["Pengaruh"].apply(
+        lambda x: "🟢 MENINGKATKAN" if x > 0 else "🔴 MENURUNKAN" if x < 0 else "➖ NETRAL"
+    )
     tabel_ate = tabel_ate.sort_values("Pengaruh", ascending=False)
-    tabel_ate.columns = ["Faktor", "Kekuatan Pengaruh", "Arah"]
+    tabel_ate = tabel_ate[["Faktor", "Penjelasan", "Arah", "Pengaruh"]]
+    tabel_ate.columns = ["Faktor", "Artinya untuk Nilai Siswa", "Arah", "Skor Teknis (ATE)"]
     st.dataframe(tabel_ate, use_container_width=True, hide_index=True,
-                 column_config={"Kekuatan Pengaruh": st.column_config.NumberColumn(format="%+.4f")})
+                 column_config={"Skor Teknis (ATE)": st.column_config.NumberColumn(format="%+.4f")})
 
-    st.markdown("""
-    <div class="info-box blue" style="margin-top:1rem;">
-        <div class="info-title">📌 Catatan Teknis</div>
-        <div class="info-text">
-            Nilai ditampilkan dalam skala <b>Average Treatment Effect (ATE)</b> dari analisis
-            Structural Causal Model. Nilai positif menandakan efek meningkatkan, nilai negatif menandakan efek menurunkan.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.expander("📌 Catatan Teknis (untuk peneliti / guru yang penasaran)"):
+        st.markdown("""
+        **Apa itu skor yang ditampilkan?**
+
+        Skor di atas dihitung menggunakan metode **Average Treatment Effect (ATE)**
+        dari **Structural Causal Model (SCM)** — sebuah teknik statistik untuk mengukur
+        sebab-akibat, bukan sekadar korelasi.
+
+        **Cara membaca angka:**
+        - **Angka positif (+)**: faktor tersebut **menaikkan** nilai siswa. Contoh: `+2.43`
+          artinya rata-rata menaikkan nilai sebesar **2,43 poin**.
+        - **Angka negatif (−)**: faktor tersebut justru **menurunkan** nilai siswa.
+          Contoh: `−3.88` artinya rata-rata **menurunkan** nilai sebesar **3,88 poin**.
+        - **Mendekati 0**: faktor tersebut hampir tidak berpengaruh.
+
+        **Untuk guru:** cukup lihat label **"Artinya untuk Nilai Siswa"** di tabel —
+        itu versi bahasa sederhananya.
+        """)
 
 # ================================================================
 # MODUL 04 — TINGKAT KEPENTINGAN
@@ -1707,8 +1750,8 @@ elif st.session_state.current_page == "kepentingan":
     section_header("01", "Faktor Paling Penting", "HASIL ANALISIS MODEL")
 
     a, b, c = st.columns(3)
-    with a: stat_card("Faktor #1", top["Faktor"], f"skor {top['Kepentingan']:.4f}", "blue")
-    with b: stat_card("Faktor #2", second["Faktor"], f"skor {second['Kepentingan']:.4f}", "purple")
+    with a: stat_card("Faktor #1", top["Faktor"], f"⭐⭐⭐ Sangat menentukan prediksi", "blue")
+    with b: stat_card("Faktor #2", second["Faktor"], f"⭐⭐ Cukup menentukan prediksi", "purple")
     with c: stat_card("Jumlah faktor", "8", "faktor dianalisis", "yellow")
 
     st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
@@ -1723,12 +1766,16 @@ elif st.session_state.current_page == "kepentingan":
     ranked = df_shap.sort_values("Kepentingan", ascending=False).reset_index(drop=True)
     for i, row in ranked.iterrows():
         pct = row["Kepentingan"] / ranked["Kepentingan"].max() * 100
+        label_awam = terjemah_shap(row["Kepentingan"])
         st.markdown(f"""
         <div class="factor-card">
             <div class="factor-head">
                 <div style="display:flex;align-items:center;gap:.7rem;">
                     <div class="rank-num">{i+1:02d}</div>
-                    <div class="factor-name">{row['Faktor']}</div>
+                    <div>
+                        <div class="factor-name">{row['Faktor']}</div>
+                        <div style="font-size:.7rem;color:#5C6B85;margin-top:.2rem;">{label_awam}</div>
+                    </div>
                 </div>
                 <div class="factor-value" style="color:#2563EB;">{row['Kepentingan']:.4f}</div>
             </div>
@@ -1738,15 +1785,26 @@ elif st.session_state.current_page == "kepentingan":
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="info-box blue" style="margin-top:1rem;">
-        <div class="info-title">📌 Catatan Teknis</div>
-        <div class="info-text">
-            Nilai ditampilkan dalam skala <b>Mean |SHAP Value|</b>.
-            Semakin tinggi skor, semakin besar kontribusi faktor tersebut terhadap prediksi model.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.expander("📌 Catatan Teknis (untuk peneliti / guru yang penasaran)"):
+        st.markdown("""
+        **Apa arti tingkat kepentingan?**
+
+        Skor ini dihitung menggunakan metode **Mean |SHAP Value|** — sebuah cara
+        untuk mengukur **seberapa sering faktor tertentu dipakai model** untuk
+        memprediksi nilai siswa.
+
+        **Cara membaca:**
+        - ⭐⭐⭐ **Sangat menentukan** — faktor ini paling sering jadi penentu prediksi
+        - ⭐⭐ **Cukup menentukan** — berpengaruh tapi bukan yang utama
+        - ⭐ **Kurang menentukan** — kontribusinya kecil
+        - ◦ **Hampir tidak menentukan** — model jarang pakai faktor ini
+
+        **Untuk guru:** lihat label bintang di tiap kartu — itu versi bahasa sederhananya.
+
+        **Beda dengan Modul 03?**
+        - **Modul 03** → menjawab *"faktor apa yang MENYEBABKAN nilai naik/turun?"*
+        - **Modul 04** → menjawab *"faktor apa yang paling DIPAKAI untuk memprediksi?"*
+        """)
 
 # ================================================================
 # MODUL 05 — REKOMENDASI UMUM
@@ -1782,13 +1840,14 @@ elif st.session_state.current_page == "rekomendasi":
              "Dorong kepercayaan diri akademik melalui mentoring dan pengalaman belajar bertahap."),
         ]
         for i, (name, ate, shap, desc) in enumerate(positive_priority, 1):
+            label, _ = terjemah_ate(ate)
             st.markdown(f"""
             <div style="padding:1rem 0;border-bottom:1px solid #CBEBDD;">
-                <div style="display:flex;justify-content:space-between;gap:.7rem;">
+                <div style="display:flex;justify-content:space-between;gap:.7rem;align-items:center;">
                     <div style="font-weight:800;font-size:.88rem;">{i:02d} · {name}</div>
-                    <div style="font-family:'Manrope';font-weight:800;color:#10B981;">+{ate:.2f}</div>
+                    <div style="font-weight:800;color:#10B981;font-size:.78rem;">{label}</div>
                 </div>
-                <div style="font-size:.69rem;color:#5C6B85;margin-top:.3rem;">Tingkat kepentingan: {shap:.4f}</div>
+                <div style="font-size:.69rem;color:#5C6B85;margin-top:.35rem;">{terjemah_shap(shap)}</div>
                 <div style="font-size:.76rem;line-height:1.55;margin-top:.45rem;color:#475467;">{desc}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -1811,13 +1870,14 @@ elif st.session_state.current_page == "rekomendasi":
              "Identifikasi hambatan belajar dan gunakan pendekatan pembelajaran yang lebih relevan."),
         ]
         for i, (name, ate, shap, desc) in enumerate(negative_priority, 1):
+            label, _ = terjemah_ate(ate)
             st.markdown(f"""
             <div style="padding:1rem 0;border-bottom:1px solid #F1DF96;">
-                <div style="display:flex;justify-content:space-between;gap:.7rem;">
+                <div style="display:flex;justify-content:space-between;gap:.7rem;align-items:center;">
                     <div style="font-weight:800;font-size:.88rem;">{i:02d} · {name}</div>
-                    <div style="font-family:'Manrope';font-weight:800;color:#EF5B67;">{ate:+.2f}</div>
+                    <div style="font-weight:800;color:#EF5B67;font-size:.78rem;">{label}</div>
                 </div>
-                <div style="font-size:.69rem;color:#5C6B85;margin-top:.3rem;">Tingkat kepentingan: {shap:.4f}</div>
+                <div style="font-size:.69rem;color:#5C6B85;margin-top:.35rem;">{terjemah_shap(shap)}</div>
                 <div style="font-size:.76rem;line-height:1.55;margin-top:.45rem;color:#475467;">{desc}</div>
             </div>
             """, unsafe_allow_html=True)
