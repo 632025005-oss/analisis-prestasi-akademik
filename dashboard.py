@@ -1206,7 +1206,7 @@ if st.session_state.current_page == "home":
     st.markdown('<div class="section-line"></div>', unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("🚪 Keluar dari Dashboard", use_container_width=True, key="logout_home"):
+        if st.button("🚪 Logoout", use_container_width=True, key="logout_home"):
             st.session_state.logged_in = False
             st.session_state.user_nama = None
             st.session_state.current_page = "home"
