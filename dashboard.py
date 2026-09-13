@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # ================================================================
-# VISUAL SYSTEM — SIASAT STYLE
+# VISUAL SYSTEM — EYE-CATCHING EDITION
 # ================================================================
 
 st.markdown("""
@@ -21,22 +21,29 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
 
 :root{
-    --ink:#17233B; --muted:#667085; --line:#E4EAF2;
-    --canvas:#F7F9FC; --surface:#FFFFFF;
-    --blue:#2563EB; --blue-soft:#EAF1FF;
-    --yellow:#F6C945; --yellow-soft:#FFF7D6;
-    --mint:#18A77A; --mint-soft:#E8F8F1;
+    --ink:#0F1B33; --muted:#5C6B85; --line:#E4EAF2;
+    --canvas:#EEF3FB; --surface:#FFFFFF;
+    --blue:#2563EB; --blue-deep:#1E3A8A; --blue-soft:#EAF1FF;
+    --violet:#7C5CFC; --violet-soft:#F1EDFF;
+    --yellow:#F6C945; --yellow-deep:#B8860B; --yellow-soft:#FFF7D6;
+    --mint:#10B981; --mint-soft:#E8F8F1;
     --coral:#EF5B67; --coral-soft:#FFF0F2;
-    --purple:#7C5CFC; --purple-soft:#F1EDFF;
-    --pink:#EC4899; --navy:#13213B; --navy-2:#1E2F50;
+    --pink:#EC4899; --pink-soft:#FCE7F3;
+    --cyan:#06B6D4; --cyan-soft:#CFFAFE;
+    --navy:#0B1730; --navy-2:#16294A;
 }
 
 html, body, [class*="css"]{font-family:'DM Sans',sans-serif;color:var(--ink);}
+
+/* ===== APP BACKGROUND — GRADIENT MESH ===== */
 .stApp{
     background:
-        radial-gradient(circle at 92% 4%, rgba(79,124,255,.10), transparent 24rem),
-        radial-gradient(circle at 4% 80%, rgba(246,201,69,.10), transparent 22rem),
-        var(--canvas);
+        radial-gradient(circle at 12% 8%, rgba(124,92,252,.18), transparent 40rem),
+        radial-gradient(circle at 88% 12%, rgba(37,99,235,.16), transparent 42rem),
+        radial-gradient(circle at 20% 85%, rgba(236,72,153,.12), transparent 40rem),
+        radial-gradient(circle at 82% 88%, rgba(16,185,129,.14), transparent 42rem),
+        linear-gradient(135deg,#F4F7FF 0%,#EEF3FB 40%,#F6EEFF 100%);
+    background-attachment:fixed;
 }
 .main{background:transparent;}
 .block-container{max-width:1480px;padding:1.6rem 2.7rem 4rem 2.7rem;}
@@ -45,380 +52,263 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 
 @keyframes riseIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 @keyframes growBar{from{transform:scaleX(0);transform-origin:left;}to{transform:scaleX(1);transform-origin:left;}}
-@keyframes floatDot{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
-@keyframes sparkle{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.3);}}
+@keyframes floatDot{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes sparkle{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.35);}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(124,92,252,.4);}50%{box-shadow:0 0 0 14px rgba(124,92,252,0);}}
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
 
 .motion{animation:riseIn .5s ease both;}
 
-/* ============ LOGIN PAGE — SIASAT STYLE ============ */
+/* ============ LOGIN — VIBRANT ============ */
 .login-page-header{
     display:flex;justify-content:space-between;align-items:center;
     padding:1rem 2rem;
-    background:#fff;
-    border-bottom:1px solid #E4EAF2;
+    background:linear-gradient(135deg,#FFFFFF 0%,#F3F6FF 100%);
+    border-bottom:1px solid #DCE4F2;
     margin:-1.6rem -2.7rem 0 -2.7rem;
+    box-shadow:0 4px 20px rgba(37,99,235,.06);
 }
-.login-logo-area{
-    display:flex;align-items:center;gap:.8rem;
-    justify-content:flex-end;
-    width:100%;
-}
-.login-logo-icon{
-    font-size:2.2rem;
-    line-height:1;
-}
-.login-logo-text{
-    text-align:right;
-    line-height:1.15;
-}
+.login-logo-area{display:flex;align-items:center;gap:.8rem;justify-content:flex-end;width:100%;}
+.login-logo-icon{font-size:2.2rem;line-height:1;filter:drop-shadow(0 4px 10px rgba(37,99,235,.3));}
+.login-logo-text{text-align:right;line-height:1.15;}
 .login-logo-title{
-    font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:1.6rem;
-    font-weight:800;
-    color:#17233B;
-    letter-spacing:-.8px;
+    font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:800;
+    color:#0F1B33;letter-spacing:-.8px;
 }
-.login-logo-title .blue-part{color:#2563EB;}
-.login-logo-sub{
-    font-size:.72rem;
-    color:#667085;
-    letter-spacing:.3px;
-    margin-top:.15rem;
+.login-logo-title .blue-part{
+    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
+.login-logo-sub{font-size:.72rem;color:#5C6B85;letter-spacing:.3px;margin-top:.15rem;}
 
-.login-content{
-    max-width:1050px;
-    margin:2rem auto;
-    padding:0 2rem;
-}
+.login-content{max-width:1050px;margin:2rem auto;padding:0 2rem;}
 
 .login-date-logout{
     display:flex;justify-content:space-between;align-items:center;
-    padding:.9rem 0;
-    border-bottom:2px solid #17233B;
+    padding:.9rem 1.1rem;
+    background:linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 100%);
+    border:1px solid #DCE4F2;
+    border-left:5px solid #2563EB;
+    border-radius:12px;
     margin-bottom:2rem;
+    box-shadow:0 6px 18px rgba(37,99,235,.06);
 }
-.login-date{
-    font-family:'Manrope',sans-serif;
-    font-weight:800;
-    font-size:.95rem;
-    color:#17233B;
-}
-.login-logout-link{
-    font-size:.8rem;
-    color:#2563EB;
-    font-weight:700;
-    padding:.35rem .8rem;
-    border-left:1px solid #E4EAF2;
-}
+.login-date{font-family:'Manrope',sans-serif;font-weight:800;font-size:.95rem;color:#0F1B33;}
+.login-logout-link{font-size:.8rem;color:#2563EB;font-weight:700;padding:.35rem .8rem;border-left:1px solid #E4EAF2;}
 
-/* Form ala SIASAT — label kiri, input kanan */
-.siasat-label{
-    font-family:'DM Sans',sans-serif;
-    font-weight:700;
-    font-size:.9rem;
-    color:#17233B;
-    padding-top:.65rem;
-}
-.siasat-label::after{
-    content:" :";
-    color:#667085;
-    font-weight:400;
-}
+.siasat-label{font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;color:#0F1B33;padding-top:.65rem;}
+.siasat-label::after{content:" :";color:#5C6B85;font-weight:400;}
 
-/* Override streamlit input untuk style SIASAT */
 .siasat-input .stTextInput > div > div > input,
 .siasat-input [data-baseweb="input"] > div,
 .siasat-input [data-baseweb="base-input"]{
-    border:1.5px solid #A8B5C7 !important;
-    border-radius:4px !important;
-    padding:.55rem .85rem !important;
-    font-size:.9rem !important;
-    background:#fff !important;
-    min-height:42px !important;
-    transition:all .15s ease !important;
+    border:1.5px solid #A8B5C7 !important;border-radius:8px !important;
+    padding:.55rem .85rem !important;font-size:.9rem !important;
+    background:linear-gradient(180deg,#FFFFFF 0%,#F9FBFF 100%) !important;
+    min-height:42px !important;transition:all .2s ease !important;
     font-family:'DM Sans',sans-serif !important;
 }
 .siasat-input .stTextInput > div > div > input:focus{
     border-color:#2563EB !important;
-    box-shadow:0 0 0 3px rgba(37,99,235,.12) !important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.15) !important;
     outline:none !important;
 }
-.siasat-input .stTextInput > div > div > input::placeholder{
-    color:#98A2B3 !important;
-    font-style:italic;
-}
+.siasat-input .stTextInput > div > div > input::placeholder{color:#98A2B3 !important;font-style:italic;}
 .siasat-input .stTextInput > label{display:none !important;}
 
-/* Tombol SIASAT style */
 .siasat-btn-login button{
-    background:linear-gradient(180deg,#4ADE80 0%,#22C55E 100%) !important;
-    border:1px solid #16A34A !important;
-    color:#fff !important;
-    font-family:'DM Sans',sans-serif !important;
-    font-weight:700 !important;
-    font-size:.9rem !important;
-    letter-spacing:.3px !important;
-    padding:.55rem 2rem !important;
-    border-radius:5px !important;
+    background:linear-gradient(135deg,#4ADE80 0%,#22C55E 50%,#16A34A 100%) !important;
+    border:1px solid #16A34A !important;color:#fff !important;
+    font-family:'DM Sans',sans-serif !important;font-weight:700 !important;
+    font-size:.9rem !important;letter-spacing:.3px !important;
+    padding:.55rem 2rem !important;border-radius:8px !important;
     min-height:44px !important;
-    box-shadow:0 2px 4px rgba(22,163,74,.2), inset 0 1px 0 rgba(255,255,255,.3) !important;
-    transition:all .15s ease !important;
-    text-transform:none !important;
+    box-shadow:0 4px 14px rgba(22,163,74,.35), inset 0 1px 0 rgba(255,255,255,.35) !important;
+    transition:all .2s ease !important;text-transform:none !important;
 }
 .siasat-btn-login button:hover{
-    background:linear-gradient(180deg,#22C55E 0%,#16A34A 100%) !important;
-    box-shadow:0 3px 8px rgba(22,163,74,.3) !important;
-    transform:translateY(-1px) !important;
+    background:linear-gradient(135deg,#22C55E 0%,#16A34A 100%) !important;
+    box-shadow:0 6px 20px rgba(22,163,74,.45) !important;
+    transform:translateY(-2px) !important;
 }
 
 .siasat-btn-lupa button{
-    background:linear-gradient(180deg,#F87171 0%,#EF4444 100%) !important;
-    border:1px solid #DC2626 !important;
-    color:#fff !important;
-    font-family:'DM Sans',sans-serif !important;
-    font-weight:700 !important;
-    font-size:.9rem !important;
-    letter-spacing:.3px !important;
-    padding:.55rem 2rem !important;
-    border-radius:5px !important;
+    background:linear-gradient(135deg,#F87171 0%,#EF4444 50%,#DC2626 100%) !important;
+    border:1px solid #DC2626 !important;color:#fff !important;
+    font-family:'DM Sans',sans-serif !important;font-weight:700 !important;
+    font-size:.9rem !important;letter-spacing:.3px !important;
+    padding:.55rem 2rem !important;border-radius:8px !important;
     min-height:44px !important;
-    box-shadow:0 2px 4px rgba(220,38,38,.2), inset 0 1px 0 rgba(255,255,255,.3) !important;
-    transition:all .15s ease !important;
-    text-transform:none !important;
+    box-shadow:0 4px 14px rgba(220,38,38,.35), inset 0 1px 0 rgba(255,255,255,.35) !important;
+    transition:all .2s ease !important;text-transform:none !important;
 }
 .siasat-btn-lupa button:hover{
-    background:linear-gradient(180deg,#EF4444 0%,#DC2626 100%) !important;
-    box-shadow:0 3px 8px rgba(220,38,38,.3) !important;
-    transform:translateY(-1px) !important;
+    background:linear-gradient(135deg,#EF4444 0%,#DC2626 100%) !important;
+    box-shadow:0 6px 20px rgba(220,38,38,.45) !important;
+    transform:translateY(-2px) !important;
 }
 
 .siasat-info-box{
-    background:#F7F9FC;
-    border:1px solid #E4EAF2;
-    border-left:4px solid #F6C945;
-    border-radius:6px;
-    padding:1.2rem 1.4rem;
-    margin-top:2.5rem;
+    background:linear-gradient(135deg,#FFF9E6 0%,#FFF4CC 100%);
+    border:1px solid #F3DF8D;border-left:5px solid #F6C945;
+    border-radius:12px;padding:1.2rem 1.4rem;margin-top:2.5rem;
+    box-shadow:0 8px 22px rgba(246,201,69,.15);
 }
-.siasat-info-header{
-    display:flex;align-items:center;gap:.6rem;
-    margin-bottom:.7rem;
-}
-.siasat-info-icon{
-    font-size:1.3rem;
-    line-height:1;
-}
-.siasat-info-title{
-    font-family:'Manrope',sans-serif;
-    font-weight:800;
-    font-size:.9rem;
-    color:#17233B;
-    letter-spacing:-.2px;
-}
-.siasat-info-list{
-    font-size:.8rem;
-    color:#475467;
-    line-height:1.85;
-    padding-left:.3rem;
-}
-.siasat-info-list div{
-    display:flex;
-    gap:.5rem;
-}
-.siasat-info-list .num{
-    color:#2563EB;
-    font-weight:800;
-    flex-shrink:0;
-    min-width:18px;
-}
+.siasat-info-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;}
+.siasat-info-icon{font-size:1.3rem;line-height:1;}
+.siasat-info-title{font-family:'Manrope',sans-serif;font-weight:800;font-size:.9rem;color:#0F1B33;letter-spacing:-.2px;}
+.siasat-info-list{font-size:.8rem;color:#475467;line-height:1.85;padding-left:.3rem;}
+.siasat-info-list div{display:flex;gap:.5rem;}
+.siasat-info-list .num{color:#2563EB;font-weight:800;flex-shrink:0;min-width:18px;}
 
 .siasat-footer{
-    text-align:center;
-    padding:2rem 0;
-    margin-top:3rem;
-    border-top:1px solid #E4EAF2;
-    font-size:.72rem;
-    color:#98A2B3;
-    letter-spacing:.3px;
-    line-height:1.8;
+    text-align:center;padding:2rem 0;margin-top:3rem;
+    border-top:1px solid #DCE4F2;font-size:.72rem;color:#5C6B85;
+    letter-spacing:.3px;line-height:1.8;
 }
-.siasat-footer strong{
-    color:#475467;
-    font-weight:700;
-}
+.siasat-footer strong{color:#2563EB;font-weight:800;}
 
 .siasat-alert-danger{
-    background:#FEF2F2;
-    border:1px solid #FECACA;
-    border-left:4px solid #EF4444;
-    border-radius:6px;
-    padding:.85rem 1.1rem;
-    margin-top:1rem;
-    animation:riseIn .3s ease both;
+    background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%);
+    border:1px solid #FECACA;border-left:5px solid #EF4444;
+    border-radius:10px;padding:.85rem 1.1rem;margin-top:1rem;
+    animation:riseIn .3s ease both;box-shadow:0 4px 12px rgba(239,68,68,.1);
 }
-.siasat-alert-danger-title{
-    font-family:'Manrope';font-weight:800;
-    font-size:.82rem;color:#991B1B;
-}
-.siasat-alert-danger-body{
-    font-size:.75rem;color:#7F1D1D;margin-top:.25rem;
-}
+.siasat-alert-danger-title{font-family:'Manrope';font-weight:800;font-size:.82rem;color:#991B1B;}
+.siasat-alert-danger-body{font-size:.75rem;color:#7F1D1D;margin-top:.25rem;}
 
 .siasat-alert-info{
-    background:#EFF6FF;
-    border:1px solid #BFDBFE;
-    border-left:4px solid #2563EB;
-    border-radius:6px;
-    padding:.85rem 1.1rem;
-    margin-top:1rem;
-    animation:riseIn .3s ease both;
+    background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);
+    border:1px solid #BFDBFE;border-left:5px solid #2563EB;
+    border-radius:10px;padding:.85rem 1.1rem;margin-top:1rem;
+    animation:riseIn .3s ease both;box-shadow:0 4px 12px rgba(37,99,235,.1);
 }
-.siasat-alert-info-title{
-    font-family:'Manrope';font-weight:800;
-    font-size:.82rem;color:#1E40AF;
-}
-.siasat-alert-info-body{
-    font-size:.75rem;color:#1E3A8A;margin-top:.25rem;
-}
+.siasat-alert-info-title{font-family:'Manrope';font-weight:800;font-size:.82rem;color:#1E40AF;}
+.siasat-alert-info-body{font-size:.75rem;color:#1E3A8A;margin-top:.25rem;}
 
-/* ============ TOP BAR (KEMBALI KE MENU) ============ */
-.top-bar{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:.85rem 1.2rem;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:16px;
-    margin-bottom:1.5rem;
-    box-shadow:0 4px 14px rgba(30,50,90,.04);
-}
-.top-bar-left{
-    display:flex;align-items:center;gap:.8rem;
-}
-.top-bar-title{
-    font-family:'Manrope',sans-serif;font-weight:800;
-    font-size:.95rem;letter-spacing:-.3px;
-}
-.top-bar-sub{
-    color:var(--muted);font-size:.72rem;margin-top:.1rem;
-}
-
-/* ============ HERO ============ */
-.dashboard-hero{
+/* ============ HERO — MEGA GRADIENT ============ */
+.menu-hero{
     position:relative;overflow:hidden;
-    background:linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 60%,#EFF4FF 100%);
-    border:1px solid var(--line);border-radius:28px;padding:2.3rem 2.5rem;
-    box-shadow:0 20px 55px rgba(30,50,90,.09);animation:riseIn .5s ease both;
-}
-.dashboard-hero:before{
-    content:"";position:absolute;width:220px;height:220px;
-    right:-80px;top:-90px;border:34px solid rgba(37,99,235,.09);border-radius:50%;
-}
-.dashboard-hero:after{
-    content:"";position:absolute;width:10px;height:10px;
-    right:140px;bottom:40px;background:var(--yellow);border-radius:50%;
-    box-shadow:42px -22px 0 var(--blue),78px 9px 0 var(--mint),112px -30px 0 var(--purple),145px 5px 0 var(--pink);
-    animation:floatDot 3s ease-in-out infinite;
-}
-
-.eyebrow{display:inline-flex;align-items:center;gap:8px;
-    font-size:.68rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
-    color:var(--blue);margin-bottom:.7rem;}
-.eyebrow-dot{width:8px;height:8px;background:var(--yellow);border-radius:50%;display:inline-block;
-    animation:sparkle 2s ease-in-out infinite;}
-
-.hero-title{font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:clamp(2.15rem,4vw,3.8rem);line-height:1.02;letter-spacing:-2.4px;margin:0;max-width:850px;}
-.hero-title .accent{background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-sub{color:var(--muted);font-size:.98rem;line-height:1.65;max-width:790px;margin:.9rem 0 0;}
-.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.25rem;}
-.pill{display:inline-flex;align-items:center;gap:7px;padding:.42rem .7rem;border-radius:999px;
-    font-size:.65rem;font-weight:800;letter-spacing:.5px;border:1px solid var(--line);background:#fff;}
-.pill.blue{background:var(--blue-soft);color:var(--blue);border-color:#D4E0FF;}
-.pill.yellow{background:var(--yellow-soft);color:#936F00;border-color:#F3DF8D;}
-.pill.mint{background:var(--mint-soft);color:#087453;border-color:#BCE8D7;}
-.pill.purple{background:var(--purple-soft);color:#5B3FCC;border-color:#DDD5FF;}
-
-.section-wrap{margin-top:2rem;margin-bottom:1rem;}
-.section-number{display:inline-flex;width:38px;height:38px;align-items:center;justify-content:center;
-    border-radius:12px;background:linear-gradient(135deg,var(--blue) 0%,var(--purple) 100%);
-    color:#fff;font-size:.78rem;font-weight:800;box-shadow:0 8px 18px rgba(37,99,235,.25);}
-.section-title{font-size:1.45rem;letter-spacing:-.7px;margin:0;}
-.section-sub{color:var(--muted);font-size:.72rem;text-transform:uppercase;
-    letter-spacing:1.1px;font-weight:800;margin-top:.2rem;}
-.section-line{height:1px;background:var(--line);margin-top:.9rem;}
-
-.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;
-    padding:1.25rem 1.35rem;box-shadow:0 10px 28px rgba(30,50,90,.045);
-    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-    animation:riseIn .5s ease both;}
-.card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(30,50,90,.10);border-color:#CFD9EA;}
-.card-blue{background:linear-gradient(135deg,#fff 0%,#F3F7FF 100%);}
-.card-yellow{background:linear-gradient(135deg,#fff 0%,#FFFBEB 100%);}
-.card-mint{background:linear-gradient(135deg,#fff 0%,#F1FBF7 100%);}
-.card-purple{background:linear-gradient(135deg,#fff 0%,#F7F4FF 100%);}
-.card-dark{background:var(--navy);border-color:var(--navy);color:#fff;}
-
-.card-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
-.card-value{font-family:'Manrope',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-1.2px;line-height:1;margin-top:.5rem;}
-.card-note{color:var(--muted);font-size:.74rem;margin-top:.45rem;}
-
-.stat-card{min-height:122px;position:relative;overflow:hidden;}
-.stat-card:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;
-    right:-28px;bottom:-28px;background:rgba(37,99,235,.06);}
-.stat-card .topline{width:34px;height:5px;border-radius:99px;margin-bottom:.85rem;}
-.topline.blue{background:var(--blue);}
-.topline.yellow{background:var(--yellow);}
-.topline.mint{background:var(--mint);}
-.topline.coral{background:var(--coral);}
-.topline.purple{background:var(--purple);}
-
-.menu-hero{position:relative;overflow:hidden;
-    background:linear-gradient(135deg,#17233B 0%,#1E2F50 50%,#2563EB 100%);
+    background:
+        radial-gradient(circle at 15% 20%, rgba(124,92,252,.5), transparent 30rem),
+        radial-gradient(circle at 85% 30%, rgba(37,99,235,.45), transparent 32rem),
+        radial-gradient(circle at 50% 100%, rgba(236,72,153,.35), transparent 30rem),
+        linear-gradient(135deg,#0B1730 0%,#16294A 45%,#1E3A8A 100%);
     border-radius:32px;padding:3.5rem 3rem;color:#fff;margin-bottom:2.5rem;
-    box-shadow:0 30px 70px rgba(23,35,59,.35);animation:riseIn .5s ease both;}
-.menu-hero:before{content:"";position:absolute;width:450px;height:450px;border-radius:50%;
-    border:70px solid rgba(246,201,69,.08);right:-200px;top:-180px;}
-.menu-hero:after{content:"";position:absolute;width:12px;height:12px;
-    right:200px;bottom:60px;background:var(--yellow);border-radius:50%;
-    box-shadow:48px -28px 0 #4F7CFF,92px 12px 0 #18A77A,135px -35px 0 #7C5CFC,175px 8px 0 #EC4899;
-    animation:floatDot 3.5s ease-in-out infinite;}
-.menu-hero-kicker{display:inline-flex;align-items:center;gap:8px;
+    box-shadow:0 30px 80px rgba(11,23,48,.45), 0 0 0 1px rgba(255,255,255,.06) inset;
+    animation:riseIn .5s ease both;
+}
+.menu-hero:before{
+    content:"";position:absolute;width:500px;height:500px;border-radius:50%;
+    border:70px solid rgba(246,201,69,.09);right:-220px;top:-200px;
+}
+.menu-hero:after{
+    content:"";position:absolute;width:14px;height:14px;
+    right:220px;bottom:70px;background:#F6C945;border-radius:50%;
+    box-shadow:
+        52px -30px 0 #4F7CFF, 100px 14px 0 #10B981, 148px -38px 0 #7C5CFC,
+        190px 10px 0 #EC4899, 232px -22px 0 #06B6D4;
+    animation:floatDot 3.5s ease-in-out infinite;
+}
+.menu-hero-kicker{
+    display:inline-flex;align-items:center;gap:8px;
     font-size:.7rem;font-weight:800;letter-spacing:2px;color:#F6C945;
-    text-transform:uppercase;margin-bottom:1rem;}
-.menu-hero-title{font-family:'Plus Jakarta Sans',sans-serif;
-    font-size:clamp(2.5rem,5vw,4.5rem);line-height:.98;letter-spacing:-3px;font-weight:800;margin:0;max-width:900px;}
-.menu-hero-title em{color:#F6C945;font-style:italic;font-family:'Manrope',serif;}
+    text-transform:uppercase;margin-bottom:1rem;
+}
+.menu-hero-title{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:clamp(2.5rem,5vw,4.5rem);line-height:.98;
+    letter-spacing:-3px;font-weight:800;margin:0;max-width:900px;
+}
+.menu-hero-title em{
+    background:linear-gradient(135deg,#F6C945 0%,#FFA94D 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    font-style:italic;font-family:'Manrope',serif;
+}
 .menu-hero-sub{color:#C6D1E5;font-size:1.05rem;line-height:1.6;max-width:680px;margin:1.2rem 0 0;}
 .menu-hero-meta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.8rem;position:relative;z-index:1;}
-.menu-hero-meta span{padding:.55rem .9rem;border-radius:999px;
-    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
-    color:#D9E3F5;font-size:.68rem;font-weight:800;letter-spacing:.7px;}
+.menu-hero-meta span{
+    padding:.55rem .9rem;border-radius:999px;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    color:#F0F5FF;font-size:.68rem;font-weight:800;letter-spacing:.7px;
+    backdrop-filter:blur(10px);
+}
 
-.menu-card{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);
-    border-radius:24px;padding:1.75rem 1.6rem 1.6rem;text-decoration:none;color:inherit;
+/* ============ MENU CARDS — GLASSMORPHISM ============ */
+.menu-card{
+    position:relative;overflow:hidden;
+    background:linear-gradient(135deg, rgba(255,255,255,.98) 0%, rgba(248,251,255,.95) 100%);
+    border:1px solid #DCE4F2;border-radius:24px;
+    padding:1.75rem 1.6rem 1.6rem;text-decoration:none;color:inherit;
     transition:transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease, border-color .3s ease;
-    box-shadow:0 12px 32px rgba(30,50,90,.06);min-height:230px;
-    display:flex;flex-direction:column;justify-content:space-between;animation:riseIn .55s ease both;}
-.menu-card:hover{transform:translateY(-6px);box-shadow:0 24px 55px rgba(30,50,90,.14);}
-.menu-card.mc-blue:hover{border-color:#2563EB;}
-.menu-card.mc-yellow:hover{border-color:#F6C945;}
-.menu-card.mc-mint:hover{border-color:#18A77A;}
-.menu-card.mc-purple:hover{border-color:#7C5CFC;}
-.menu-card.mc-pink:hover{border-color:#EC4899;}
-.menu-card.mc-teal:hover{border-color:#10B981;}
+    box-shadow:0 14px 40px rgba(30,50,90,.08);
+    min-height:230px;display:flex;flex-direction:column;justify-content:space-between;
+    animation:riseIn .55s ease both;
+}
+.menu-card:hover{transform:translateY(-8px);box-shadow:0 28px 65px rgba(30,50,90,.18);}
+
+.menu-card.mc-blue{
+    background:linear-gradient(135deg,#FFFFFF 0%,#EAF1FF 100%);
+    border-color:#D4E0FF;
+}
+.menu-card.mc-blue:hover{
+    border-color:#2563EB;
+    box-shadow:0 28px 65px rgba(37,99,235,.28);
+}
+.menu-card.mc-yellow{
+    background:linear-gradient(135deg,#FFFFFF 0%,#FFF7D6 100%);
+    border-color:#F3DF8D;
+}
+.menu-card.mc-yellow:hover{
+    border-color:#F6C945;
+    box-shadow:0 28px 65px rgba(246,201,69,.32);
+}
+.menu-card.mc-mint{
+    background:linear-gradient(135deg,#FFFFFF 0%,#E8F8F1 100%);
+    border-color:#BCE8D7;
+}
+.menu-card.mc-mint:hover{
+    border-color:#10B981;
+    box-shadow:0 28px 65px rgba(16,185,129,.28);
+}
+.menu-card.mc-purple{
+    background:linear-gradient(135deg,#FFFFFF 0%,#F1EDFF 100%);
+    border-color:#DDD5FF;
+}
+.menu-card.mc-purple:hover{
+    border-color:#7C5CFC;
+    box-shadow:0 28px 65px rgba(124,92,252,.32);
+}
+.menu-card.mc-pink{
+    background:linear-gradient(135deg,#FFFFFF 0%,#FCE7F3 100%);
+    border-color:#F8C7DF;
+}
+.menu-card.mc-pink:hover{
+    border-color:#EC4899;
+    box-shadow:0 28px 65px rgba(236,72,153,.28);
+}
+.menu-card.mc-teal{
+    background:linear-gradient(135deg,#FFFFFF 0%,#CFFAFE 100%);
+    border-color:#A5E8EF;
+}
+.menu-card.mc-teal:hover{
+    border-color:#06B6D4;
+    box-shadow:0 28px 65px rgba(6,182,212,.28);
+}
 
 .menu-card-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:.68rem;font-weight:800;
     letter-spacing:1.6px;color:var(--muted);text-transform:uppercase;}
-.menu-card-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;
-    justify-content:center;font-size:1.7rem;margin:.9rem 0;}
-.menu-card.mc-blue .menu-card-icon{background:var(--blue-soft);color:var(--blue);}
-.menu-card.mc-yellow .menu-card-icon{background:var(--yellow-soft);color:#936F00;}
-.menu-card.mc-mint .menu-card-icon{background:var(--mint-soft);color:var(--mint);}
-.menu-card.mc-purple .menu-card-icon{background:var(--purple-soft);color:var(--purple);}
-.menu-card.mc-pink .menu-card-icon{background:#FCE7F3;color:var(--pink);}
-.menu-card.mc-teal .menu-card-icon{background:#D1FAE5;color:#10B981;}
+.menu-card-icon{
+    width:56px;height:56px;border-radius:16px;display:flex;align-items:center;
+    justify-content:center;font-size:1.7rem;margin:.9rem 0;
+    box-shadow:0 6px 14px rgba(0,0,0,.06);
+}
+.menu-card.mc-blue .menu-card-icon{background:linear-gradient(135deg,#DBE7FF 0%,#B8CEFF 100%);color:#2563EB;}
+.menu-card.mc-yellow .menu-card-icon{background:linear-gradient(135deg,#FFF1B8 0%,#FFE37A 100%);color:#936F00;}
+.menu-card.mc-mint .menu-card-icon{background:linear-gradient(135deg,#C9F2E0 0%,#9BE5C8 100%);color:#087453;}
+.menu-card.mc-purple .menu-card-icon{background:linear-gradient(135deg,#E2DBFF 0%,#C9BEFF 100%);color:#5B3FCC;}
+.menu-card.mc-pink .menu-card-icon{background:linear-gradient(135deg,#FBD5E8 0%,#F8AFD0 100%);color:#BE185D;}
+.menu-card.mc-teal .menu-card-icon{background:linear-gradient(135deg,#B6EFF6 0%,#7FE0EC 100%);color:#0E7490;}
 
 .menu-card-title{font-family:'Manrope',sans-serif;font-size:1.15rem;font-weight:800;
     letter-spacing:-.4px;line-height:1.2;margin:0 0 .35rem;}
@@ -430,115 +320,268 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 .menu-card.mc-mint .menu-card-cta{color:var(--mint);}
 .menu-card.mc-purple .menu-card-cta{color:var(--purple);}
 .menu-card.mc-pink .menu-card-cta{color:var(--pink);}
-.menu-card.mc-teal .menu-card-cta{color:#10B981;}
+.menu-card.mc-teal .menu-card-cta{color:#0E7490;}
 
-.menu-card:before{content:"";position:absolute;width:120px;height:120px;border-radius:50%;
-    right:-55px;bottom:-55px;opacity:.06;transition:transform .4s ease;}
+.menu-card:before{
+    content:"";position:absolute;width:130px;height:130px;border-radius:50%;
+    right:-60px;bottom:-60px;opacity:.08;transition:transform .4s ease;
+}
+.menu-card:hover:before{transform:scale(1.7);opacity:.12;}
 .menu-card.mc-blue:before{background:var(--blue);}
 .menu-card.mc-yellow:before{background:var(--yellow);}
 .menu-card.mc-mint:before{background:var(--mint);}
 .menu-card.mc-purple:before{background:var(--purple);}
 .menu-card.mc-pink:before{background:var(--pink);}
-.menu-card.mc-teal:before{background:#10B981;}
-.menu-card:hover:before{transform:scale(1.6);}
+.menu-card.mc-teal:before{background:#06B6D4;}
 
-.info-box{border-radius:18px;padding:1.1rem 1.2rem;border:1px solid var(--line);background:#fff;}
-.info-box.blue{background:var(--blue-soft);border-color:#D5E1FF;}
-.info-box.yellow{background:var(--yellow-soft);border-color:#F1DF96;}
-.info-box.mint{background:var(--mint-soft);border-color:#C5EBDD;}
-.info-box.coral{background:var(--coral-soft);border-color:#F4CDD3;}
-.info-title{font-weight:800;font-size:.9rem;}
-.info-text{font-size:.78rem;line-height:1.6;margin-top:.35rem;color:#475467;}
-
-/* Notifikasi simpan */
-.notif-success{
-    background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%);
-    border:2px solid #10B981;
-    border-left:6px solid #10B981;
+/* ============ SECTION HEADER ============ */
+.section-wrap{margin-top:2rem;margin-bottom:1rem;}
+.section-number{
+    display:inline-flex;width:42px;height:42px;align-items:center;justify-content:center;
     border-radius:14px;
-    padding:1.2rem 1.4rem;
-    margin:1rem 0;
+    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%);
+    color:#fff;font-size:.8rem;font-weight:800;
+    box-shadow:0 10px 24px rgba(37,99,235,.35), 0 0 0 4px rgba(124,92,252,.08);
+}
+.section-title{font-size:1.45rem;letter-spacing:-.7px;margin:0;}
+.section-sub{color:var(--muted);font-size:.72rem;text-transform:uppercase;
+    letter-spacing:1.1px;font-weight:800;margin-top:.2rem;}
+.section-line{height:1px;background:linear-gradient(90deg,#DCE4F2 0%,transparent 100%);margin-top:.9rem;}
+
+/* ============ CARDS ============ */
+.card{
+    background:linear-gradient(135deg,#FFFFFF 0%,#FBFDFF 100%);
+    border:1px solid var(--line);border-radius:20px;
+    padding:1.25rem 1.35rem;
+    box-shadow:0 10px 30px rgba(30,50,90,.06);
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     animation:riseIn .5s ease both;
 }
-.notif-success-title{
-    font-family:'Manrope',sans-serif;font-weight:800;
-    font-size:1rem;color:#065F46;
-    display:flex;align-items:center;gap:.5rem;
-}
-.notif-success-body{
-    font-size:.85rem;color:#064E3B;line-height:1.6;margin-top:.4rem;
+.card:hover{transform:translateY(-3px);box-shadow:0 20px 48px rgba(30,50,90,.12);border-color:#CFD9EA;}
+
+.card-blue{background:linear-gradient(135deg,#FFFFFF 0%,#EAF1FF 100%);border-color:#D4E0FF;}
+.card-yellow{background:linear-gradient(135deg,#FFFFFF 0%,#FFF7D6 100%);border-color:#F3DF8D;}
+.card-mint{background:linear-gradient(135deg,#FFFFFF 0%,#E8F8F1 100%);border-color:#BCE8D7;}
+.card-purple{background:linear-gradient(135deg,#FFFFFF 0%,#F1EDFF 100%);border-color:#DDD5FF;}
+.card-dark{
+    background:
+        radial-gradient(circle at 100% 0%, rgba(124,92,252,.35), transparent 20rem),
+        linear-gradient(135deg,#0B1730 0%,#16294A 100%);
+    border-color:#0B1730;color:#fff;
+    box-shadow:0 20px 50px rgba(11,23,48,.35);
 }
 
-.profile-card{display:flex;align-items:center;justify-content:space-between;
-    gap:1rem;padding:1.15rem 1.3rem;background:#fff;
-    border:1px solid var(--line);border-radius:18px;}
-.profile-avatar{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;
-    justify-content:center;background:linear-gradient(135deg,var(--blue-soft) 0%,var(--purple-soft) 100%);
-    color:var(--blue);font-weight:800;font-size:1rem;}
+.card-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+.card-dark .card-label{color:#9DBBFF;}
+.card-value{font-family:'Manrope',sans-serif;font-size:2rem;font-weight:800;
+    letter-spacing:-1.2px;line-height:1;margin-top:.5rem;}
+.card-note{color:var(--muted);font-size:.74rem;margin-top:.45rem;}
+.card-dark .card-note{color:#9DBBFF;}
+
+.stat-card{min-height:122px;position:relative;overflow:hidden;}
+.stat-card:after{
+    content:"";position:absolute;width:90px;height:90px;border-radius:50%;
+    right:-35px;bottom:-35px;background:radial-gradient(circle,rgba(37,99,235,.15),transparent 70%);
+}
+.stat-card .topline{width:40px;height:5px;border-radius:99px;margin-bottom:.85rem;}
+.topline.blue{background:linear-gradient(90deg,#2563EB,#7C5CFC);}
+.topline.yellow{background:linear-gradient(90deg,#F6C945,#FFA94D);}
+.topline.mint{background:linear-gradient(90deg,#10B981,#06B6D4);}
+.topline.coral{background:linear-gradient(90deg,#EF5B67,#EC4899);}
+.topline.purple{background:linear-gradient(90deg,#7C5CFC,#EC4899);}
+
+/* ============ HERO DASHBOARD ============ */
+.dashboard-hero{
+    position:relative;overflow:hidden;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(124,92,252,.12), transparent 25rem),
+        linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 50%,#EEF3FF 100%);
+    border:1px solid #DCE4F2;border-radius:28px;padding:2.3rem 2.5rem;
+    box-shadow:0 20px 55px rgba(30,50,90,.10);animation:riseIn .5s ease both;
+}
+.dashboard-hero:before{
+    content:"";position:absolute;width:240px;height:240px;
+    right:-90px;top:-100px;border:36px solid rgba(37,99,235,.09);border-radius:50%;
+}
+.dashboard-hero:after{
+    content:"";position:absolute;width:12px;height:12px;
+    right:150px;bottom:45px;background:#F6C945;border-radius:50%;
+    box-shadow:
+        44px -24px 0 #2563EB, 82px 10px 0 #10B981, 118px -32px 0 #7C5CFC,
+        152px 6px 0 #EC4899, 186px -20px 0 #06B6D4;
+    animation:floatDot 3s ease-in-out infinite;
+}
+
+.eyebrow{display:inline-flex;align-items:center;gap:8px;
+    font-size:.68rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--blue);margin-bottom:.7rem;}
+.eyebrow-dot{width:8px;height:8px;background:var(--yellow);border-radius:50%;display:inline-block;
+    animation:sparkle 2s ease-in-out infinite;}
+
+.hero-title{font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:clamp(2.15rem,4vw,3.8rem);line-height:1.02;letter-spacing:-2.4px;margin:0;max-width:850px;}
+.hero-title .accent{
+    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 50%,#EC4899 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{color:var(--muted);font-size:.98rem;line-height:1.65;max-width:790px;margin:.9rem 0 0;}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.25rem;}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:.42rem .7rem;border-radius:999px;
+    font-size:.65rem;font-weight:800;letter-spacing:.5px;border:1px solid var(--line);background:#fff;}
+.pill.blue{background:var(--blue-soft);color:var(--blue);border-color:#D4E0FF;}
+.pill.yellow{background:var(--yellow-soft);color:#936F00;border-color:#F3DF8D;}
+.pill.mint{background:var(--mint-soft);color:#087453;border-color:#BCE8D7;}
+.pill.purple{background:var(--purple-soft);color:#5B3FCC;border-color:#DDD5FF;}
+
+/* ============ PROFILE CARD ============ */
+.profile-card{
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    padding:1.15rem 1.3rem;
+    background:linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 100%);
+    border:1px solid #DCE4F2;border-radius:18px;
+    box-shadow:0 8px 24px rgba(30,50,90,.05);
+}
+.profile-avatar{
+    width:48px;height:48px;border-radius:15px;display:flex;align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%);
+    color:#fff;font-weight:800;font-size:1rem;
+    box-shadow:0 8px 18px rgba(37,99,235,.3);
+}
 .profile-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.05rem;}
 .profile-meta{color:var(--muted);font-size:.72rem;margin-top:.2rem;}
 
-.factor-card{border:1px solid var(--line);border-radius:18px;background:#fff;
-    padding:1rem 1.05rem;margin:.65rem 0;transition:all .2s ease;}
-.factor-card:hover{transform:translateX(3px);box-shadow:0 8px 22px rgba(30,50,90,.06);}
+/* ============ FACTOR CARD ============ */
+.factor-card{
+    border:1px solid var(--line);border-radius:18px;
+    background:linear-gradient(135deg,#FFFFFF 0%,#FBFDFF 100%);
+    padding:1rem 1.05rem;margin:.65rem 0;transition:all .25s ease;
+}
+.factor-card:hover{transform:translateX(4px);box-shadow:0 10px 26px rgba(30,50,90,.08);border-color:#CFD9EA;}
 .factor-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;}
 .factor-name{font-weight:700;font-size:.86rem;}
 .factor-value{font-family:'Manrope',sans-serif;font-weight:800;font-size:1rem;}
 .factor-bar{height:7px;background:#EEF2F7;border-radius:99px;overflow:hidden;margin-top:.75rem;}
 .factor-fill{height:100%;border-radius:99px;animation:growBar .7s ease both;}
-.fill-blue{background:var(--blue);}
-.fill-yellow{background:var(--yellow);}
-.fill-mint{background:var(--mint);}
-.fill-purple{background:var(--purple);}
-.fill-coral{background:var(--coral);}
+.fill-blue{background:linear-gradient(90deg,#2563EB,#7C5CFC);}
+.fill-yellow{background:linear-gradient(90deg,#F6C945,#FFA94D);}
+.fill-mint{background:linear-gradient(90deg,#10B981,#06B6D4);}
+.fill-purple{background:linear-gradient(90deg,#7C5CFC,#EC4899);}
+.fill-coral{background:linear-gradient(90deg,#EF5B67,#EC4899);}
 
+/* ============ RANK ROW ============ */
 .rank-row{display:grid;grid-template-columns:34px 1fr auto;
     align-items:center;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--line);}
 .rank-row:last-child{border-bottom:0;}
-.rank-num{width:30px;height:30px;border-radius:10px;background:var(--blue-soft);
+.rank-num{
+    width:30px;height:30px;border-radius:10px;
+    background:linear-gradient(135deg,#EAF1FF 0%,#F1EDFF 100%);
     color:var(--blue);display:flex;align-items:center;justify-content:center;
-    font-size:.68rem;font-weight:800;}
+    font-size:.68rem;font-weight:800;
+}
 .rank-name{font-weight:700;font-size:.8rem;}
 .rank-desc{font-size:.67rem;color:var(--muted);margin-top:.15rem;}
 .rank-value{font-family:'Manrope',sans-serif;font-size:.86rem;font-weight:800;}
 .positive{color:var(--mint);}
 .negative{color:var(--coral);}
 
-/* Radio buttons */
+/* ============ INPUT/COMPONENTS OVERRIDE ============ */
 .stRadio > div{gap:.6rem;}
 .stRadio [role="radiogroup"]{gap:.5rem;}
 .stRadio [role="radiogroup"] label{
-    background:#fff;border:1.5px solid var(--line);border-radius:12px;
-    padding:.65rem 1rem !important;transition:all .18s ease;font-weight:600 !important;
-    cursor:pointer;}
+    background:linear-gradient(135deg,#FFFFFF 0%,#FBFDFF 100%);
+    border:1.5px solid var(--line);border-radius:12px;
+    padding:.65rem 1rem !important;transition:all .2s ease;
+    font-weight:600 !important;cursor:pointer;
+}
 .stRadio [role="radiogroup"] label:hover{
-    border-color:var(--blue);background:#F8FAFF;}
+    border-color:var(--blue);
+    background:linear-gradient(135deg,#FFFFFF 0%,#EAF1FF 100%);
+    transform:translateY(-1px);
+}
 .stRadio [role="radiogroup"] label[data-checked="true"]{
-    border-color:var(--blue);background:var(--blue-soft);color:var(--blue);}
+    border-color:var(--blue);
+    background:linear-gradient(135deg,#EAF1FF 0%,#F1EDFF 100%);
+    color:var(--blue);
+    box-shadow:0 6px 16px rgba(37,99,235,.15);
+}
 
 .stTextInput > div > div > input,
 .stNumberInput > div > div > input,
 .stSelectbox [data-baseweb="select"] > div{
-    background:#fff !important;border:1px solid #D7DFEA !important;
-    border-radius:12px !important;min-height:43px;color:var(--ink) !important;}
+    background:linear-gradient(180deg,#FFFFFF 0%,#FBFDFF 100%) !important;
+    border:1px solid #D7DFEA !important;border-radius:12px !important;
+    min-height:43px;color:var(--ink) !important;
+    transition:all .2s ease !important;
+}
 .stTextInput label,.stNumberInput label,.stSelectbox label{
     font-size:.72rem !important;font-weight:800 !important;color:#475467 !important;}
 .stTextInput > div > div > input:focus,
 .stNumberInput > div > div > input:focus{
     border-color:var(--blue) !important;
-    box-shadow:0 0 0 3px rgba(37,99,235,.10) !important;}
+    box-shadow:0 0 0 4px rgba(37,99,235,.12) !important;}
 
 .stButton > button,.stDownloadButton > button{
     border-radius:12px !important;min-height:43px;font-weight:800 !important;
-    border:1px solid #D7DFEA !important;transition:all .18s ease !important;}
+    border:1px solid #D7DFEA !important;
+    background:linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 100%) !important;
+    transition:all .2s ease !important;
+    color:#17233B !important;
+}
 .stButton > button:hover,.stDownloadButton > button:hover{
-    transform:translateY(-2px);box-shadow:0 8px 20px rgba(30,50,90,.08);}
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px rgba(30,50,90,.12);
+    border-color:#2563EB !important;
+}
 button[kind="primary"]{
-    background:linear-gradient(135deg,var(--blue) 0%,var(--purple) 100%) !important;
-    border-color:var(--blue) !important;color:#fff !important;}
+    background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%) !important;
+    border-color:#2563EB !important;color:#fff !important;
+    box-shadow:0 8px 20px rgba(37,99,235,.3) !important;
+}
+button[kind="primary"]:hover{
+    box-shadow:0 12px 30px rgba(37,99,235,.45) !important;
+    transform:translateY(-2px);
+}
 
-[data-testid="stDataFrame"]{border:1px solid var(--line);border-radius:16px;
-    overflow:hidden;box-shadow:0 8px 25px rgba(30,50,90,.04);}
+[data-testid="stDataFrame"]{
+    border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    box-shadow:0 10px 28px rgba(30,50,90,.06);
+}
+
+/* ============ INFO BOX ============ */
+.info-box{
+    border-radius:18px;padding:1.1rem 1.2rem;border:1px solid var(--line);
+    background:linear-gradient(135deg,#FFFFFF 0%,#FBFDFF 100%);
+}
+.info-box.blue{background:linear-gradient(135deg,#EAF1FF 0%,#DBE7FF 100%);border-color:#D5E1FF;}
+.info-box.yellow{background:linear-gradient(135deg,#FFF7D6 0%,#FFF1B8 100%);border-color:#F1DF96;}
+.info-box.mint{background:linear-gradient(135deg,#E8F8F1 0%,#C9F2E0 100%);border-color:#C5EBDD;}
+.info-box.coral{background:linear-gradient(135deg,#FFF0F2 0%,#FFD9DF 100%);border-color:#F4CDD3;}
+.info-title{font-weight:800;font-size:.9rem;}
+.info-text{font-size:.78rem;line-height:1.6;margin-top:.35rem;color:#475467;}
+
+/* ============ NOTIFIKASI ============ */
+.notif-success{
+    background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 60%,#A7F3D0 100%);
+    border:2px solid #10B981;border-left:6px solid #10B981;
+    border-radius:14px;padding:1.2rem 1.4rem;margin:1rem 0;
+    animation:riseIn .5s ease both;
+    box-shadow:0 10px 30px rgba(16,185,129,.2);
+}
+.notif-success-title{
+    font-family:'Manrope',sans-serif;font-weight:800;
+    font-size:1rem;color:#065F46;display:flex;align-items:center;gap:.5rem;
+}
+.notif-success-body{font-size:.85rem;color:#064E3B;line-height:1.6;margin-top:.4rem;}
+
+/* ============ TOP BAR ============ */
+.top-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:.85rem 1.2rem;
+    background:linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 100%);
+    border:1px solid var(--line);border-radius:16px;margin-bottom:1.5rem;
+    box-shadow:0 6px 20px rgba(30,50,90,.06);
+}
 
 @media(max-width:850px){
     .block-container{padding:1rem 1rem 3rem;}
@@ -732,7 +775,7 @@ def analisis_kausal(nilai_akademik, profil_siswa):
 
 def kategori_nilai(nilai):
     if nilai >= 88:
-        return "Sangat Baik", "#18A77A", "▲"
+        return "Sangat Baik", "#10B981", "▲"
     elif nilai >= 84:
         return "Baik", "#2563EB", "●"
     elif nilai >= 80:
@@ -766,10 +809,10 @@ def top_bar(page_title, page_sub):
     with col1:
         st.markdown(f"""
         <div style="padding:.5rem 0;">
-            <div style="font-family:'Manrope';font-weight:800;font-size:1.1rem;color:#17233B;">
+            <div style="font-family:'Manrope';font-weight:800;font-size:1.1rem;color:#0F1B33;">
                 {page_title}
             </div>
-            <div style="color:#667085;font-size:.75rem;margin-top:.15rem;">
+            <div style="color:#5C6B85;font-size:.75rem;margin-top:.15rem;">
                 {page_sub}
             </div>
         </div>
@@ -832,8 +875,8 @@ def plot_pengaruh(df):
     labels = df["Faktor"].values
     y = np.arange(len(df))
     bars = ax.barh(y, vals, height=.58,
-                   color=["#EF5B67" if x < 0 else "#18A77A" for x in vals], alpha=.9)
-    ax.axvline(0, color="#17233B", linewidth=1.3)
+                   color=["#EF5B67" if x < 0 else "#10B981" for x in vals], alpha=.9)
+    ax.axvline(0, color="#0F1B33", linewidth=1.3)
     max_abs = max(abs(vals.min()), abs(vals.max()))
     pad = max_abs * .15
     ax.set_xlim(vals.min() - pad, vals.max() + pad)
@@ -845,14 +888,14 @@ def plot_pengaruh(df):
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=9)
     ax.tick_params(axis="y", length=0, pad=8)
-    ax.tick_params(axis="x", labelsize=8, colors="#667085")
+    ax.tick_params(axis="x", labelsize=8, colors="#5C6B85")
     ax.grid(axis="x", alpha=.12, linewidth=.7)
     ax.set_axisbelow(True)
     for s in ["top", "right", "left"]:
         ax.spines[s].set_visible(False)
     ax.spines["bottom"].set_color("#D8E0EB")
     ax.set_xlabel("Kekuatan Pengaruh (poin nilai)", fontsize=9,
-                  fontweight="bold", color="#667085", labelpad=10)
+                  fontweight="bold", color="#5C6B85", labelpad=10)
     plt.tight_layout()
     return fig
 
@@ -865,7 +908,7 @@ def plot_kepentingan(df):
     vals = df["Kepentingan"].values
     labels = df["Faktor"].values
     y = np.arange(len(df))
-    bars = ax.barh(y, vals, height=.58, color="#4F7CFF", alpha=.9)
+    bars = ax.barh(y, vals, height=.58, color="#7C5CFC", alpha=.9)
     ax.set_xlim(0, max(vals) * 1.18)
     for bar, val in zip(bars, vals):
         ax.text(val + max(vals)*.018, bar.get_y() + bar.get_height()/2,
@@ -873,14 +916,14 @@ def plot_kepentingan(df):
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=9)
     ax.tick_params(axis="y", length=0, pad=8)
-    ax.tick_params(axis="x", labelsize=8, colors="#667085")
+    ax.tick_params(axis="x", labelsize=8, colors="#5C6B85")
     ax.grid(axis="x", alpha=.12, linewidth=.7)
     ax.set_axisbelow(True)
     for s in ["top", "right", "left"]:
         ax.spines[s].set_visible(False)
     ax.spines["bottom"].set_color("#D8E0EB")
     ax.set_xlabel("Tingkat Kepentingan Faktor", fontsize=9,
-                  fontweight="bold", color="#667085", labelpad=10)
+                  fontweight="bold", color="#5C6B85", labelpad=10)
     plt.tight_layout()
     return fig
 
@@ -889,10 +932,10 @@ def input_kategori(key_name, faktor_name):
     config = SKALA_PILIHAN[faktor_name]
     st.markdown(f"""
     <div style="margin-bottom:.5rem;">
-        <div style="font-family:'Manrope';font-weight:800;font-size:.88rem;color:#17233B;">
+        <div style="font-family:'Manrope';font-weight:800;font-size:.88rem;color:#0F1B33;">
             {faktor_name}
         </div>
-        <div style="font-size:.72rem;color:#667085;margin-top:.15rem;margin-bottom:.6rem;">
+        <div style="font-size:.72rem;color:#5C6B85;margin-top:.15rem;margin-bottom:.6rem;">
             {config['question']}
         </div>
     </div>
@@ -911,11 +954,10 @@ def input_kategori(key_name, faktor_name):
 
 
 # ================================================================
-# LOGIN PAGE — SIASAT STYLE
+# LOGIN PAGE
 # ================================================================
 
 def halaman_login():
-    # Header dengan logo kanan atas
     st.markdown("""
     <div class="login-page-header">
         <div></div>
@@ -933,7 +975,6 @@ def halaman_login():
 
     st.markdown('<div class="login-content">', unsafe_allow_html=True)
 
-    # Tanggal
     hari_ini = datetime.now()
     hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"][hari_ini.weekday()]
     bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -947,7 +988,6 @@ def halaman_login():
     </div>
     """, unsafe_allow_html=True)
 
-    # Form ala SIASAT
     with st.form("login_form_siasat", clear_on_submit=False):
         col_label1, col_input1 = st.columns([1, 3])
         with col_label1:
@@ -1015,7 +1055,6 @@ def halaman_login():
             </div>
             """, unsafe_allow_html=True)
 
-    # Info box
     st.markdown("""
     <div class="siasat-info-box">
         <div class="siasat-info-header">
@@ -1044,7 +1083,7 @@ def halaman_login():
 
     st.markdown("""
     <div class="siasat-footer">
-        <strong>SIA.Prestasi</strong> · Sistem Informasi Akademik<br>
+        <strong>SIA.Prestasi</strong> · Sistem Informasi Analisis Prestasi Siswa<br>
         Dikembangkan oleh Program Studi Magister Sains Data<br>
         Universitas Kristen Satya Wacana · © 2026
     </div>
@@ -1211,6 +1250,7 @@ if st.session_state.current_page == "home":
             st.session_state.user_nama = None
             st.session_state.current_page = "home"
             st.rerun()
+
 # ================================================================
 # MODUL 01 — ANALISIS SISWA
 # ================================================================
@@ -1256,7 +1296,7 @@ elif st.session_state.current_page == "analisis":
     <div class="info-box blue" style="margin-bottom:1.5rem;">
         <div class="info-title">💡 Cara Mengisi</div>
         <div class="info-text">
-            Klik salah satu pilihan yang paling menggambarkan kondisi siswa. 
+            Klik salah satu pilihan yang paling menggambarkan kondisi siswa.
             Tidak perlu mengisi angka — cukup pilih deskripsi yang paling sesuai.
         </div>
     </div>
@@ -1267,7 +1307,7 @@ elif st.session_state.current_page == "analisis":
         st.markdown("""
         <div class="card card-blue">
             <div class="card-label">FAKTOR INTERNAL</div>
-            <div style="color:#667085;font-size:.72rem;margin-top:.25rem;">
+            <div style="color:#5C6B85;font-size:.72rem;margin-top:.25rem;">
                 Kondisi yang berasal dari dalam diri siswa.
             </div>
         </div>
@@ -1281,7 +1321,7 @@ elif st.session_state.current_page == "analisis":
         st.markdown("""
         <div class="card card-yellow">
             <div class="card-label">FAKTOR EKSTERNAL</div>
-            <div style="color:#667085;font-size:.72rem;margin-top:.25rem;">
+            <div style="color:#5C6B85;font-size:.72rem;margin-top:.25rem;">
                 Lingkungan keluarga dan sekolah yang mempengaruhi siswa.
             </div>
         </div>
@@ -1352,10 +1392,10 @@ elif st.session_state.current_page == "analisis":
             <div style="font-family:'Manrope';font-weight:800;color:#2563EB;">{nilai_akademik:.2f}</div>
         </div>
         <div style="height:12px;background:#EEF2F7;border-radius:99px;margin-top:1rem;position:relative;overflow:hidden;">
-            <div style="width:{score_pct:.1f}%;height:100%;background:linear-gradient(90deg,#4F7CFF,#7C5CFC);border-radius:99px;animation:growBar .8s ease both;"></div>
-            <div style="position:absolute;left:{baseline_pct:.1f}%;top:-3px;width:3px;height:18px;background:#17233B;border-radius:99px;"></div>
+            <div style="width:{score_pct:.1f}%;height:100%;background:linear-gradient(90deg,#2563EB,#7C5CFC,#EC4899);border-radius:99px;animation:growBar .8s ease both;"></div>
+            <div style="position:absolute;left:{baseline_pct:.1f}%;top:-3px;width:3px;height:18px;background:#0F1B33;border-radius:99px;"></div>
         </div>
-        <div style="display:flex;justify-content:space-between;margin-top:.45rem;color:#667085;font-size:.62rem;">
+        <div style="display:flex;justify-content:space-between;margin-top:.45rem;color:#5C6B85;font-size:.62rem;">
             <span>60</span><span>Rata-rata {RATA_RATA_NILAI:.2f}</span><span>100</span>
         </div>
     </div>
@@ -1381,8 +1421,8 @@ elif st.session_state.current_page == "analisis":
         vals = d["Kontribusi"].values
         y = np.arange(len(d))
         bars = ax.barh(y, vals, height=.56,
-                       color=["#EF5B67" if x < 0 else "#18A77A" for x in vals], alpha=.9)
-        ax.axvline(0, color="#17233B", linewidth=1.2)
+                       color=["#EF5B67" if x < 0 else "#10B981" for x in vals], alpha=.9)
+        ax.axvline(0, color="#0F1B33", linewidth=1.2)
         max_abs = max(abs(vals.min()), abs(vals.max()))
         ax.set_xlim(vals.min() - max_abs*.2, vals.max() + max_abs*.2)
         for bar, val in zip(bars, vals):
@@ -1394,13 +1434,13 @@ elif st.session_state.current_page == "analisis":
         ax.set_yticks(y)
         ax.set_yticklabels(d["Aspek"], fontsize=8.5)
         ax.tick_params(axis="y", length=0, pad=7)
-        ax.tick_params(axis="x", labelsize=8, colors="#667085")
+        ax.tick_params(axis="x", labelsize=8, colors="#5C6B85")
         ax.grid(axis="x", alpha=.12)
         ax.set_axisbelow(True)
         for s in ["top","right","left"]:
             ax.spines[s].set_visible(False)
         ax.spines["bottom"].set_color("#D8E0EB")
-        ax.set_xlabel("Pengaruh terhadap nilai (poin)", fontsize=9, fontweight="bold", color="#667085")
+        ax.set_xlabel("Pengaruh terhadap nilai (poin)", fontsize=9, fontweight="bold", color="#5C6B85")
         plt.tight_layout()
         st.pyplot(fig, use_container_width=True)
         plt.close(fig)
@@ -1525,7 +1565,7 @@ elif st.session_state.current_page == "database":
         <div class="card" style="text-align:center;padding:4rem 2rem;margin-top:1.5rem;">
             <div style="font-size:2.8rem;">◎</div>
             <div style="font-family:'Manrope';font-weight:800;font-size:1.35rem;margin-top:.7rem;">Belum ada data</div>
-            <div style="color:#667085;font-size:.75rem;margin-top:.4rem;">Input siswa dari menu Analisis Siswa untuk mulai mengisi database.</div>
+            <div style="color:#5C6B85;font-size:.75rem;margin-top:.4rem;">Input siswa dari menu Analisis Siswa untuk mulai mengisi database.</div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -1611,7 +1651,7 @@ elif st.session_state.current_page == "kausal":
         <div class="info-box mint">
             <div class="info-title">🟢 Faktor Pendorong</div>
             <div class="info-text">
-                Faktor yang <b>meningkatkan</b> prestasi siswa. 
+                Faktor yang <b>meningkatkan</b> prestasi siswa.
                 Semakin panjang batangnya, semakin besar pengaruh positifnya.
             </div>
         </div>
@@ -1621,7 +1661,7 @@ elif st.session_state.current_page == "kausal":
         <div class="info-box coral">
             <div class="info-title">🔴 Faktor Penghambat</div>
             <div class="info-text">
-                Faktor yang justru <b>menurunkan</b> prestasi siswa. 
+                Faktor yang justru <b>menurunkan</b> prestasi siswa.
                 Semakin panjang batangnya, semakin besar pengaruh negatifnya.
             </div>
         </div>
@@ -1639,7 +1679,7 @@ elif st.session_state.current_page == "kausal":
     <div class="info-box blue" style="margin-top:1rem;">
         <div class="info-title">📌 Catatan Teknis</div>
         <div class="info-text">
-            Nilai ditampilkan dalam skala <b>Average Treatment Effect (ATE)</b> dari analisis 
+            Nilai ditampilkan dalam skala <b>Average Treatment Effect (ATE)</b> dari analisis
             Structural Causal Model. Nilai positif menandakan efek meningkatkan, nilai negatif menandakan efek menurunkan.
         </div>
     </div>
@@ -1702,7 +1742,7 @@ elif st.session_state.current_page == "kepentingan":
     <div class="info-box blue" style="margin-top:1rem;">
         <div class="info-title">📌 Catatan Teknis</div>
         <div class="info-text">
-            Nilai ditampilkan dalam skala <b>Mean |SHAP Value|</b>. 
+            Nilai ditampilkan dalam skala <b>Mean |SHAP Value|</b>.
             Semakin tinggi skor, semakin besar kontribusi faktor tersebut terhadap prediksi model.
         </div>
     </div>
@@ -1746,9 +1786,9 @@ elif st.session_state.current_page == "rekomendasi":
             <div style="padding:1rem 0;border-bottom:1px solid #CBEBDD;">
                 <div style="display:flex;justify-content:space-between;gap:.7rem;">
                     <div style="font-weight:800;font-size:.88rem;">{i:02d} · {name}</div>
-                    <div style="font-family:'Manrope';font-weight:800;color:#18A77A;">+{ate:.2f}</div>
+                    <div style="font-family:'Manrope';font-weight:800;color:#10B981;">+{ate:.2f}</div>
                 </div>
-                <div style="font-size:.69rem;color:#667085;margin-top:.3rem;">Tingkat kepentingan: {shap:.4f}</div>
+                <div style="font-size:.69rem;color:#5C6B85;margin-top:.3rem;">Tingkat kepentingan: {shap:.4f}</div>
                 <div style="font-size:.76rem;line-height:1.55;margin-top:.45rem;color:#475467;">{desc}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -1777,7 +1817,7 @@ elif st.session_state.current_page == "rekomendasi":
                     <div style="font-weight:800;font-size:.88rem;">{i:02d} · {name}</div>
                     <div style="font-family:'Manrope';font-weight:800;color:#EF5B67;">{ate:+.2f}</div>
                 </div>
-                <div style="font-size:.69rem;color:#667085;margin-top:.3rem;">Tingkat kepentingan: {shap:.4f}</div>
+                <div style="font-size:.69rem;color:#5C6B85;margin-top:.3rem;">Tingkat kepentingan: {shap:.4f}</div>
                 <div style="font-size:.76rem;line-height:1.55;margin-top:.45rem;color:#475467;">{desc}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -1909,7 +1949,7 @@ else:
 
     if len(faktor_positif) > 0:
         fp = faktor_positif.iloc[0]
-        narasi_positif = f"""Sementara itu, kekuatan utama <b>{nama_siswa}</b> terletak pada <b style="color:#18A77A;">{fp['Aspek']}</b> (kontribusi <b>+{fp['Kontribusi']:.2f} poin</b>)."""
+        narasi_positif = f"""Sementara itu, kekuatan utama <b>{nama_siswa}</b> terletak pada <b style="color:#10B981;">{fp['Aspek']}</b> (kontribusi <b>+{fp['Kontribusi']:.2f} poin</b>)."""
     else:
         narasi_positif = "Siswa ini belum memiliki faktor kekuatan dominan yang bisa diandalkan."
 
@@ -1921,11 +1961,11 @@ else:
             </div>
             <div>
                 <div style="font-family:'Manrope';font-weight:800;font-size:1.3rem;">{nama_siswa}</div>
-                <div style="color:#667085;font-size:.8rem;">{kelas_siswa} · Absen {absen_siswa:02d} · Nilai {nilai_akademik:.2f}</div>
+                <div style="color:#5C6B85;font-size:.8rem;">{kelas_siswa} · Absen {absen_siswa:02d} · Nilai {nilai_akademik:.2f}</div>
             </div>
         </div>
         <div style="font-size:.95rem;line-height:1.75;color:#1F2A44;">
-            Nilai <b>{nama_siswa}</b> saat ini berada <b>{abs_selisih:.2f} poin {posisi} rata-rata sekolah</b> 
+            Nilai <b>{nama_siswa}</b> saat ini berada <b>{abs_selisih:.2f} poin {posisi} rata-rata sekolah</b>
             (rata-rata {RATA_RATA_NILAI:.2f}). Berdasarkan analisis sebab-akibat:
             <br><br>
             {narasi_negatif}
@@ -1958,7 +1998,7 @@ else:
                 <div class="card" style="border-top:4px solid #EF5B67;min-height:220px;">
                     <div style="font-size:.65rem;font-weight:800;letter-spacing:1.5px;color:#EF5B67;">PRIORITAS {i+1}</div>
                     <div style="font-family:'Manrope';font-weight:800;font-size:1rem;margin:.6rem 0 .3rem;">{row['Aspek']}</div>
-                    <div style="font-size:.7rem;color:#667085;margin-bottom:.5rem;">{level}</div>
+                    <div style="font-size:.7rem;color:#5C6B85;margin-bottom:.5rem;">{level}</div>
                     <div style="font-size:.75rem;line-height:1.6;color:#475467;">
                         Nilai siswa: <b>{row['Nilai_Siswa']:.2f}</b><br>
                         Rata-rata: <b>{row['Baseline']:.2f}</b><br>
@@ -2081,7 +2121,7 @@ else:
                     for j, t in enumerate(tugas["guru"], 1):
                         st.markdown(f"""
                         <div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">
-                            <div style="width:22px;height:22px;border-radius:6px;background:#EAF1FF;color:#2563EB;
+                            <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#EAF1FF,#F1EDFF);color:#2563EB;
                                         display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;">
                                 {j}
                             </div>
@@ -2094,7 +2134,7 @@ else:
                     for j, s in enumerate(tugas["siswa"], 1):
                         st.markdown(f"""
                         <div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">
-                            <div style="width:22px;height:22px;border-radius:6px;background:#E8F8F1;color:#18A77A;
+                            <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#E8F8F1,#C9F2E0);color:#10B981;
                                         display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;">
                                 {j}
                             </div>
@@ -2108,11 +2148,11 @@ else:
     <div class="card" style="border-left:5px solid #7C5CFC;">
         <div class="card-label">💬 UNTUK BERBICARA DENGAN SISWA</div>
         <div style="font-size:.88rem;line-height:1.8;color:#1F2A44;margin-top:.8rem;font-style:italic;">
-            "<b>{nama_siswa}</b>, Ibu/Bapak sudah melihat hasil belajarmu. 
-            Ada hal positif yang Ibu/Bapak perhatikan: 
-            <b style="color:#18A77A;">{faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else 'kamu sudah berusaha'}</b>.
+            "<b>{nama_siswa}</b>, Ibu/Bapak sudah melihat hasil belajarmu.
+            Ada hal positif yang Ibu/Bapak perhatikan:
+            <b style="color:#10B981;">{faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else 'kamu sudah berusaha'}</b>.
             <br><br>
-            Ibu/Bapak ingin bantu kamu untuk hal yang mungkin masih bisa ditingkatkan, 
+            Ibu/Bapak ingin bantu kamu untuk hal yang mungkin masih bisa ditingkatkan,
             khususnya <b style="color:#EF5B67;">{prioritas.iloc[0]['Aspek'] if len(prioritas) > 0 else 'belajar'}</b>.
             Bukan karena kamu kurang, tapi karena Ibu/Bapak yakin kamu bisa lebih baik lagi.
             <br><br>
@@ -2125,13 +2165,13 @@ else:
     <div class="card" style="border-left:5px solid #F6C945;margin-top:1rem;">
         <div class="card-label">📞 UNTUK KOMUNIKASI DENGAN ORANG TUA</div>
         <div style="font-size:.88rem;line-height:1.8;color:#1F2A44;margin-top:.8rem;font-style:italic;">
-            "Selamat siang Bapak/Ibu. Saya ingin berbagi tentang perkembangan 
+            "Selamat siang Bapak/Ibu. Saya ingin berbagi tentang perkembangan
             <b>{nama_siswa}</b> di sekolah.
             <br><br>
-            <b>Kabar baiknya:</b> {nama_siswa} menunjukkan kekuatan di 
-            <b style="color:#18A77A;">{faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else 'semangat belajar'}</b>.
+            <b>Kabar baiknya:</b> {nama_siswa} menunjukkan kekuatan di
+            <b style="color:#10B981;">{faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else 'semangat belajar'}</b>.
             <br><br>
-            <b>Yang ingin saya diskusikan:</b> ada beberapa hal yang mungkin bisa kita bantu bersama, 
+            <b>Yang ingin saya diskusikan:</b> ada beberapa hal yang mungkin bisa kita bantu bersama,
             terutama di <b style="color:#EF5B67;">{prioritas.iloc[0]['Aspek'] if len(prioritas) > 0 else 'kebiasaan belajar'}</b>.
             <br><br>
             Kira-kira kapan waktu yang tepat untuk kita bicara lebih lanjut?"
