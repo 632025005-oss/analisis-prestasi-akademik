@@ -35,7 +35,7 @@ st.markdown("""
 
 html, body, [class*="css"]{font-family:'DM Sans',sans-serif;color:var(--ink);}
 
-/* ===== APP BACKGROUND — PUTIH BERSIH + GLOW TIPIS ===== */
+/* ===== APP BACKGROUND — PUTIH + GLOW TIPIS ===== */
 .stApp{
     background:
         radial-gradient(circle at 100% 0%, rgba(37,99,235,.07), transparent 32rem),
@@ -527,10 +527,29 @@ button[kind="primary"]:hover{
     box-shadow:0 12px 30px rgba(37,99,235,.45) !important;
     transform:translateY(-2px);
 }
+button:disabled{
+    opacity:.5 !important;cursor:not-allowed !important;
+}
 
 [data-testid="stDataFrame"]{
     border:1px solid var(--line);border-radius:16px;overflow:hidden;
     box-shadow:0 10px 28px rgba(30,50,90,.06);
+}
+
+/* ============ TABS ============ */
+.stTabs [data-baseweb="tab-list"]{
+    gap:.5rem;background:transparent;border-bottom:1px solid var(--line);
+}
+.stTabs [data-baseweb="tab"]{
+    height:44px;border-radius:12px 12px 0 0;
+    background:transparent;font-weight:800;font-size:.82rem;
+    color:#5C6B85;padding:0 1.2rem;
+}
+.stTabs [data-baseweb="tab"]:hover{color:#2563EB;background:#F5F8FF;}
+.stTabs [aria-selected="true"]{
+    background:linear-gradient(135deg,#EAF1FF 0%,#F1EDFF 100%) !important;
+    color:#2563EB !important;
+    border-bottom:3px solid #2563EB !important;
 }
 
 /* ============ INFO BOX ============ */
@@ -1599,6 +1618,7 @@ elif st.session_state.current_page == "database":
         with c: stat_card("Tertinggi", f"{df_db['Nilai Akademik'].max():.2f}", "nilai maksimum", "yellow")
         with d: stat_card("Terendah", f"{df_db['Nilai Akademik'].min():.2f}", "nilai minimum", "coral")
 
+        # ============ DAFTAR SISWA ============
         section_header("01", "Daftar Siswa", "DATA TERARSIP")
         c1, c2 = st.columns([1, 2])
         with c1:
@@ -1623,10 +1643,114 @@ elif st.session_state.current_page == "database":
             st.download_button("📥 Download CSV", data=csv,
                 file_name=f"database_siswa_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv", use_container_width=True)
-        with c2:
-            if st.button("🗑️ Hapus semua data", use_container_width=True):
-                st.session_state.database_siswa = []
-                st.rerun()
+
+        # ============ KELOLA DATA ============
+        section_header("02", "Kelola Data Siswa", "HAPUS SATU-PER-SATU ATAU SEMUA")
+
+        tab_hapus1, tab_hapus_all = st.tabs(["🗑️ Hapus Satu Siswa", "⚠️ Hapus Semua Data"])
+
+        # ---------- TAB 1: HAPUS SATU-PER-SATU ----------
+        with tab_hapus1:
+            st.markdown("""
+            <div class="info-box blue" style="margin-bottom:1rem;">
+                <div class="info-title">💡 Cara Hapus Satu Siswa</div>
+                <div class="info-text">
+                    Pilih siswa yang ingin dihapus dari daftar di bawah,
+                    lalu klik tombol <b>Hapus Siswa Ini</b>. Data yang dihapus tidak bisa dikembalikan.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            if len(df_db) == 0:
+                st.warning("Database kosong.")
+            else:
+                df_db_reset = df_db.reset_index(drop=True)
+                opsi_label = df_db_reset.apply(
+                    lambda x: f"{x['Nama']} — {x['Kelas']} (Absen {x['Absen']}) · Nilai {x['Nilai Akademik']:.2f}",
+                    axis=1
+                ).tolist()
+
+                siswa_dipilih = st.selectbox(
+                    "Pilih siswa yang ingin dihapus",
+                    opsi_label,
+                    key="pilih_hapus_satu"
+                )
+
+                idx_preview = opsi_label.index(siswa_dipilih)
+                row_preview = df_db_reset.iloc[idx_preview]
+                st.markdown(f"""
+                <div class="card" style="border-left:5px solid #EF5B67;margin-top:.8rem;">
+                    <div class="card-label">⚠️ SISWA YANG AKAN DIHAPUS</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.7rem;">
+                        <div>
+                            <div style="font-family:'Manrope';font-weight:800;font-size:1.05rem;">
+                                {row_preview['Nama']}
+                            </div>
+                            <div style="font-size:.75rem;color:#5C6B85;margin-top:.2rem;">
+                                {row_preview['Kelas']} · Absen {int(row_preview['Absen']):02d}
+                                · Nilai {row_preview['Nilai Akademik']:.2f}
+                                · {row_preview['Kategori']}
+                            </div>
+                        </div>
+                        <span class="pill" style="background:#FFF0F2;color:#EF5B67;border-color:#F4CDD3;">
+                            AKAN DIHAPUS
+                        </span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
+                if st.button("🗑️ Hapus Siswa Ini", use_container_width=True, key="btn_hapus_satu", type="primary"):
+                    idx_hapus = opsi_label.index(siswa_dipilih)
+                    nama_hapus = st.session_state.database_siswa[idx_hapus]["Nama"]
+                    st.session_state.database_siswa.pop(idx_hapus)
+                    st.success(f"✅ Data siswa **{nama_hapus}** berhasil dihapus.")
+                    st.rerun()
+
+        # ---------- TAB 2: HAPUS SEMUA ----------
+        with tab_hapus_all:
+            st.markdown(f"""
+            <div class="info-box coral" style="margin-bottom:1rem;">
+                <div class="info-title">⚠️ Peringatan Keras</div>
+                <div class="info-text">
+                    Tombol ini akan <b>menghapus SEMUA data siswa ({len(df_db)} siswa)</b> dari database.
+                    Tindakan ini <b>tidak bisa dibatalkan</b>. Pastikan Anda sudah download CSV
+                    sebagai backup sebelum melanjutkan.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            konfirmasi = st.checkbox(
+                f"Saya mengerti, saya ingin menghapus SEMUA {len(df_db)} data siswa",
+                key="konfirmasi_hapus_semua"
+            )
+
+            col_a, col_b = st.columns([1, 1])
+            with col_a:
+                csv_all = df_db.to_csv(index=False).encode("utf-8")
+                st.download_button(
+                    "💾 Download Backup Dulu",
+                    data=csv_all,
+                    file_name=f"backup_database_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                    key="dl_backup_all"
+                )
+            with col_b:
+                if st.button(
+                    "🗑️ Hapus SEMUA Data",
+                    use_container_width=True,
+                    type="primary",
+                    disabled=not konfirmasi,
+                    key="btn_hapus_semua"
+                ):
+                    jumlah = len(st.session_state.database_siswa)
+                    st.session_state.database_siswa = []
+                    st.success(f"✅ {jumlah} data siswa berhasil dihapus semua.")
+                    st.rerun()
+
+            if not konfirmasi:
+                st.caption("🔒 Centang kotak di atas untuk mengaktifkan tombol hapus.")
 
 # ================================================================
 # MODUL 03 — FAKTOR PENYEBAB
@@ -1750,8 +1874,8 @@ elif st.session_state.current_page == "kepentingan":
     section_header("01", "Faktor Paling Penting", "HASIL ANALISIS MODEL")
 
     a, b, c = st.columns(3)
-    with a: stat_card("Faktor #1", top["Faktor"], f"⭐⭐⭐ Sangat menentukan prediksi", "blue")
-    with b: stat_card("Faktor #2", second["Faktor"], f"⭐⭐ Cukup menentukan prediksi", "purple")
+    with a: stat_card("Faktor #1", top["Faktor"], "⭐⭐⭐ Sangat menentukan prediksi", "blue")
+    with b: stat_card("Faktor #2", second["Faktor"], "⭐⭐ Cukup menentukan prediksi", "purple")
     with c: stat_card("Jumlah faktor", "8", "faktor dianalisis", "yellow")
 
     st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
