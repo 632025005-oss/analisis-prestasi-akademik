@@ -1306,6 +1306,16 @@ elif st.session_state.current_page == "analisis":
         [("8 FAKTOR", "blue"), ("SEBAB-AKIBAT", "mint"), ("PER SISWA", "yellow")],
     )
 
+    # ============================================================
+    # JIKA BARU SELESAI SIMPAN → TAMPILKAN NOTIF SAJA, STOP FORM
+    # ============================================================
+    if st.session_state.last_saved:
+        notifikasi_simpan(
+            st.session_state.last_saved["nama"],
+            st.session_state.last_saved["kelas"]
+        )
+        st.stop()
+
     section_header("01", "Data Siswa", "IDENTITAS & NILAI RAPOR")
 
     c1, c2, c3 = st.columns([1.6, .8, .7])
@@ -1315,14 +1325,6 @@ elif st.session_state.current_page == "analisis":
         kelas_siswa = st.selectbox("Kelas", KELAS_LIST, index=KELAS_LIST.index("IX-A"))
     with c3:
         absen_siswa = st.number_input("No. Absen", 1, 50, 1)
-
-    # Reset notifikasi kalau data input berubah dari yang terakhir disimpan
-    if st.session_state.last_saved:
-        saved = st.session_state.last_saved
-        if (saved.get("nama") != nama_siswa or
-            saved.get("kelas") != kelas_siswa or
-            saved.get("absen") != absen_siswa):
-            st.session_state.last_saved = None
 
     c1, c2 = st.columns([1.5, 1])
     with c1:
@@ -1623,12 +1625,6 @@ elif st.session_state.current_page == "analisis":
                     "absen": absen_siswa
                 }
                 st.rerun()
-
-        if st.session_state.last_saved:
-            notifikasi_simpan(
-                st.session_state.last_saved["nama"],
-                st.session_state.last_saved["kelas"]
-            )
 
 # ================================================================
 # MODUL 02 — DATABASE
