@@ -1316,6 +1316,14 @@ elif st.session_state.current_page == "analisis":
     with c3:
         absen_siswa = st.number_input("No. Absen", 1, 50, 1)
 
+    # Reset notifikasi kalau data input berubah dari yang terakhir disimpan
+    if st.session_state.last_saved:
+        saved = st.session_state.last_saved
+        if (saved.get("nama") != nama_siswa or
+            saved.get("kelas") != kelas_siswa or
+            saved.get("absen") != absen_siswa):
+            st.session_state.last_saved = None
+
     c1, c2 = st.columns([1.5, 1])
     with c1:
         nilai_akademik = st.number_input(
@@ -1548,19 +1556,49 @@ elif st.session_state.current_page == "analisis":
         </div>
         """, unsafe_allow_html=True)
     else:
-        duplikat = any(s["Nama"] == nama_siswa and s["Kelas"] == kelas_siswa
-                       for s in st.session_state.database_siswa)
+        # ============ VALIDASI DUPLIKAT 2 TINGKAT ============
+        # 1) Nama + Kelas + Absen sama persis → peringatan duplikat
+        # 2) Kelas + Absen sama (nama beda) → peringatan absen bentrok
+        duplikat_persis = False
+        duplikat_absen = None
 
-        if duplikat:
+        for s in st.session_state.database_siswa:
+            nama_sama = s["Nama"].strip().lower() == nama_siswa.strip().lower()
+            kelas_sama = s["Kelas"] == kelas_siswa
+            absen_sama = int(s["Absen"]) == int(absen_siswa)
+
+            if nama_sama and kelas_sama and absen_sama:
+                duplikat_persis = True
+                break
+            elif kelas_sama and absen_sama and not nama_sama:
+                duplikat_absen = s["Nama"]
+
+        if duplikat_persis:
             st.markdown(f"""
             <div class="info-box coral">
                 <div class="info-title">⚠️ Data sudah ada</div>
                 <div class="info-text">
-                    Siswa <b>{nama_siswa}</b> kelas <b>{kelas_siswa}</b> sudah tersimpan di database.
-                    Hapus data lama terlebih dahulu jika ingin memperbarui.
+                    Siswa <b>{nama_siswa}</b> kelas <b>{kelas_siswa}</b>
+                    dengan nomor absen <b>{absen_siswa:02d}</b> sudah tersimpan di database.
+                    <br><br>
+                    Jika ingin memperbarui, hapus dulu data lama di menu <b>Database Siswa</b>.
                 </div>
             </div>
             """, unsafe_allow_html=True)
+
+        elif duplikat_absen:
+            st.markdown(f"""
+            <div class="info-box coral">
+                <div class="info-title">⚠️ Nomor absen sudah dipakai</div>
+                <div class="info-text">
+                    Di kelas <b>{kelas_siswa}</b>, nomor absen <b>{absen_siswa:02d}</b>
+                    sudah dipakai oleh siswa <b>{duplikat_absen}</b>.
+                    <br><br>
+                    <b>Solusi:</b> gunakan nomor absen yang berbeda, atau cek kembali data siswa tersebut di <b>Database Siswa</b>.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
         else:
             if st.button("💾 Simpan Hasil Siswa", type="primary", use_container_width=True):
                 data_baru = {
@@ -1579,7 +1617,11 @@ elif st.session_state.current_page == "analisis":
                     "Dicatat Oleh": st.session_state.user_nama,
                 }
                 st.session_state.database_siswa.append(data_baru)
-                st.session_state.last_saved = {"nama": nama_siswa, "kelas": kelas_siswa}
+                st.session_state.last_saved = {
+                    "nama": nama_siswa,
+                    "kelas": kelas_siswa,
+                    "absen": absen_siswa
+                }
                 st.rerun()
 
         if st.session_state.last_saved:
