@@ -1573,19 +1573,6 @@ elif st.session_state.current_page == "analisis":
             elif kelas_sama and absen_sama and not nama_sama:
                 duplikat_absen = s["Nama"]
 
-        if duplikat_persis:
-            st.markdown(f"""
-            <div class="info-box coral">
-                <div class="info-title">⚠️ Data sudah ada</div>
-                <div class="info-text">
-                    Siswa <b>{nama_siswa}</b> kelas <b>{kelas_siswa}</b>
-                    dengan nomor absen <b>{absen_siswa:02d}</b> sudah tersimpan di database.
-                    <br><br>
-                    Jika ingin memperbarui, hapus dulu data lama di menu <b>Database Siswa</b>.
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
         elif duplikat_absen:
             st.markdown(f"""
             <div class="info-box coral">
