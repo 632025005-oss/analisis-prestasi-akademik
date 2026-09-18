@@ -4,6 +4,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 import hashlib
+import json
+import os
+
+# ================================================================
+# PERSISTENSI DATABASE (opsional — aman kalau file tidak ada)
+# ================================================================
+DB_FILE = "database_siswa.json"
+
+def load_database():
+    """Load database dari file JSON lokal. Return [] kalau belum ada."""
+    if os.path.exists(DB_FILE):
+        try:
+            with open(DB_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+def save_database(data):
+    """Simpan database ke file JSON lokal."""
+    try:
+        with open(DB_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
 
 st.set_page_config(
     page_title="SIA.Prestasi | SMPN 6 Salatiga",
@@ -30,6 +55,7 @@ st.markdown("""
     --coral:#EF5B67; --coral-soft:#FFF0F2;
     --pink:#EC4899; --pink-soft:#FCE7F3;
     --cyan:#06B6D4; --cyan-soft:#CFFAFE;
+    --purple:#7C5CFC; --purple-soft:#F1EDFF;
     --navy:#0B1730; --navy-2:#16294A;
 }
 
@@ -615,7 +641,7 @@ if "logged_in" not in st.session_state:
 if "user_nama" not in st.session_state:
     st.session_state.user_nama = None
 if "database_siswa" not in st.session_state:
-    st.session_state.database_siswa = []
+    st.session_state.database_siswa = load_database()
 if "current_page" not in st.session_state:
     st.session_state.current_page = "home"
 if "last_saved" not in st.session_state:
@@ -1112,14 +1138,16 @@ def halaman_login():
     </div>
     """, unsafe_allow_html=True)
 
-    with st.expander("🔑 Lihat Akun Demo"):
-        st.markdown("""
-        | Nama Pengguna | Kata Sandi | Peran |
-        |---------------|------------|-------|
-        | `admin` | `admin123` | Administrator |
-        | `guru` | `guru123` | Guru |
-        | `regina` | `regina2026` | Peneliti |
-        """)
+    # Tampilkan akun demo HANYA saat mode development
+    if os.environ.get("SHOW_DEMO_ACCOUNTS", "true").lower() == "true":
+        with st.expander("🔑 Lihat Akun Demo (mode development)"):
+            st.markdown("""
+            | Nama Pengguna | Kata Sandi | Peran |
+            |---------------|------------|-------|
+            | `admin` | `admin123` | Administrator |
+            | `guru` | `guru123` | Guru |
+            | `regina` | `regina2026` | Peneliti |
+            """)
 
     st.markdown("""
     <div class="siasat-footer">
@@ -1453,6 +1481,18 @@ elif st.session_state.current_page == "analisis":
 
     section_header("04", "Faktor yang Mempengaruhi Nilai", "FAKTOR POSITIF & NEGATIF")
 
+    st.markdown("""
+    <div class="info-box blue" style="margin-bottom:1rem;">
+        <div class="info-title">ℹ️ Tentang estimasi ini</div>
+        <div class="info-text">
+            Estimasi pengaruh di bawah ini dihitung dari <b>selisih profil siswa terhadap rata-rata sekolah</b>,
+            dikalikan dengan <b>bobot sebab-akibat (ATE)</b> dan <b>bobot kepentingan (SHAP)</b>
+            yang telah dihitung dari data seluruh siswa. Ini adalah <b>estimasi berbasis bobot</b>,
+            bukan prediksi langsung dari model.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     df_kontribusi = pd.DataFrame([
         {"Aspek": k, "Kontribusi": v, "Nilai_Siswa": profil_siswa[k],
          "Baseline": BASELINE_ASPEK[k], "Selisih": profil_siswa[k] - BASELINE_ASPEK[k]}
@@ -1619,6 +1659,7 @@ elif st.session_state.current_page == "analisis":
                     "Dicatat Oleh": st.session_state.user_nama,
                 }
                 st.session_state.database_siswa.append(data_baru)
+                save_database(st.session_state.database_siswa)
                 st.session_state.last_saved = {
                     "nama": nama_siswa,
                     "kelas": kelas_siswa,
@@ -1742,6 +1783,7 @@ elif st.session_state.current_page == "database":
                     idx_hapus = opsi_label.index(siswa_dipilih)
                     nama_hapus = st.session_state.database_siswa[idx_hapus]["Nama"]
                     st.session_state.database_siswa.pop(idx_hapus)
+                    save_database(st.session_state.database_siswa)
                     st.success(f"✅ Data siswa **{nama_hapus}** berhasil dihapus.")
                     st.rerun()
 
@@ -1784,6 +1826,7 @@ elif st.session_state.current_page == "database":
                 ):
                     jumlah = len(st.session_state.database_siswa)
                     st.session_state.database_siswa = []
+                    save_database(st.session_state.database_siswa)
                     st.success(f"✅ {jumlah} data siswa berhasil dihapus semua.")
                     st.rerun()
 
