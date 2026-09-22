@@ -650,49 +650,56 @@ if "last_saved" not in st.session_state:
 # ================================================================
 # DATA
 # ================================================================
+# ⚠️ BLOK YANG DIPERBARUI #1 — BASELINE_ASPEK
 
 BASELINE_ASPEK = {
     "Self-Efficacy Akademik": 4.63,
-    "Keterlibatan Orang Tua": 4.35,
-    "Harapan Orang Tua": 3.45,
+    "Keterlibatan Orang Tua": 3.51,
+    "Harapan Orang Tua": 3.34,
     "Dukungan Sekolah": 4.60,
-    "Motivasi Belajar": 2.52,
+    "Motivasi Belajar": 3.34,
     "Kecemasan Akademik": 2.89,
     "Kemalasan Belajar": 1.49,
     "Fasilitas Sekolah": 4.88,
 }
 
+# ⚠️ BLOK YANG DIPERBARUI #2 — PENGARUH_DATA (ATE)
+
 PENGARUH_DATA = {
-    "Self-Efficacy Akademik": 2.0698,
-    "Keterlibatan Orang Tua": 2.2100,
-    "Harapan Orang Tua": -1.5323,
-    "Dukungan Sekolah": -3.8797,
-    "Motivasi Belajar": -0.2850,
-    "Kecemasan Akademik": 0.4522,
-    "Kemalasan Belajar": -0.0902,
-    "Fasilitas Sekolah": 2.4295,
+    "Self-Efficacy Akademik": 2.1995,
+    "Keterlibatan Orang Tua": 1.7559,
+    "Harapan Orang Tua": -0.6987,
+    "Dukungan Sekolah": -1.0351,
+    "Motivasi Belajar": -1.9093,
+    "Kecemasan Akademik": 0.7197,
+    "Kemalasan Belajar": 0.7320,
+    "Fasilitas Sekolah": 0.6182,
 }
+
+# ⚠️ BLOK YANG DIPERBARUI #3 — KEPENTINGAN_DATA (SHAP)
 
 KEPENTINGAN_DATA = {
-    "Self-Efficacy Akademik": 0.8008,
-    "Keterlibatan Orang Tua": 0.6806,
-    "Harapan Orang Tua": 0.5823,
-    "Dukungan Sekolah": 0.4352,
-    "Motivasi Belajar": 0.3667,
-    "Kecemasan Akademik": 0.1308,
+    "Self-Efficacy Akademik": 0.8197,
+    "Keterlibatan Orang Tua": 0.6717,
+    "Harapan Orang Tua": 0.5766,
+    "Dukungan Sekolah": 0.4325,
+    "Motivasi Belajar": 0.3601,
+    "Kecemasan Akademik": 0.1553,
     "Fasilitas Sekolah": 0.0654,
-    "Kemalasan Belajar": 0.0793,
+    "Kemalasan Belajar": 0.0846,
 }
 
+# ⚠️ BLOK YANG DIPERBARUI #4 — BOBOT_PENGARUH
+
 BOBOT_PENGARUH = {
-    "Self-Efficacy Akademik": 2.0698 * 0.8008,
-    "Keterlibatan Orang Tua": 2.2100 * 0.6806,
-    "Harapan Orang Tua": -1.5323 * 0.5823,
-    "Dukungan Sekolah": -3.8797 * 0.4352,
-    "Motivasi Belajar": -0.2850 * 0.3667,
-    "Kecemasan Akademik": 0.4522 * 0.1308,
-    "Fasilitas Sekolah": 2.4295 * 0.0654,
-    "Kemalasan Belajar": -0.0902 * 0.0793,
+    "Self-Efficacy Akademik": 2.1995 * 0.8197,
+    "Keterlibatan Orang Tua": 1.7559 * 0.6717,
+    "Harapan Orang Tua": -0.6987 * 0.5766,
+    "Dukungan Sekolah": -1.0351 * 0.4325,
+    "Motivasi Belajar": -1.9093 * 0.3601,
+    "Kecemasan Akademik": 0.7197 * 0.1553,
+    "Fasilitas Sekolah": 0.6182 * 0.0654,
+    "Kemalasan Belajar": 0.7320 * 0.0846,
 }
 
 RATA_RATA_NILAI = 83.78
@@ -1923,10 +1930,10 @@ elif st.session_state.current_page == "kausal":
         sebab-akibat, bukan sekadar korelasi.
 
         **Cara membaca angka:**
-        - **Angka positif (+)**: faktor tersebut **menaikkan** nilai siswa. Contoh: `+2.43`
-          artinya rata-rata menaikkan nilai sebesar **2,43 poin**.
+        - **Angka positif (+)**: faktor tersebut **menaikkan** nilai siswa. Contoh: `+2.20`
+          artinya rata-rata menaikkan nilai sebesar **2,20 poin**.
         - **Angka negatif (−)**: faktor tersebut justru **menurunkan** nilai siswa.
-          Contoh: `−3.88` artinya rata-rata **menurunkan** nilai sebesar **3,88 poin**.
+          Contoh: `−1.91` artinya rata-rata **menurunkan** nilai sebesar **1,91 poin**.
         - **Mendekati 0**: faktor tersebut hampir tidak berpengaruh.
 
         **Untuk guru:** cukup lihat label **"Artinya untuk Nilai Siswa"** di tabel —
@@ -2037,12 +2044,12 @@ elif st.session_state.current_page == "rekomendasi":
             </div>
         """, unsafe_allow_html=True)
         positive_priority = [
-            ("Fasilitas Sekolah", PENGARUH_DATA["Fasilitas Sekolah"], KEPENTINGAN_DATA["Fasilitas Sekolah"],
-             "Evaluasi dan optimalkan fasilitas belajar yang paling relevan dengan kebutuhan siswa."),
+            ("Self-Efficacy Akademik", PENGARUH_DATA["Self-Efficacy Akademik"], KEPENTINGAN_DATA["Self-Efficacy Akademik"],
+             "Dorong kepercayaan diri akademik melalui mentoring, apresiasi proses, dan pengalaman belajar bertahap."),
             ("Keterlibatan Orang Tua", PENGARUH_DATA["Keterlibatan Orang Tua"], KEPENTINGAN_DATA["Keterlibatan Orang Tua"],
              "Perkuat komunikasi dan pendampingan belajar antara sekolah dan keluarga."),
-            ("Self-Efficacy Akademik", PENGARUH_DATA["Self-Efficacy Akademik"], KEPENTINGAN_DATA["Self-Efficacy Akademik"],
-             "Dorong kepercayaan diri akademik melalui mentoring dan pengalaman belajar bertahap."),
+            ("Kemalasan Belajar", PENGARUH_DATA["Kemalasan Belajar"], KEPENTINGAN_DATA["Kemalasan Belajar"],
+             "Meskipun efeknya positif, tetap pantau agar siswa tidak terjebak pola belajar pasif."),
         ]
         for i, (name, ate, shap, desc) in enumerate(positive_priority, 1):
             label, _ = terjemah_ate(ate)
@@ -2067,12 +2074,12 @@ elif st.session_state.current_page == "rekomendasi":
             </div>
         """, unsafe_allow_html=True)
         negative_priority = [
+            ("Motivasi Belajar", PENGARUH_DATA["Motivasi Belajar"], KEPENTINGAN_DATA["Motivasi Belajar"],
+             "Identifikasi hambatan belajar, kaitkan materi dengan kehidupan nyata, dan berikan pilihan tugas."),
             ("Dukungan Sekolah", PENGARUH_DATA["Dukungan Sekolah"], KEPENTINGAN_DATA["Dukungan Sekolah"],
              "Evaluasi bentuk pendampingan agar dukungan tetap membantu tanpa mengurangi kemandirian siswa."),
             ("Harapan Orang Tua", PENGARUH_DATA["Harapan Orang Tua"], KEPENTINGAN_DATA["Harapan Orang Tua"],
              "Dorong target akademik yang realistis dan komunikasi yang tidak menambah tekanan belajar."),
-            ("Motivasi Belajar", PENGARUH_DATA["Motivasi Belajar"], KEPENTINGAN_DATA["Motivasi Belajar"],
-             "Identifikasi hambatan belajar dan gunakan pendekatan pembelajaran yang lebih relevan."),
         ]
         for i, (name, ate, shap, desc) in enumerate(negative_priority, 1):
             label, _ = terjemah_ate(ate)
@@ -2386,125 +2393,4 @@ else:
                     for j, t in enumerate(tugas["guru"], 1):
                         st.markdown(f"""
                         <div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">
-                            <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#EAF1FF,#F1EDFF);color:#2563EB;
-                                        display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;">
-                                {j}
-                            </div>
-                            <div style="font-size:.82rem;line-height:1.55;color:#1F2A44;">{t}</div>
-                        </div>
-                        """, unsafe_allow_html=True)
-
-                with col2:
-                    st.markdown("**🎓 Yang bisa dilakukan SISWA:**")
-                    for j, s in enumerate(tugas["siswa"], 1):
-                        st.markdown(f"""
-                        <div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">
-                            <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#E8F8F1,#C9F2E0);color:#10B981;
-                                        display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;">
-                                {j}
-                            </div>
-                            <div style="font-size:.82rem;line-height:1.55;color:#1F2A44;">{s}</div>
-                        </div>
-                        """, unsafe_allow_html=True)
-
-    section_header("05", "Script Komunikasi", "CARA MENYAMPAIKAN KE SISWA / ORANG TUA")
-
-    st.markdown(f"""
-    <div class="card" style="border-left:5px solid #7C5CFC;">
-        <div class="card-label">💬 UNTUK BERBICARA DENGAN SISWA</div>
-        <div style="font-size:.88rem;line-height:1.8;color:#1F2A44;margin-top:.8rem;font-style:italic;">
-            "<b>{nama_siswa}</b>, Ibu/Bapak sudah melihat hasil belajarmu.
-            Ada hal positif yang Ibu/Bapak perhatikan:
-            <b style="color:#10B981;">{faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else 'kamu sudah berusaha'}</b>.
-            <br><br>
-            Ibu/Bapak ingin bantu kamu untuk hal yang mungkin masih bisa ditingkatkan,
-            khususnya <b style="color:#EF5B67;">{prioritas.iloc[0]['Aspek'] if len(prioritas) > 0 else 'belajar'}</b>.
-            Bukan karena kamu kurang, tapi karena Ibu/Bapak yakin kamu bisa lebih baik lagi.
-            <br><br>
-            Bagaimana kalau kita coba beberapa hal bersama?"
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown(f"""
-    <div class="card" style="border-left:5px solid #F6C945;margin-top:1rem;">
-        <div class="card-label">📞 UNTUK KOMUNIKASI DENGAN ORANG TUA</div>
-        <div style="font-size:.88rem;line-height:1.8;color:#1F2A44;margin-top:.8rem;font-style:italic;">
-            "Selamat siang Bapak/Ibu. Saya ingin berbagi tentang perkembangan
-            <b>{nama_siswa}</b> di sekolah.
-            <br><br>
-            <b>Kabar baiknya:</b> {nama_siswa} menunjukkan kekuatan di
-            <b style="color:#10B981;">{faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else 'semangat belajar'}</b>.
-            <br><br>
-            <b>Yang ingin saya diskusikan:</b> ada beberapa hal yang mungkin bisa kita bantu bersama,
-            terutama di <b style="color:#EF5B67;">{prioritas.iloc[0]['Aspek'] if len(prioritas) > 0 else 'kebiasaan belajar'}</b>.
-            <br><br>
-            Kira-kira kapan waktu yang tepat untuk kita bicara lebih lanjut?"
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    section_header("06", "Indikator Keberhasilan", "KAPAN GURU TAHU PERBAIKAN BERHASIL?")
-
-    st.markdown("""
-    <div class="card">
-        <div style="font-size:.82rem;line-height:1.7;color:#475467;">
-        Evaluasi tindak lanjut dalam <b>2 minggu</b> ke depan dengan indikator berikut:
-        </div>
-    """, unsafe_allow_html=True)
-
-    indikator = [
-        ("2 Minggu", "Siswa menunjukkan perubahan kecil di kelas (lebih aktif bertanya, lebih fokus)", "🟢"),
-        ("1 Bulan", "Nilai formatif (kuis, PR, tugas) mulai menunjukkan tren naik", "🟡"),
-        ("3 Bulan", "Nilai sumatif (ujian tengah/akhir semester) menunjukkan peningkatan stabil", "🟢"),
-        ("6 Bulan", "Perubahan perilaku belajar sudah menjadi kebiasaan siswa", "⭐"),
-    ]
-
-    for waktu, indikator_txt, simbol_ind in indikator:
-        st.markdown(f"""
-        <div style="display:flex;gap:1rem;padding:1rem;border-bottom:1px solid #EEF2F7;align-items:center;">
-            <div style="font-size:1.5rem;">{simbol_ind}</div>
-            <div style="flex:1;">
-                <div style="font-weight:800;font-size:.8rem;color:#2563EB;letter-spacing:1px;">{waktu.upper()}</div>
-                <div style="font-size:.85rem;color:#1F2A44;margin-top:.2rem;">{indikator_txt}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    section_header("07", "Download Catatan", "SIMPAN UNTUK ARSIP GURU")
-
-    catatan_text = f"""CATATAN KONSULTASI GURU
-=======================
-Nama Siswa  : {nama_siswa}
-Kelas       : {kelas_siswa}
-Absen       : {absen_siswa}
-Nilai       : {nilai_akademik:.2f}
-Kategori    : {kategori}
-
-KESIMPULAN
-----------
-Nilai siswa berada {abs(selisih_nilai):.2f} poin {"di atas" if selisih_nilai >= 0 else "di bawah"} rata-rata sekolah.
-
-Faktor yang paling menekan: {prioritas.iloc[0]['Aspek'] if len(prioritas) > 0 else "-"}
-Faktor kekuatan: {faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else "-"}
-
-PRIORITAS PERBAIKAN
--------------------
-"""
-    for i, (_, row) in enumerate(prioritas.iterrows(), 1):
-        catatan_text += f"{i}. {row['Aspek']} (selisih {row['Selisih']:+.2f})\n"
-
-    catatan_text += f"""
-Dibuat oleh: {st.session_state.user_nama}
-Tanggal    : {datetime.now().strftime('%d %B %Y, %H:%M')}
-"""
-
-    st.download_button(
-        "📥 Download Catatan (.txt)",
-        data=catatan_text.encode("utf-8"),
-        file_name=f"catatan_{nama_siswa.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.txt",
-        mime="text/plain",
-        use_container_width=True,
-    )
+                            <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#
