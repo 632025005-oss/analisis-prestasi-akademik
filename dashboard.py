@@ -2391,6 +2391,127 @@ else:
                 with col1:
                     st.markdown("**👨‍🏫 Yang bisa dilakukan GURU:**")
                     for j, t in enumerate(tugas["guru"], 1):
+                                               st.markdown(f"""
+                        <div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">
+                            <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#EAF1FF,#F1EDFF);color:#2563EB;
+                                        display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;">
+                                {j}
+                            </div>
+                            <div style="font-size:.82rem;line-height:1.55;color:#1F2A44;">{t}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                with col2:
+                    st.markdown("**🎓 Yang bisa dilakukan SISWA:**")
+                    for j, s in enumerate(tugas["siswa"], 1):
                         st.markdown(f"""
                         <div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">
-                            <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#
+                            <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#E8F8F1,#C9F2E0);color:#10B981;
+                                        display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;">
+                                {j}
+                            </div>
+                            <div style="font-size:.82rem;line-height:1.55;color:#1F2A44;">{s}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+    section_header("05", "Script Komunikasi", "CARA MENYAMPAIKAN KE SISWA / ORANG TUA")
+
+    st.markdown(f"""
+    <div class="card" style="border-left:5px solid #7C5CFC;">
+        <div class="card-label">💬 UNTUK BERBICARA DENGAN SISWA</div>
+        <div style="font-size:.88rem;line-height:1.8;color:#1F2A44;margin-top:.8rem;font-style:italic;">
+            "<b>{nama_siswa}</b>, Ibu/Bapak sudah melihat hasil belajarmu.
+            Ada hal positif yang Ibu/Bapak perhatikan:
+            <b style="color:#10B981;">{faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else 'kamu sudah berusaha'}</b>.
+            <br><br>
+            Ibu/Bapak ingin bantu kamu untuk hal yang mungkin masih bisa ditingkatkan,
+            khususnya <b style="color:#EF5B67;">{prioritas.iloc[0]['Aspek'] if len(prioritas) > 0 else 'belajar'}</b>.
+            Bukan karena kamu kurang, tapi karena Ibu/Bapak yakin kamu bisa lebih baik lagi.
+            <br><br>
+            Bagaimana kalau kita coba beberapa hal bersama?"
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown(f"""
+    <div class="card" style="border-left:5px solid #F6C945;margin-top:1rem;">
+        <div class="card-label">📞 UNTUK KOMUNIKASI DENGAN ORANG TUA</div>
+        <div style="font-size:.88rem;line-height:1.8;color:#1F2A44;margin-top:.8rem;font-style:italic;">
+            "Selamat siang Bapak/Ibu. Saya ingin berbagi tentang perkembangan
+            <b>{nama_siswa}</b> di sekolah.
+            <br><br>
+            <b>Kabar baiknya:</b> {nama_siswa} menunjukkan kekuatan di
+            <b style="color:#10B981;">{faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else 'semangat belajar'}</b>.
+            <br><br>
+            <b>Yang ingin saya diskusikan:</b> ada beberapa hal yang mungkin bisa kita bantu bersama,
+            terutama di <b style="color:#EF5B67;">{prioritas.iloc[0]['Aspek'] if len(prioritas) > 0 else 'kebiasaan belajar'}</b>.
+            <br><br>
+            Kira-kira kapan waktu yang tepat untuk kita bicara lebih lanjut?"
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    section_header("06", "Indikator Keberhasilan", "KAPAN GURU TAHU PERBAIKAN BERHASIL?")
+
+    st.markdown("""
+    <div class="card">
+        <div style="font-size:.82rem;line-height:1.7;color:#475467;">
+        Evaluasi tindak lanjut dalam <b>2 minggu</b> ke depan dengan indikator berikut:
+        </div>
+    """, unsafe_allow_html=True)
+
+    indikator = [
+        ("2 Minggu", "Siswa menunjukkan perubahan kecil di kelas (lebih aktif bertanya, lebih fokus)", "🟢"),
+        ("1 Bulan", "Nilai formatif (kuis, PR, tugas) mulai menunjukkan tren naik", "🟡"),
+        ("3 Bulan", "Nilai sumatif (ujian tengah/akhir semester) menunjukkan peningkatan stabil", "🟢"),
+        ("6 Bulan", "Perubahan perilaku belajar sudah menjadi kebiasaan siswa", "⭐"),
+    ]
+
+    for waktu, indikator_txt, simbol_ind in indikator:
+        st.markdown(f"""
+        <div style="display:flex;gap:1rem;padding:1rem;border-bottom:1px solid #EEF2F7;align-items:center;">
+            <div style="font-size:1.5rem;">{simbol_ind}</div>
+            <div style="flex:1;">
+                <div style="font-weight:800;font-size:.8rem;color:#2563EB;letter-spacing:1px;">{waktu.upper()}</div>
+                <div style="font-size:.85rem;color:#1F2A44;margin-top:.2rem;">{indikator_txt}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    section_header("07", "Download Catatan", "SIMPAN UNTUK ARSIP GURU")
+
+    catatan_text = f"""CATATAN KONSULTASI GURU
+=======================
+Nama Siswa  : {nama_siswa}
+Kelas       : {kelas_siswa}
+Absen       : {absen_siswa}
+Nilai       : {nilai_akademik:.2f}
+Kategori    : {kategori}
+
+KESIMPULAN
+----------
+Nilai siswa berada {abs(selisih_nilai):.2f} poin {"di atas" if selisih_nilai >= 0 else "di bawah"} rata-rata sekolah.
+
+Faktor yang paling menekan: {prioritas.iloc[0]['Aspek'] if len(prioritas) > 0 else "-"}
+Faktor kekuatan: {faktor_positif.iloc[0]['Aspek'] if len(faktor_positif) > 0 else "-"}
+
+PRIORITAS PERBAIKAN
+-------------------
+"""
+    for i, (_, row) in enumerate(prioritas.iterrows(), 1):
+        catatan_text += f"{i}. {row['Aspek']} (selisih {row['Selisih']:+.2f})\n"
+
+    catatan_text += f"""
+Dibuat oleh: {st.session_state.user_nama}
+Tanggal    : {datetime.now().strftime('%d %B %Y, %H:%M')}
+"""
+
+    st.download_button(
+        "📥 Download Catatan (.txt)",
+        data=catatan_text.encode("utf-8"),
+        file_name=f"catatan_{nama_siswa.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.txt",
+        mime="text/plain",
+        use_container_width=True,
+    )
