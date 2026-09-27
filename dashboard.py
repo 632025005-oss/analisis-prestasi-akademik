@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# ================================================================
-# SMART ACADEMIC ANALYTICS (SAA)
-# Sub-brand: SIA.Prestasi - Magister Sains Data UKSW
-# Hilirisasi penelitian Hybrid Causal-Explainable Machine Learning
-# ================================================================
-
 import streamlit as st
 import pandas as pd
 import numpy as np
