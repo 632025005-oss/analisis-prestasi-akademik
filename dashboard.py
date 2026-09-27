@@ -926,3 +926,664 @@ if st.session_state.current_page == "home":
                          type="primary", disabled=disabled):
                 goto_page(page)
                              
+# ================================================================
+# MODUL 01 - PROFIL SISWA
+# ================================================================
+elif st.session_state.current_page == "analisis":
+    top_bar("Profil Siswa", "Modul 01 - Input dan profil personal siswa")
+
+    hero_header(
+        "MODUL 01 - PROFIL SISWA",
+        "Kenali siswa.<br><span class='accent'>Pahami konteksnya.</span>",
+        "Input data siswa, lihat profil personal berdasarkan 8 faktor, "
+        "dan bandingkan dengan rata-rata sekolah.",
+        [("8 FAKTOR", "blue"), ("PROFIL PERSONAL", "mint"), ("PER SISWA", "yellow")],
+    )
+
+    if st.session_state.last_saved:
+        nama_ss = st.session_state.last_saved["nama"]
+        kelas_ss = st.session_state.last_saved["kelas"]
+        st.markdown(
+            f'<div class="notif-success">'
+            f'<div class="notif-success-title">Data Berhasil Disimpan</div>'
+            f'<div class="notif-success-body">Data siswa <b>{nama_ss}</b> kelas <b>{kelas_ss}</b> telah tersimpan.</div>'
+            f'</div>', unsafe_allow_html=True,
+        )
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            if st.button("Lihat Prediksi", use_container_width=True, key="go_pred"):
+                goto_page("prediksi")
+        with c2:
+            if st.button("Lihat Rekomendasi", use_container_width=True, key="go_rek"):
+                goto_page("rekomendasi")
+        with c3:
+            if st.button("Input Siswa Lain", use_container_width=True, key="reset_form"):
+                st.session_state.last_saved = None
+                st.rerun()
+        st.stop()
+
+    section_header("01", "Input Data Siswa", "IDENTITAS DAN PROFIL 8 FAKTOR")
+
+    nama, kelas, absen, nilai, profil = form_profil_siswa("m1")
+    selisih, kontribusi = analisis_kausal(nilai, profil)
+    kategori, warna_kategori = kategori_nilai(nilai)
+
+    section_header("02", "Ringkasan Profil", "KONDISI SAAT INI")
+
+    if nama:
+        initials = "".join(x[0] for x in nama.split()[:2]).upper()
+        st.markdown(
+            f'<div class="profile-card">'
+            f'<div style="display:flex;align-items:center;gap:.85rem;">'
+            f'<div class="profile-avatar">{initials}</div>'
+            f'<div><div class="profile-name">{nama}</div>'
+            f'<div class="profile-meta">{kelas} - No. Absen {absen:02d}</div>'
+            f'</div></div>'
+            f'<span class="pill blue">SUBJEK ANALISIS</span></div>',
+            unsafe_allow_html=True,
+        )
+
+    a, b, c, d = st.columns(4)
+    with a:
+        stat_card("Nilai Akademik", f"{nilai:.2f}", "nilai rata-rata rapor", "blue")
+    with b:
+        stat_card("Selisih Rata-rata", f"{selisih:+.2f}", "poin dari rata-rata sekolah",
+                  "mint" if selisih >= 0 else "coral")
+    with c:
+        accent = "mint" if kategori == "Sangat Baik" else "blue" if kategori == "Baik" else "yellow" if kategori == "Cukup" else "coral"
+        st.markdown(
+            f'<div class="card stat-card"><div class="topline {accent}"></div>'
+            f'<div class="card-label">KATEGORI</div>'
+            f'<div class="card-value" style="font-size:1.55rem;color:{warna_kategori};">{kategori}</div>'
+            f'<div class="card-note">berdasarkan rentang nilai</div></div>',
+            unsafe_allow_html=True,
+        )
+    with d:
+        potensi = potensi_maksimal(profil)
+        st.markdown(
+            f'<div class="card stat-card"><div class="topline purple"></div>'
+            f'<div class="card-label">POTENSI MAKSIMAL</div>'
+            f'<div class="card-value" style="color:#7C5CFC;font-size:1.55rem;">{potensi:.2f}</div>'
+            f'<div class="card-note">jika semua faktor dioptimalkan</div></div>',
+            unsafe_allow_html=True,
+        )
+
+    section_header("03", "Profil vs Rata-rata Sekolah", "DETAIL PER FAKTOR")
+
+    df = pd.DataFrame([
+        {"Aspek": k, "Kontribusi": v, "Nilai_Siswa": profil[k],
+         "Baseline": BASELINE_ASPEK[k],
+         "Selisih": profil[k] - BASELINE_ASPEK[k]}
+        for k, v in kontribusi.items()
+    ]).sort_values("Kontribusi", key=abs, ascending=False)
+
+    tabel = df.copy()
+    tabel["Status"] = tabel["Selisih"].apply(
+        lambda x: "Di atas" if x > 0 else "Di bawah" if x < 0 else "Sama"
+    )
+    tabel = tabel[["Aspek", "Nilai_Siswa", "Baseline", "Selisih", "Kontribusi", "Status"]]
+    tabel.columns = ["Faktor", "Nilai Siswa", "Rata-rata", "Selisih", "Pengaruh (poin)", "Status"]
+
+    st.dataframe(
+        tabel, use_container_width=True, hide_index=True,
+        column_config={
+            "Nilai Siswa": st.column_config.NumberColumn(format="%.2f"),
+            "Rata-rata": st.column_config.NumberColumn(format="%.2f"),
+            "Selisih": st.column_config.NumberColumn(format="%+.2f"),
+            "Pengaruh (poin)": st.column_config.NumberColumn(format="%+.2f"),
+        },
+    )
+
+    section_header("04", "Simpan Data", "ARSIPKAN HASIL ANALISIS")
+
+    if not nama:
+        st.warning("Isi nama siswa terlebih dahulu.")
+    else:
+        dup = False
+        dup_absen = None
+        for s in st.session_state.database_siswa:
+            ns = s["Nama"].strip().lower() == nama.strip().lower()
+            ks = s["Kelas"] == kelas
+            abs_ = int(s["Absen"]) == int(absen)
+            if ns and ks and abs_:
+                dup = True
+                break
+            elif ks and abs_ and not ns:
+                dup_absen = s["Nama"]
+
+        if dup:
+            st.error(f"Siswa {nama} kelas {kelas} absen {absen:02d} sudah tersimpan.")
+        elif dup_absen:
+            st.error(f"Di kelas {kelas}, absen {absen:02d} sudah dipakai oleh {dup_absen}.")
+        else:
+            if st.button("Simpan Hasil Siswa", type="primary", use_container_width=True):
+                data = {
+                    "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    "Nama": nama, "Kelas": kelas, "Absen": absen,
+                    "Nilai Akademik": round(nilai, 2),
+                    "Selisih": round(selisih, 2), "Kategori": kategori,
+                    "Self-Efficacy": profil["Self-Efficacy Akademik"],
+                    "Keterlibatan Ortu": profil["Keterlibatan Orang Tua"],
+                    "Harapan Ortu": profil["Harapan Orang Tua"],
+                    "Dukungan Sekolah": profil["Dukungan Sekolah"],
+                    "Motivasi": profil["Motivasi Belajar"],
+                    "Kecemasan": profil["Kecemasan Akademik"],
+                    "Fasilitas": profil["Fasilitas Sekolah"],
+                    "Kemalasan": profil["Kemalasan Belajar"],
+                    "Dicatat Oleh": st.session_state.user_nama,
+                }
+                st.session_state.database_siswa.append(data)
+                save_database(st.session_state.database_siswa)
+                add_log("Input siswa", f"{nama} ({kelas})")
+                st.session_state.last_saved = {"nama": nama, "kelas": kelas, "absen": absen}
+                st.rerun()
+
+# ================================================================
+# MODUL 02 - PREDIKSI PRESTASI
+# ================================================================
+elif st.session_state.current_page == "prediksi":
+    top_bar("Prediksi Prestasi", "Modul 02 - Prediksi nilai dan potensi siswa")
+
+    hero_header(
+        "MODUL 02 - PREDIKSI PRESTASI",
+        "Lihat ke depan.<br><span class='accent'>Bukan hanya saat ini.</span>",
+        "Prediksi nilai akademik siswa dan perbandingan kondisi saat ini dengan potensi maksimalnya.",
+        [("PREDIKSI", "purple"), ("POTENSI", "mint"), ("PER SISWA", "blue")],
+    )
+
+    if len(st.session_state.database_siswa) == 0:
+        st.warning("Data siswa masih kosong. Input terlebih dahulu di Modul 01.")
+        st.stop()
+
+    section_header("01", "Pilih Siswa", "DARI DATA TERSIMPAN ATAU INPUT BARU")
+    opsi_sumber = st.radio("Sumber data siswa",
+                           ["Ambil dari data tersimpan", "Input manual"],
+                           horizontal=True, key="pred_sumber")
+
+    if opsi_sumber == "Ambil dari data tersimpan":
+        df_db = pd.DataFrame(st.session_state.database_siswa)
+        opsi = df_db.apply(
+            lambda x: f"{x['Nama']} - {x['Kelas']} (Absen {x['Absen']})", axis=1
+        ).tolist()
+        pilihan = st.selectbox("Pilih Siswa", opsi, key="pred_pilih")
+        idx = opsi.index(pilihan)
+        b = df_db.iloc[idx]
+        nama = b["Nama"]
+        kelas = b["Kelas"]
+        absen = int(b["Absen"])
+        nilai = float(b["Nilai Akademik"])
+        profil = {
+            "Self-Efficacy Akademik": float(b["Self-Efficacy"]),
+            "Keterlibatan Orang Tua": float(b["Keterlibatan Ortu"]),
+            "Harapan Orang Tua": float(b["Harapan Ortu"]),
+            "Dukungan Sekolah": float(b["Dukungan Sekolah"]),
+            "Motivasi Belajar": float(b["Motivasi"]),
+            "Kecemasan Akademik": float(b["Kecemasan"]),
+            "Fasilitas Sekolah": float(b["Fasilitas"]),
+            "Kemalasan Belajar": float(b["Kemalasan"]),
+        }
+    else:
+        nama, kelas, absen, nilai, profil = form_profil_siswa("m2")
+
+    pred = prediksi_nilai(profil)
+    potensi = potensi_maksimal(profil)
+    kat_pred, warna_pred = kategori_nilai(pred)
+
+    section_header("02", "Hasil Prediksi", "NILAI SAAT INI VS PREDIKSI VS POTENSI")
+
+    a, b_, c = st.columns(3)
+    with a:
+        st.markdown(
+            f'<div class="card stat-card"><div class="topline blue"></div>'
+            f'<div class="card-label">NILAI SAAT INI</div>'
+            f'<div class="card-value" style="color:#2563EB;">{nilai:.2f}</div>'
+            f'<div class="card-note">nilai rata-rata rapor</div></div>',
+            unsafe_allow_html=True,
+        )
+    with b_:
+        delta = pred - nilai
+        st.markdown(
+            f'<div class="card stat-card"><div class="topline purple"></div>'
+            f'<div class="card-label">PREDIKSI NILAI</div>'
+            f'<div class="card-value" style="color:#7C5CFC;">{pred:.2f}</div>'
+            f'<div class="card-note">{delta:+.2f} poin dari nilai saat ini</div></div>',
+            unsafe_allow_html=True,
+        )
+    with c:
+        gap = potensi - nilai
+        st.markdown(
+            f'<div class="card stat-card"><div class="topline mint"></div>'
+            f'<div class="card-label">POTENSI MAKSIMAL</div>'
+            f'<div class="card-value" style="color:#10B981;">{potensi:.2f}</div>'
+            f'<div class="card-note">{gap:+.2f} poin jika faktor dioptimalkan</div></div>',
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<div style='height:.8rem'></div>", unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="card" style="border-left:5px solid {warna_pred};">'
+        f'<div class="card-label">PENJELASAN PREDIKSI</div>'
+        f'<div style="font-family:Manrope;font-size:1.15rem;font-weight:800;margin-top:.5rem;">'
+        f'Prediksi: <span style="color:{warna_pred};">{kat_pred}</span> ({pred:.2f})'
+        f'</div>'
+        f'<div style="font-size:.85rem;line-height:1.7;color:#475467;margin-top:.6rem;">'
+        f'Berdasarkan profil 8 faktor siswa saat ini, nilai akademik diperkirakan sekitar <b>{pred:.2f}</b>.<br><br>'
+        f'Rentang perkiraan: <b>kurang lebih {STD_NILAI:.2f} poin</b>, yaitu sekitar '
+        f'<b>{max(0, pred - STD_NILAI):.2f} hingga {min(100, pred + STD_NILAI):.2f}</b>.<br><br>'
+        f'Jika semua faktor pendukung ditingkatkan, siswa berpotensi mencapai '
+        f'<b style="color:#10B981;">{potensi:.2f}</b> '
+        f'(selisih <b>+{potensi - nilai:.2f}</b> dari nilai saat ini).'
+        f'</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    section_header("03", "Posisi Nilai Siswa", "PERBANDINGAN")
+
+    fig, ax = plt.subplots(figsize=(10, 3.6))
+    fig.patch.set_alpha(0)
+    ax.set_facecolor("none")
+    posisi = [nilai, pred, potensi]
+    labels = ["Nilai Sekarang", "Prediksi", "Potensi Maksimal"]
+    colors = ["#2563EB", "#7C5CFC", "#10B981"]
+    bars = ax.barh([0, 1, 2], posisi, height=.5, color=colors, alpha=.85)
+    for i, p in enumerate(posisi):
+        ax.text(p + 0.5, i, f"{p:.2f}", va="center", fontsize=11,
+                fontweight="bold", color=colors[i])
+    ax.axvline(RATA_RATA_NILAI, color="#EF5B67", linestyle="--", alpha=.6, linewidth=1.5)
+    ax.text(RATA_RATA_NILAI, 2.6, f"Rata-rata sekolah ({RATA_RATA_NILAI:.2f})",
+            color="#EF5B67", fontsize=9, fontweight="bold", ha="center")
+    ax.set_yticks([0, 1, 2])
+    ax.set_yticklabels(labels, fontsize=10)
+    ax.set_xlim(60, 100)
+    ax.tick_params(axis="y", length=0)
+    ax.grid(axis="x", alpha=.15)
+    ax.set_axisbelow(True)
+    for s in ["top", "right", "left"]:
+        ax.spines[s].set_visible(False)
+    ax.spines["bottom"].set_color("#D8E0EB")
+    ax.set_xlabel("Nilai Akademik (skala 60-100)", fontsize=9.5, color="#5C6B85", labelpad=8)
+    plt.tight_layout()
+    st.pyplot(fig, use_container_width=True)
+    plt.close(fig)
+
+    with st.expander("Penjelasan tambahan untuk guru"):
+        st.markdown(
+            "Nilai prediksi diperoleh dari perhitungan yang mempertimbangkan kondisi 8 faktor siswa "
+            "dibandingkan dengan rata-rata sekolah. Jika faktor-faktor yang mendukung sudah baik, "
+            "prediksi akan cenderung naik. Jika ada faktor yang masih di bawah rata-rata, "
+            "prediksi bisa tertekan. Gunakan informasi ini sebagai bahan pertimbangan untuk "
+            "membantu siswa, bukan sebagai keputusan mutlak."
+        )
+
+# ================================================================
+# MODUL 03 - FAKTOR PENGARUH
+# ================================================================
+elif st.session_state.current_page == "kausal":
+    top_bar("Faktor Pengaruh", "Modul 03 - Faktor yang mempengaruhi prestasi")
+
+    hero_header(
+        "MODUL 03 - FAKTOR PENGARUH",
+        "Faktor apa yang<br><span class='accent'>paling berpengaruh?</span>",
+        "Temukan faktor-faktor yang benar-benar mempengaruhi prestasi siswa, serta faktor yang "
+        "paling menentukan dalam memprediksi nilai.",
+        [("8 FAKTOR", "blue"), ("SEBAB-AKIBAT", "mint"), ("PREDIKSI", "purple")],
+    )
+
+    section_header("01", "Dua Jenis Pengaruh", "PENGARUH VS PREDIKSI")
+    st.markdown(
+        '<div class="info-box blue" style="margin-bottom:1rem;">'
+        '<div class="info-title">Kenapa ada dua jenis pengaruh?</div>'
+        '<div class="info-text">'
+        '<b>Pengaruh sebab-akibat</b>: Jika faktor ini diperbaiki, apakah nilai siswa benar-benar naik?<br>'
+        '<b>Tingkat kepentingan prediksi</b>: Seberapa sering faktor ini dipakai untuk memperkirakan nilai siswa?'
+        '<br><br>Keduanya bisa berbeda. Faktor yang sering dipakai untuk prediksi belum tentu bisa '
+        'diperbaiki untuk menaikkan nilai.'
+        '</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    tab_pengaruh, tab_kepentingan = st.tabs(["Pengaruh Sebab-Akibat", "Tingkat Kepentingan Prediksi"])
+
+    with tab_pengaruh:
+        df_ate = pd.DataFrame([{"Faktor": k, "Pengaruh": v} for k, v in PENGARUH_DATA.items()])
+        pos_ate = df_ate[df_ate["Pengaruh"] > 0].sort_values("Pengaruh", ascending=False)
+        neg_ate = df_ate[df_ate["Pengaruh"] < 0].sort_values("Pengaruh")
+
+        a, b_, c = st.columns(3)
+        with a:
+            t = pos_ate.iloc[0]
+            stat_card("Paling menaikkan nilai", t["Faktor"],
+                      f"kontribusi +{t['Pengaruh']:.2f} poin", "mint")
+        with b_:
+            t = neg_ate.iloc[0]
+            stat_card("Paling menurunkan nilai", t["Faktor"],
+                      f"kontribusi {t['Pengaruh']:.2f} poin", "coral")
+        with c:
+            stat_card("Jumlah faktor", "8", "faktor dianalisis", "blue")
+
+        st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
+        fig = plot_pengaruh(df_ate)
+        st.pyplot(fig, use_container_width=True)
+        plt.close(fig)
+
+        tabel_ate = df_ate.copy()
+        tabel_ate["Artinya"] = tabel_ate["Pengaruh"].apply(label_pengaruh)
+        tabel_ate["Arah"] = tabel_ate["Pengaruh"].apply(
+            lambda x: "Menaikkan" if x > 0 else "Menurunkan" if x < 0 else "Netral"
+        )
+        tabel_ate = tabel_ate.sort_values("Pengaruh", ascending=False)[
+            ["Faktor", "Artinya", "Arah", "Pengaruh"]
+        ]
+        tabel_ate.columns = ["Faktor", "Artinya untuk Nilai Siswa", "Arah", "Skor Pengaruh"]
+        st.dataframe(
+            tabel_ate, use_container_width=True, hide_index=True,
+            column_config={"Skor Pengaruh": st.column_config.NumberColumn(format="%+.4f")},
+        )
+
+    with tab_kepentingan:
+        df_shap = pd.DataFrame([{"Faktor": k, "Kepentingan": v} for k, v in KEPENTINGAN_DATA.items()])
+        ranked = df_shap.sort_values("Kepentingan", ascending=False).reset_index(drop=True)
+
+        a, b_, c = st.columns(3)
+        with a:
+            stat_card("Faktor #1", ranked.iloc[0]["Faktor"], "paling menentukan prediksi", "purple")
+        with b_:
+            stat_card("Faktor #2", ranked.iloc[1]["Faktor"], "cukup menentukan prediksi", "blue")
+        with c:
+            stat_card("Jumlah faktor", "8", "faktor dianalisis", "yellow")
+
+        st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
+        fig = plot_kepentingan(df_shap)
+        st.pyplot(fig, use_container_width=True)
+        plt.close(fig)
+
+        for i, row in ranked.iterrows():
+            pct = row["Kepentingan"] / ranked["Kepentingan"].max() * 100
+            label = label_kepentingan(row["Kepentingan"])
+            st.markdown(
+                f'<div class="factor-card">'
+                f'<div class="factor-head">'
+                f'<div style="display:flex;align-items:center;gap:.7rem;">'
+                f'<div class="rank-num">{i + 1:02d}</div>'
+                f'<div><div class="factor-name">{row["Faktor"]}</div>'
+                f'<div style="font-size:.7rem;color:#5C6B85;margin-top:.2rem;">{label}</div>'
+                f'</div></div>'
+                f'<div class="factor-value" style="color:#7C5CFC;">{row["Kepentingan"]:.4f}</div>'
+                f'</div>'
+                f'<div class="factor-bar"><div class="factor-fill" style="width:{pct:.1f}%"></div></div>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
+    with st.expander("Penjelasan tambahan untuk guru"):
+        st.markdown(
+            "**Pengaruh sebab-akibat** menunjukkan apakah faktor tersebut benar-benar bisa mengubah nilai "
+            "siswa jika diperbaiki. Misalnya: siswa yang lebih percaya diri cenderung mendapat nilai lebih baik.\n\n"
+            "**Tingkat kepentingan prediksi** menunjukkan seberapa sering faktor tersebut dipakai untuk "
+            "memperkirakan nilai siswa. Faktor dengan tingkat kepentingan tinggi berarti sangat membantu "
+            "memahami kondisi siswa.\n\n"
+            "**Catatan**: Gunakan hasil pengaruh sebab-akibat untuk memutuskan apa yang perlu diperbaiki. "
+            "Gunakan tingkat kepentingan untuk memahami faktor mana yang paling sering dipertimbangkan."
+        )
+
+# ================================================================
+# MODUL 04 - REKOMENDASI
+# ================================================================
+elif st.session_state.current_page == "rekomendasi":
+    top_bar("Rekomendasi", "Modul 04 - Saran tindak lanjut untuk sekolah dan guru")
+
+    hero_header(
+        "MODUL 04 - REKOMENDASI",
+        "Dari analisis<br><span class='accent'>menjadi tindakan.</span>",
+        "Rekomendasi untuk tingkat sekolah dan catatan personal untuk guru per siswa.",
+        [("TINGKAT SEKOLAH", "yellow"), ("PERSONAL", "mint"), ("TINDAK LANJUT", "blue")],
+    )
+
+    tab_umum, tab_personal = st.tabs(["Rekomendasi Tingkat Sekolah", "Catatan untuk Guru (Personal)"])
+
+    with tab_umum:
+        section_header("01", "Prioritas Intervensi", "FAKTOR DENGAN PENGARUH TERKUAT")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown(
+                '<div class="card card-mint">'
+                '<div class="card-label">FAKTOR YANG PERLU DIPERKUAT</div>'
+                '<div style="font-family:Manrope;font-size:1.25rem;font-weight:800;margin-top:.45rem;">'
+                'Faktor pendorong prestasi</div></div>',
+                unsafe_allow_html=True,
+            )
+            pos_priority = [
+                ("Self-Efficacy Akademik", "Dorong kepercayaan diri akademik melalui mentoring dan apresiasi proses."),
+                ("Keterlibatan Orang Tua", "Perkuat komunikasi dan pendampingan belajar antara sekolah dan keluarga."),
+                ("Kemalasan Belajar", "Pantau agar siswa tidak terjebak pola belajar pasif."),
+            ]
+            for i, (name, desc) in enumerate(pos_priority, 1):
+                label = label_pengaruh(PENGARUH_DATA[name])
+                st.markdown(
+                    f'<div style="padding:1rem 0;border-bottom:1px solid #CBEBDD;">'
+                    f'<div style="display:flex;justify-content:space-between;gap:.7rem;">'
+                    f'<div style="font-weight:800;font-size:.88rem;">{i:02d} - {name}</div>'
+                    f'<div style="font-weight:800;color:#10B981;font-size:.78rem;">{label}</div>'
+                    f'</div>'
+                    f'<div style="font-size:.76rem;line-height:1.55;margin-top:.45rem;color:#475467;">{desc}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
+
+        with c2:
+            st.markdown(
+                '<div class="card card-yellow">'
+                '<div class="card-label">FAKTOR YANG PERLU DIEVALUASI</div>'
+                '<div style="font-family:Manrope;font-size:1.25rem;font-weight:800;margin-top:.45rem;">'
+                'Faktor penghambat prestasi</div></div>',
+                unsafe_allow_html=True,
+            )
+            neg_priority = [
+                ("Motivasi Belajar", "Identifikasi hambatan belajar dan kaitkan materi dengan kehidupan nyata."),
+                ("Dukungan Sekolah", "Evaluasi bentuk pendampingan agar tidak mengurangi kemandirian siswa."),
+                ("Harapan Orang Tua", "Dorong target akademik realistis dan komunikasi tanpa tekanan berlebih."),
+            ]
+            for i, (name, desc) in enumerate(neg_priority, 1):
+                label = label_pengaruh(PENGARUH_DATA[name])
+                st.markdown(
+                    f'<div style="padding:1rem 0;border-bottom:1px solid #F1DF96;">'
+                    f'<div style="display:flex;justify-content:space-between;gap:.7rem;">'
+                    f'<div style="font-weight:800;font-size:.88rem;">{i:02d} - {name}</div>'
+                    f'<div style="font-weight:800;color:#EF5B67;font-size:.78rem;">{label}</div>'
+                    f'</div>'
+                    f'<div style="font-size:.76rem;line-height:1.55;margin-top:.45rem;color:#475467;">{desc}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
+
+        st.markdown(
+            '<div class="card card-dark" style="margin-top:1rem;">'
+            '<div class="card-label">CATATAN</div>'
+            '<div style="font-family:Manrope;font-size:1.35rem;line-height:1.25;font-weight:800;margin-top:.7rem;">'
+            'Gunakan hasil sebab-akibat untuk memahami apa yang perlu diubah, '
+            'dan hasil kepentingan prediksi untuk memahami faktor mana yang paling menentukan.'
+            '</div></div>',
+            unsafe_allow_html=True,
+        )
+
+    with tab_personal:
+        if len(st.session_state.database_siswa) == 0:
+            st.warning("Data siswa masih kosong. Input terlebih dahulu di Modul 01.")
+        else:
+            df_db = pd.DataFrame(st.session_state.database_siswa)
+            opsi = df_db.apply(
+                lambda x: f"{x['Nama']} - {x['Kelas']} (Absen {x['Absen']})", axis=1
+            ).tolist()
+            pilihan = st.selectbox("Pilih Siswa", opsi, key="rek_pilih")
+            idx = opsi.index(pilihan)
+            b = df_db.iloc[idx]
+
+            nama = b["Nama"]; kelas = b["Kelas"]
+            absen = int(b["Absen"]); nilai = float(b["Nilai Akademik"])
+            profil = {
+                "Self-Efficacy Akademik": float(b["Self-Efficacy"]),
+                "Keterlibatan Orang Tua": float(b["Keterlibatan Ortu"]),
+                "Harapan Orang Tua": float(b["Harapan Ortu"]),
+                "Dukungan Sekolah": float(b["Dukungan Sekolah"]),
+                "Motivasi Belajar": float(b["Motivasi"]),
+                "Kecemasan Akademik": float(b["Kecemasan"]),
+                "Fasilitas Sekolah": float(b["Fasilitas"]),
+                "Kemalasan Belajar": float(b["Kemalasan"]),
+            }
+            selisih, kontribusi = analisis_kausal(nilai, profil)
+            kategori, warna_kategori = kategori_nilai(nilai)
+
+            df_k = pd.DataFrame([
+                {"Aspek": k, "Kontribusi": v, "Nilai_Siswa": profil[k],
+                 "Baseline": BASELINE_ASPEK[k],
+                 "Selisih": profil[k] - BASELINE_ASPEK[k]}
+                for k, v in kontribusi.items()
+            ]).sort_values("Kontribusi")
+            neg = df_k[df_k["Kontribusi"] < -0.2].sort_values("Kontribusi")
+            pos = df_k[df_k["Kontribusi"] > 0.2].sort_values("Kontribusi", ascending=False)
+
+            posisi = "di atas" if selisih >= 0 else "di bawah"
+            fn = neg.iloc[0] if len(neg) > 0 else None
+            fp = pos.iloc[0] if len(pos) > 0 else None
+
+            narasi_neg = (
+                f"Faktor yang paling menekan nilai <b>{nama}</b> adalah "
+                f"<b style='color:#EF5B67;'>{fn['Aspek']}</b> "
+                f"(kontribusi {fn['Kontribusi']:.2f} poin)."
+            ) if fn is not None else "Tidak ada faktor yang signifikan menekan nilai."
+
+            narasi_pos = (
+                f"Kekuatan utama terletak pada <b style='color:#10B981;'>{fp['Aspek']}</b> "
+                f"(kontribusi +{fp['Kontribusi']:.2f} poin)."
+            ) if fp is not None else "Belum ada faktor kekuatan dominan."
+
+            st.markdown(
+                f'<div class="card" style="border-left:5px solid {warna_kategori};margin-top:1rem;">'
+                f'<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">'
+                f'<div class="profile-avatar" style="width:56px;height:56px;font-size:1.2rem;">'
+                f'{"".join(x[0] for x in nama.split()[:2]).upper()}</div>'
+                f'<div><div style="font-family:Manrope;font-weight:800;font-size:1.3rem;">{nama}</div>'
+                f'<div style="color:#5C6B85;font-size:.8rem;">{kelas} - Absen {absen:02d} - Nilai {nilai:.2f}</div>'
+                f'</div></div>'
+                f'<div style="font-size:.95rem;line-height:1.75;color:#1F2A44;">'
+                f'Nilai saat ini <b>{abs(selisih):.2f} poin {posisi} rata-rata sekolah</b> ({RATA_RATA_NILAI:.2f}).'
+                f'<br><br>{narasi_neg}<br><br>{narasi_pos}<br><br>'
+                f'<b>Kategori:</b> <span style="color:{warna_kategori};">{kategori}</span>'
+                f'</div></div>',
+                unsafe_allow_html=True,
+            )
+
+            section_header("02", "Prioritas Perbaikan", "FOKUSKAN PADA 3 HAL INI")
+            prioritas = neg.head(3)
+            if len(prioritas) == 0:
+                st.success("Tidak ada prioritas perbaikan mendesak.")
+            else:
+                cols = st.columns(len(prioritas))
+                for i, (_, row) in enumerate(prioritas.iterrows()):
+                    with cols[i]:
+                        gap_val = row["Selisih"]
+                        level = "Segera" if gap_val < -1 else "Perhatian" if gap_val < -0.5 else "Pantau"
+                        st.markdown(
+                            f'<div class="card" style="border-top:4px solid #EF5B67;min-height:200px;">'
+                            f'<div style="font-size:.65rem;font-weight:800;letter-spacing:1.5px;color:#EF5B67;">PRIORITAS {i + 1}</div>'
+                            f'<div style="font-family:Manrope;font-weight:800;font-size:1rem;margin:.6rem 0 .3rem;">{row["Aspek"]}</div>'
+                            f'<div style="font-size:.7rem;color:#5C6B85;margin-bottom:.5rem;">{level}</div>'
+                            f'<div style="font-size:.75rem;line-height:1.6;color:#475467;">'
+                            f'Nilai siswa: <b>{row["Nilai_Siswa"]:.2f}</b><br>'
+                            f'Rata-rata: <b>{row["Baseline"]:.2f}</b><br>'
+                            f'<span style="color:#EF5B67;font-weight:700;">Selisih: {row["Selisih"]:+.2f}</span>'
+                            f'</div></div>',
+                            unsafe_allow_html=True,
+                        )
+
+            section_header("03", "Tindak Lanjut", "CHECKLIST GURU DAN SISWA")
+            TINDAK = {
+                "Self-Efficacy Akademik": {
+                    "guru": ["Berikan tugas bertahap", "Pujian spesifik atas usaha", "Ajak refleksi mingguan", "Pasangkan dengan peer-mentor"],
+                    "siswa": ["Jurnal harian 1 hal yang berhasil", "Tetapkan target kecil mingguan"],
+                },
+                "Keterlibatan Orang Tua": {
+                    "guru": ["Kirim kabar positif ke orang tua", "Ajak orang tua ikut sesi belajar", "Panduan mendampingi belajar 15 menit/hari", "Komunikasi rutin 2 minggu sekali"],
+                    "siswa": ["Ceritakan 1 hal yang dipelajari", "Minta orang tua periksa PR"],
+                },
+                "Harapan Orang Tua": {
+                    "guru": ["Pertemuan ekspektasi realistis", "Bantu pahami tahap perkembangan anak", "Sarankan fokus pada usaha", "Contoh memotivasi tanpa menekan"],
+                    "siswa": ["Belajar menyampaikan perasaan", "Fokus pada usaha yang bisa dikontrol"],
+                },
+                "Dukungan Sekolah": {
+                    "guru": ["Refleksi bantuan berlebih", "Kurangi bantuan yang bisa dilakukan sendiri", "Berikan kesempatan mencoba", "Fokus membimbing, bukan menggantikan"],
+                    "siswa": ["Coba selesaikan tugas 10 menit sebelum bertanya", "Catat apa yang sudah dicoba"],
+                },
+                "Motivasi Belajar": {
+                    "guru": ["Kaitkan materi dengan kehidupan nyata", "Berikan pilihan tugas", "Apresiasi proses", "Ciptakan suasana kelas menyenangkan"],
+                    "siswa": ["Cari 1 hal menarik dari tiap pelajaran", "Belajar bersama teman"],
+                },
+                "Kecemasan Akademik": {
+                    "guru": ["Ajarkan teknik relaksasi", "Ubah suasana ujian lebih santai", "Ujian formatif yang tidak menakutkan", "Normalisasi cemas itu wajar"],
+                    "siswa": ["Latihan pernapasan 4-7-8", "Persiapan lebih awal"],
+                },
+                "Fasilitas Sekolah": {
+                    "guru": ["Informasikan fasilitas yang tersedia", "Bantu akses perpustakaan atau lab", "Cek hambatan akses"],
+                    "siswa": ["Manfaatkan perpustakaan", "Tanyakan ke guru jika butuh bantuan"],
+                },
+                "Kemalasan Belajar": {
+                    "guru": ["Cari akar kemalasan", "Beri tugas lebih menantang jika bosan", "Pecah tugas besar jadi langkah kecil", "Buat sistem reward sederhana"],
+                    "siswa": ["Mulai dari tugas 5 menit", "Gunakan teknik Pomodoro"],
+                },
+            }
+
+            if len(prioritas) == 0:
+                st.info("Tidak ada tindak lanjut khusus.")
+            else:
+                for i, (_, row) in enumerate(prioritas.iterrows()):
+                    aspek = row["Aspek"]
+                    tugas = TINDAK.get(aspek, {"guru": [], "siswa": []})
+                    with st.expander(f"Prioritas {i + 1}: {aspek}", expanded=(i == 0)):
+                        c1, c2 = st.columns(2)
+                        with c1:
+                            st.markdown("**Yang bisa dilakukan GURU:**")
+                            for j, t in enumerate(tugas["guru"], 1):
+                                st.markdown(
+                                    f'<div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">'
+                                    f'<div style="width:22px;height:22px;border-radius:6px;background:#EAF1FF;color:#2563EB;'
+                                    f'display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;">{j}</div>'
+                                    f'<div style="font-size:.82rem;line-height:1.55;color:#1F2A44;">{t}</div></div>',
+                                    unsafe_allow_html=True,
+                                )
+                        with c2:
+                            st.markdown("**Yang bisa dilakukan SISWA:**")
+                            for j, s in enumerate(tugas["siswa"], 1):
+                                st.markdown(
+                                    f'<div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">'
+                                    f'<div style="width:22px;height:22px;border-radius:6px;background:#E8F8F1;color:#10B981;'
+                                    f'display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;">{j}</div>'
+                                    f'<div style="font-size:.82rem;line-height:1.55;color:#1F2A44;">{s}</div></div>',
+                                    unsafe_allow_html=True,
+                                )
+
+            section_header("04", "Download Catatan", "ARSIP GURU")
+            faktor_utama = prioritas.iloc[0]["Aspek"] if len(prioritas) > 0 else "-"
+            faktor_kekuatan = pos.iloc[0]["Aspek"] if len(pos) > 0 else "-"
+            txt = (
+                "CATATAN KONSULTASI GURU - SAA\n"
+                "=================================\n"
+                f"Nama Siswa  : {nama}\nKelas       : {kelas}\nAbsen       : {absen}\n"
+                f"Nilai       : {nilai:.2f}\nKategori    : {kategori}\n\n"
+                "KESIMPULAN\n----------\n"
+                f"Nilai siswa {abs(selisih):.2f} poin {'di atas' if selisih >= 0 else 'di bawah'} rata-rata sekolah.\n\n"
+                f"Faktor paling menekan : {faktor_utama}\n"
+                f"Faktor kekuatan       : {faktor_kekuatan}\n\n"
+                "PRIORITAS PERBAIKAN\n-------------------\n"
+            )
+            for i, (_, row) in enumerate(prioritas.iterrows(), 1):
+                txt += f"{i}. {row['Aspek']} (selisih {row['Selisih']:+.2f})\n"
+            txt += f"\nDibuat oleh : {st.session_state.user_nama}\n"
+            txt += f"Tanggal     : {datetime.now().strftime('%d %B %Y, %H:%M')}\n"
+            st.download_button(
+                "Download Catatan (.txt)",
+                data=txt.encode("utf-8"),
+                file_name=f"catatan_{nama.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.txt",
+                mime="text/plain",
+                use_container_width=True,
+            )
