@@ -2,7 +2,6 @@
 # ================================================================
 # SMART ACADEMIC ANALYTICS (SAA) - SMP Negeri 6 Salatiga
 # Sub-brand: SIA.Prestasi - Magister Sains Data UKSW
-# Hilirisasi penelitian Hybrid Causal-Explainable Machine Learning
 # ================================================================
 
 import streamlit as st
@@ -20,6 +19,9 @@ import os
 DB_FILE = "database_siswa.json"
 CONFIG_FILE = "config_school.json"
 LOG_FILE = "log_aktivitas.json"
+USERS_FILE = "users.json"
+
+SUPER_ADMIN = {"admin", "regina"}  # tidak bisa dihapus
 
 def _load_json(path, default):
     if os.path.exists(path):
@@ -50,6 +52,32 @@ def save_config(c): _save_json(CONFIG_FILE, c)
 def load_log(): return _load_json(LOG_FILE, [])
 def save_log(l): _save_json(LOG_FILE, l)
 
+def hash_password(p):
+    return hashlib.sha256(p.encode()).hexdigest()
+
+def load_users():
+    """Load user database. Jika belum ada, inisialisasi dengan super admin."""
+    users = _load_json(USERS_FILE, None)
+    if users is None or not isinstance(users, dict) or len(users) == 0:
+        users = {
+            "admin": {
+                "password": hash_password("admin123"),
+                "nama": "Administrator", "role": "admin",
+                "kelas_ampu": None, "email": "admin@smpn6salatiga.sch.id",
+                "status": "approved", "created": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            },
+            "regina": {
+                "password": hash_password("regina2026"),
+                "nama": "Regina Ria Aurellia", "role": "admin",
+                "kelas_ampu": None, "email": "regina@student.uksw.edu",
+                "status": "approved", "created": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            },
+        }
+        _save_json(USERS_FILE, users)
+    return users
+
+def save_users(u): _save_json(USERS_FILE, u)
+
 st.set_page_config(
     page_title="SAA - Smart Academic Analytics",
     page_icon="🎓",
@@ -72,15 +100,13 @@ st.markdown("""
     --coral:#EF5B67; --coral-soft:#FFF0F2;
     --pink:#EC4899; --pink-soft:#FCE7F3;
     --cyan:#06B6D4; --cyan-soft:#CFFAFE;
-    --navy:#0B1730;
 }
-html, body, [class*="css"]{font-family:'DM Sans',sans-serif;color:var(--ink);}
+html, body, [class*="css"]{font-family:'DM Sans',sans-serif;color:#0F1B33;}
 .stApp{
     background:
         radial-gradient(circle at 100% 0%, rgba(37,99,235,.07), transparent 32rem),
         radial-gradient(circle at 0% 100%, rgba(124,92,252,.06), transparent 32rem),
         #FFFFFF;
-    background-attachment:fixed;
 }
 .main{background:transparent;}
 .block-container{max-width:1480px;padding:1.6rem 2.7rem 4rem 2.7rem;}
@@ -88,40 +114,35 @@ html, body, [class*="css"]{font-family:'DM Sans',sans-serif;color:var(--ink);}
 h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 
 @keyframes riseIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-@keyframes growBar{from{transform:scaleX(0);transform-origin:left;}to{transform:scaleX(1);transform-origin:left;}}
 @keyframes floatDot{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
 @keyframes sparkle{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.35);}}
-@keyframes gradientShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
 .motion{animation:riseIn .5s ease both;}
 
 .login-page-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;
     background:linear-gradient(135deg,#FFFFFF 0%,#F3F6FF 100%);border-bottom:1px solid #DCE4F2;
     margin:-1.6rem -2.7rem 0 -2.7rem;box-shadow:0 4px 20px rgba(37,99,235,.06);}
 .login-logo-area{display:flex;align-items:center;gap:.8rem;justify-content:flex-end;width:100%;}
-.login-logo-icon{font-size:2.2rem;line-height:1;}
+.login-logo-icon{font-size:2.2rem;}
 .login-logo-text{text-align:right;line-height:1.15;}
-.login-logo-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:800;
-    color:#0F1B33;letter-spacing:-.8px;}
+.login-logo-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:800;color:#0F1B33;letter-spacing:-.8px;}
 .login-logo-title .blue-part{background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 100%);
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.login-logo-sub{font-size:.72rem;color:#5C6B85;letter-spacing:.3px;margin-top:.15rem;}
+.login-logo-sub{font-size:.72rem;color:#5C6B85;margin-top:.15rem;}
 .login-content{max-width:1050px;margin:2rem auto;padding:0 2rem;}
 .login-date-logout{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1.1rem;
     background:linear-gradient(135deg,#FFFFFF 0%,#F5F8FF 100%);border:1px solid #DCE4F2;
     border-left:5px solid #2563EB;border-radius:12px;margin-bottom:2rem;}
 .login-date{font-family:'Manrope',sans-serif;font-weight:800;font-size:.95rem;color:#0F1B33;}
-.login-logout-link{font-size:.8rem;color:#2563EB;font-weight:700;padding:.35rem .8rem;}
-.siasat-label{font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;color:#0F1B33;padding-top:.65rem;}
+.siasat-label{font-weight:700;font-size:.9rem;color:#0F1B33;padding-top:.65rem;}
 .siasat-info-box{background:linear-gradient(135deg,#FFF9E6 0%,#FFF4CC 100%);
-    border:1px solid #F3DF8D;border-left:5px solid #F6C945;
-    border-radius:12px;padding:1.2rem 1.4rem;margin-top:2.5rem;}
+    border:1px solid #F3DF8D;border-left:5px solid #F6C945;border-radius:12px;padding:1.2rem 1.4rem;margin-top:2.5rem;}
 .siasat-info-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;}
 .siasat-info-title{font-family:'Manrope',sans-serif;font-weight:800;font-size:.9rem;color:#0F1B33;}
 .siasat-info-list{font-size:.8rem;color:#475467;line-height:1.85;}
 .siasat-info-list div{display:flex;gap:.5rem;}
 .siasat-info-list .num{color:#2563EB;font-weight:800;min-width:18px;}
-.siasat-footer{text-align:center;padding:2rem 0;margin-top:3rem;
-    border-top:1px solid #DCE4F2;font-size:.72rem;color:#5C6B85;line-height:1.8;}
+.siasat-footer{text-align:center;padding:2rem 0;margin-top:3rem;border-top:1px solid #DCE4F2;
+    font-size:.72rem;color:#5C6B85;line-height:1.8;}
 .siasat-footer strong{color:#2563EB;font-weight:800;}
 
 .dashboard-hero{position:relative;overflow:hidden;
@@ -138,8 +159,7 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 .menu-hero-title{font-family:'Plus Jakarta Sans',sans-serif;
     font-size:clamp(2.5rem,5vw,4.5rem);line-height:.98;letter-spacing:-3px;font-weight:800;margin:0;max-width:900px;}
 .menu-hero-title em{background:linear-gradient(135deg,#F6C945 0%,#FFA94D 50%,#F6C945 100%);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    font-style:italic;}
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic;}
 .menu-hero-sub{color:#C6D1E5;font-size:1.05rem;line-height:1.6;max-width:680px;margin:1.2rem 0 0;}
 .menu-hero-meta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.8rem;}
 .menu-hero-meta span{padding:.55rem .9rem;border-radius:999px;
@@ -162,13 +182,13 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 .menu-card-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:.68rem;font-weight:800;
     letter-spacing:1.6px;color:#5C6B85;text-transform:uppercase;}
 .menu-card-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;
-    justify-content:center;font-size:1.7rem;margin:.9rem 0;box-shadow:0 6px 14px rgba(0,0,0,.06);}
-.menu-card.mc-blue .menu-card-icon{background:linear-gradient(135deg,#DBE7FF,#B8CEFF);color:#2563EB;}
-.menu-card.mc-yellow .menu-card-icon{background:linear-gradient(135deg,#FFF1B8,#FFE37A);color:#936F00;}
-.menu-card.mc-mint .menu-card-icon{background:linear-gradient(135deg,#C9F2E0,#9BE5C8);color:#087453;}
-.menu-card.mc-purple .menu-card-icon{background:linear-gradient(135deg,#E2DBFF,#C9BEFF);color:#5B3FCC;}
-.menu-card.mc-pink .menu-card-icon{background:linear-gradient(135deg,#FBD5E8,#F8AFD0);color:#BE185D;}
-.menu-card.mc-teal .menu-card-icon{background:linear-gradient(135deg,#B6EFF6,#7FE0EC);color:#0E7490;}
+    justify-content:center;font-size:1.7rem;margin:.9rem 0;}
+.menu-card.mc-blue .menu-card-icon{background:linear-gradient(135deg,#DBE7FF,#B8CEFF);}
+.menu-card.mc-yellow .menu-card-icon{background:linear-gradient(135deg,#FFF1B8,#FFE37A);}
+.menu-card.mc-mint .menu-card-icon{background:linear-gradient(135deg,#C9F2E0,#9BE5C8);}
+.menu-card.mc-purple .menu-card-icon{background:linear-gradient(135deg,#E2DBFF,#C9BEFF);}
+.menu-card.mc-pink .menu-card-icon{background:linear-gradient(135deg,#FBD5E8,#F8AFD0);}
+.menu-card.mc-teal .menu-card-icon{background:linear-gradient(135deg,#B6EFF6,#7FE0EC);}
 .menu-card-title{font-family:'Manrope',sans-serif;font-size:1.15rem;font-weight:800;
     letter-spacing:-.4px;line-height:1.2;margin:0 0 .35rem;}
 .menu-card-desc{color:#5C6B85;font-size:.78rem;line-height:1.55;margin:0;}
@@ -190,7 +210,6 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 .card-blue{background:linear-gradient(135deg,#FFFFFF 0%,#EAF1FF 100%);border-color:#D4E0FF;}
 .card-yellow{background:linear-gradient(135deg,#FFFFFF 0%,#FFF7D6 100%);border-color:#F3DF8D;}
 .card-mint{background:linear-gradient(135deg,#FFFFFF 0%,#E8F8F1 100%);border-color:#BCE8D7;}
-.card-purple{background:linear-gradient(135deg,#FFFFFF 0%,#F1EDFF 100%);border-color:#DDD5FF;}
 .card-dark{background:linear-gradient(135deg,#0B1730 0%,#16294A 100%);
     border-color:#0B1730;color:#fff;box-shadow:0 20px 50px rgba(11,23,48,.35);}
 .card-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#5C6B85;}
@@ -231,7 +250,7 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
     border:1px solid #DCE4F2;border-radius:18px;box-shadow:0 8px 24px rgba(30,50,90,.05);}
 .profile-avatar{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;
     justify-content:center;background:linear-gradient(135deg,#2563EB 0%,#7C5CFC 50%,#EC4899 100%);
-    color:#fff;font-weight:800;font-size:1rem;box-shadow:0 8px 18px rgba(37,99,235,.3);}
+    color:#fff;font-weight:800;font-size:1rem;}
 .profile-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.05rem;}
 .profile-meta{color:#5C6B85;font-size:.72rem;margin-top:.2rem;}
 
@@ -268,9 +287,8 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 
 .notif-success{background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%);
     border:2px solid #10B981;border-left:6px solid #10B981;
-    border-radius:14px;padding:1.2rem 1.4rem;margin:1rem 0;animation:riseIn .5s ease both;}
-.notif-success-title{font-family:'Manrope',sans-serif;font-weight:800;
-    font-size:1rem;color:#065F46;}
+    border-radius:14px;padding:1.2rem 1.4rem;margin:1rem 0;}
+.notif-success-title{font-family:'Manrope',sans-serif;font-weight:800;font-size:1rem;color:#065F46;}
 .notif-success-body{font-size:.85rem;color:#064E3B;line-height:1.6;margin-top:.4rem;}
 
 .role-badge{display:inline-flex;align-items:center;gap:6px;padding:.35rem .75rem;
@@ -281,6 +299,12 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 .role-badge.wali_kelas{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);color:#065F46;border-color:#6EE7B7;}
 .role-badge.guru{background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E40AF;border-color:#93C5FD;}
 
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:.3rem .6rem;
+    border-radius:999px;font-size:.65rem;font-weight:800;}
+.status-badge.approved{background:#D1FAE5;color:#065F46;}
+.status-badge.pending{background:#FEF3C7;color:#92400E;}
+.status-badge.rejected{background:#FEE2E2;color:#991B1B;}
+
 @media(max-width:850px){
     .block-container{padding:1rem 1rem 3rem;}
     .menu-hero{padding:2.5rem 1.7rem;}
@@ -290,19 +314,8 @@ h1,h2,h3,h4{font-family:'Manrope',sans-serif;}
 """, unsafe_allow_html=True)
 
 # ================================================================
-# AUTENTIKASI & ROLE
+# ROLE & SESSION
 # ================================================================
-def hash_password(p):
-    return hashlib.sha256(p.encode()).hexdigest()
-
-USERS = {
-    "admin":  {"password": hash_password("admin123"),  "nama": "Administrator",       "role": "admin",          "kelas_ampu": None},
-    "kepsek": {"password": hash_password("kepsek123"), "nama": "Kepala Sekolah",      "role": "kepala_sekolah", "kelas_ampu": None},
-    "guru":   {"password": hash_password("guru123"),   "nama": "Guru SMPN 6",         "role": "guru",           "kelas_ampu": None},
-    "wali":   {"password": hash_password("wali123"),   "nama": "Wali Kelas IX-A",     "role": "wali_kelas",     "kelas_ampu": ["IX-A"]},
-    "regina": {"password": hash_password("regina2026"),"nama": "Regina Ria Aurellia", "role": "admin",          "kelas_ampu": None},
-}
-
 ROLE_LABEL = {
     "admin": "Administrator",
     "kepala_sekolah": "Kepala Sekolah",
@@ -310,24 +323,17 @@ ROLE_LABEL = {
     "guru": "Guru",
 }
 
-def can_access_pengaturan(role):
-    return role == "admin"
+def can_access_pengaturan(role): return role == "admin"
 
-# ================================================================
-# SESSION STATE
-# ================================================================
-_default_state = {
-    "logged_in": False,
-    "user_nama": None,
-    "user_role": None,
-    "user_kelas": None,
+for key, val in {
+    "logged_in": False, "user_nama": None, "user_role": None, "user_kelas": None,
     "database_siswa": load_database(),
     "config": load_config(),
     "log": load_log(),
+    "users": load_users(),
     "current_page": "home",
     "last_saved": None,
-}
-for key, val in _default_state.items():
+}.items():
     if key not in st.session_state:
         st.session_state[key] = val
 
@@ -336,12 +342,14 @@ def add_log(aksi, detail=""):
         "waktu": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "user": st.session_state.user_nama or "-",
         "role": st.session_state.user_role or "-",
-        "aksi": aksi,
-        "detail": detail,
+        "aksi": aksi, "detail": detail,
     }
     st.session_state.log.insert(0, entry)
     st.session_state.log = st.session_state.log[:200]
     save_log(st.session_state.log)
+
+def reload_users():
+    st.session_state.users = load_users()
 
 # ================================================================
 # DATA 8 FAKTOR
@@ -387,90 +395,33 @@ KELAS_LIST = (
 )
 
 SKALA_PILIHAN = {
-    "Self-Efficacy Akademik": {
-        "question": "Seberapa yakin siswa terhadap kemampuan akademiknya?",
-        "options": [
-            ("1", "Hampir tidak pernah percaya diri"),
-            ("2", "Jarang percaya diri"),
-            ("3", "Kadang-kadang percaya diri"),
-            ("4", "Sering percaya diri"),
-            ("5", "Hampir selalu percaya diri"),
-        ],
-    },
-    "Keterlibatan Orang Tua": {
-        "question": "Seberapa aktif orang tua mendampingi siswa belajar?",
-        "options": [
-            ("1", "Hampir tidak pernah mendampingi"),
-            ("2", "Jarang mendampingi"),
-            ("3", "Kadang-kadang mendampingi"),
-            ("4", "Sering mendampingi"),
-            ("5", "Hampir selalu mendampingi"),
-        ],
-    },
-    "Harapan Orang Tua": {
-        "question": "Seberapa tinggi tuntutan orang tua terhadap nilai siswa?",
-        "options": [
-            ("1", "Sangat rendah"),
-            ("2", "Rendah"),
-            ("3", "Sedang / wajar"),
-            ("4", "Tinggi"),
-            ("5", "Sangat tinggi / menekan"),
-        ],
-    },
-    "Dukungan Sekolah": {
-        "question": "Seberapa besar dukungan sekolah kepada siswa?",
-        "options": [
-            ("1", "Sangat kurang"),
-            ("2", "Kurang"),
-            ("3", "Cukup"),
-            ("4", "Baik"),
-            ("5", "Sangat baik"),
-        ],
-    },
-    "Motivasi Belajar": {
-        "question": "Seberapa besar motivasi dan semangat belajar siswa?",
-        "options": [
-            ("1", "Tidak ada motivasi"),
-            ("2", "Kurang termotivasi"),
-            ("3", "Cukup termotivasi"),
-            ("4", "Termotivasi"),
-            ("5", "Sangat termotivasi"),
-        ],
-    },
-    "Kecemasan Akademik": {
-        "question": "Seberapa sering siswa merasa cemas saat belajar atau ujian?",
-        "options": [
-            ("1", "Hampir tidak pernah cemas"),
-            ("2", "Jarang cemas"),
-            ("3", "Kadang-kadang cemas"),
-            ("4", "Sering cemas"),
-            ("5", "Hampir selalu cemas"),
-        ],
-    },
-    "Fasilitas Sekolah": {
-        "question": "Seberapa memadai fasilitas belajar di sekolah?",
-        "options": [
-            ("1", "Sangat kurang memadai"),
-            ("2", "Kurang memadai"),
-            ("3", "Cukup memadai"),
-            ("4", "Memadai"),
-            ("5", "Sangat memadai"),
-        ],
-    },
-    "Kemalasan Belajar": {
-        "question": "Seberapa sering siswa menunjukkan sikap malas belajar?",
-        "options": [
-            ("1", "Tidak pernah malas"),
-            ("2", "Jarang malas"),
-            ("3", "Kadang-kadang malas"),
-            ("4", "Sering malas"),
-            ("5", "Hampir selalu malas"),
-        ],
-    },
+    "Self-Efficacy Akademik": {"question": "Seberapa yakin siswa terhadap kemampuan akademiknya?", "options": [
+        ("1","Hampir tidak pernah percaya diri"),("2","Jarang percaya diri"),
+        ("3","Kadang-kadang percaya diri"),("4","Sering percaya diri"),("5","Hampir selalu percaya diri")]},
+    "Keterlibatan Orang Tua": {"question": "Seberapa aktif orang tua mendampingi siswa belajar?", "options": [
+        ("1","Hampir tidak pernah mendampingi"),("2","Jarang mendampingi"),
+        ("3","Kadang-kadang mendampingi"),("4","Sering mendampingi"),("5","Hampir selalu mendampingi")]},
+    "Harapan Orang Tua": {"question": "Seberapa tinggi tuntutan orang tua terhadap nilai siswa?", "options": [
+        ("1","Sangat rendah"),("2","Rendah"),("3","Sedang / wajar"),
+        ("4","Tinggi"),("5","Sangat tinggi / menekan")]},
+    "Dukungan Sekolah": {"question": "Seberapa besar dukungan sekolah kepada siswa?", "options": [
+        ("1","Sangat kurang"),("2","Kurang"),("3","Cukup"),("4","Baik"),("5","Sangat baik")]},
+    "Motivasi Belajar": {"question": "Seberapa besar motivasi dan semangat belajar siswa?", "options": [
+        ("1","Tidak ada motivasi"),("2","Kurang termotivasi"),("3","Cukup termotivasi"),
+        ("4","Termotivasi"),("5","Sangat termotivasi")]},
+    "Kecemasan Akademik": {"question": "Seberapa sering siswa merasa cemas saat belajar atau ujian?", "options": [
+        ("1","Hampir tidak pernah cemas"),("2","Jarang cemas"),("3","Kadang-kadang cemas"),
+        ("4","Sering cemas"),("5","Hampir selalu cemas")]},
+    "Fasilitas Sekolah": {"question": "Seberapa memadai fasilitas belajar di sekolah?", "options": [
+        ("1","Sangat kurang memadai"),("2","Kurang memadai"),("3","Cukup memadai"),
+        ("4","Memadai"),("5","Sangat memadai")]},
+    "Kemalasan Belajar": {"question": "Seberapa sering siswa menunjukkan sikap malas belajar?", "options": [
+        ("1","Tidak pernah malas"),("2","Jarang malas"),("3","Kadang-kadang malas"),
+        ("4","Sering malas"),("5","Hampir selalu malas")]},
 }
 
 # ================================================================
-# FUNGSI ANALITIK
+# FUNGSI ANALITIK (internal - tidak ditampilkan istilah teknisnya ke guru)
 # ================================================================
 def analisis_kausal(nilai_akademik, profil_siswa):
     selisih_nilai = nilai_akademik - RATA_RATA_NILAI
@@ -500,27 +451,27 @@ def potensi_maksimal(profil_siswa):
     return prediksi_nilai(optimum)
 
 def kategori_nilai(nilai):
-    if nilai >= 88: return "Sangat Baik", "#10B981", "A"
-    if nilai >= 84: return "Baik", "#2563EB", "B"
-    if nilai >= 80: return "Cukup", "#F0B900", "C"
-    return "Perlu Perhatian", "#EF5B67", "D"
+    if nilai >= 88: return "Sangat Baik", "#10B981"
+    if nilai >= 84: return "Baik", "#2563EB"
+    if nilai >= 80: return "Cukup", "#F0B900"
+    return "Perlu Perhatian", "#EF5B67"
 
-def terjemah_ate(nilai):
-    if nilai > 3: return "Sangat kuat MENINGKATKAN nilai", "#10B981"
-    if nilai > 2: return "Kuat meningkatkan nilai", "#10B981"
-    if nilai > 1: return "Sedang meningkatkan nilai", "#10B981"
-    if nilai > 0.5: return "Sedikit meningkatkan nilai", "#10B981"
-    if nilai >= -0.5: return "Hampir tidak berpengaruh", "#5C6B85"
-    if nilai >= -1: return "Sedikit menurunkan nilai", "#EF5B67"
-    if nilai >= -2: return "Sedang menurunkan nilai", "#EF5B67"
-    if nilai >= -3: return "Kuat menurunkan nilai", "#EF5B67"
-    return "Sangat kuat MENURUNKAN nilai", "#EF5B67"
+def label_pengaruh(nilai):
+    """Bahasa guru - pengganti istilah teknis ATE."""
+    if nilai > 2: return "Sangat kuat menaikkan nilai"
+    if nilai > 1: return "Kuat menaikkan nilai"
+    if nilai > 0.5: return "Sedikit menaikkan nilai"
+    if nilai > -0.5: return "Hampir tidak berpengaruh"
+    if nilai > -1: return "Sedikit menurunkan nilai"
+    if nilai > -2: return "Sedang menurunkan nilai"
+    return "Kuat menurunkan nilai"
 
-def terjemah_shap(nilai):
-    if nilai > 0.7: return "Sangat menentukan prediksi"
+def label_kepentingan(nilai):
+    """Bahasa guru - pengganti istilah teknis SHAP."""
+    if nilai > 0.7: return "Paling menentukan prediksi"
     if nilai > 0.4: return "Cukup menentukan prediksi"
     if nilai > 0.15: return "Kurang menentukan prediksi"
-    return "Hampir tidak menentukan"
+    return "Hampir tidak menentukan prediksi"
 
 def goto_page(page):
     st.session_state.current_page = page
@@ -537,13 +488,12 @@ def section_header(num, title, subtitle):
         f'<div class="section-number">{num}</div>'
         f'<div><h2 class="section-title">{title}</h2>'
         f'<div class="section-sub">{subtitle}</div></div>'
-        f'</div>'
-        f'<div class="section-line"></div>'
-        f'</div>',
+        f'</div><div class="section-line"></div></div>',
         unsafe_allow_html=True,
     )
 
 def top_bar(page_title, page_sub):
+    """Top bar dengan tombol Menu Utama dan Logout di setiap halaman."""
     c1, c2, c3 = st.columns([3, 1.2, 1])
     with c1:
         role_cls = st.session_state.user_role or "guru"
@@ -560,7 +510,7 @@ def top_bar(page_title, page_sub):
         if st.button("Menu Utama", use_container_width=True, key=f"home_{page_title}"):
             goto_page("home")
     with c3:
-        if st.button("Logout", use_container_width=True, key=f"out_{page_title}"):
+        if st.button("Logout", use_container_width=True, key=f"out_{page_title}", type="primary"):
             add_log("Logout", st.session_state.user_nama or "")
             st.session_state.logged_in = False
             st.session_state.user_nama = None
@@ -576,8 +526,7 @@ def hero_header(eyebrow, title, subtitle, pills=None):
         f'<div class="eyebrow"><span class="eyebrow-dot"></span>{eyebrow}</div>'
         f'<h1 class="hero-title">{title}</h1>'
         f'<p class="hero-sub">{subtitle}</p>'
-        f'<div class="hero-meta">{pills_html}</div>'
-        f'</div>',
+        f'<div class="hero-meta">{pills_html}</div></div>',
         unsafe_allow_html=True,
     )
 
@@ -587,34 +536,12 @@ def stat_card(label, value, note="", accent="blue"):
         f'<div class="topline {accent}"></div>'
         f'<div class="card-label">{label}</div>'
         f'<div class="card-value">{value}</div>'
-        f'<div class="card-note">{note}</div>'
-        f'</div>',
+        f'<div class="card-note">{note}</div></div>',
         unsafe_allow_html=True,
     )
-
-def notifikasi_simpan(nama, kelas):
-    st.markdown(
-        f'<div class="notif-success">'
-        f'<div class="notif-success-title">Data Berhasil Disimpan</div>'
-        f'<div class="notif-success-body">Data siswa <b>{nama}</b> kelas <b>{kelas}</b> telah tersimpan.<br>'
-        f'Lanjutkan ke modul <b>Prediksi Prestasi</b> atau <b>Rekomendasi</b>.</div>'
-        f'</div>',
-        unsafe_allow_html=True,
-    )
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        if st.button("Lihat Prediksi", use_container_width=True, key="go_pred"):
-            goto_page("prediksi")
-    with c2:
-        if st.button("Lihat Rekomendasi", use_container_width=True, key="go_rek"):
-            goto_page("rekomendasi")
-    with c3:
-        if st.button("Input Siswa Lain", use_container_width=True, key="reset_form"):
-            st.session_state.last_saved = None
-            st.rerun()
 
 # ================================================================
-# PLOT FUNCTIONS
+# PLOT
 # ================================================================
 def plot_pengaruh(df):
     df = df.sort_values("Pengaruh", ascending=True)
@@ -641,12 +568,12 @@ def plot_pengaruh(df):
     ax.set_yticklabels(labels, fontsize=9)
     ax.tick_params(axis="y", length=0, pad=8)
     ax.tick_params(axis="x", labelsize=8, colors="#5C6B85")
-    ax.grid(axis="x", alpha=.12, linewidth=.7)
+    ax.grid(axis="x", alpha=.12)
     ax.set_axisbelow(True)
     for s in ["top", "right", "left"]:
         ax.spines[s].set_visible(False)
     ax.spines["bottom"].set_color("#D8E0EB")
-    ax.set_xlabel("Kiri: MENURUNKAN nilai | Kanan: MENINGKATKAN nilai",
+    ax.set_xlabel("Kiri: menurunkan nilai  |  Kanan: menaikkan nilai",
                   fontsize=10, fontweight="bold", color="#5C6B85", labelpad=12)
     plt.tight_layout()
     return fig
@@ -668,7 +595,7 @@ def plot_kepentingan(df):
     ax.set_yticklabels(labels, fontsize=9)
     ax.tick_params(axis="y", length=0, pad=8)
     ax.tick_params(axis="x", labelsize=8, colors="#5C6B85")
-    ax.grid(axis="x", alpha=.12, linewidth=.7)
+    ax.grid(axis="x", alpha=.12)
     ax.set_axisbelow(True)
     for s in ["top", "right", "left"]:
         ax.spines[s].set_visible(False)
@@ -698,11 +625,8 @@ def input_kategori(key_name, faktor_name):
             default_idx = i
             break
     pilihan = st.radio(
-        f"{faktor_name}_radio",
-        labels,
-        index=default_idx,
-        key=key_name,
-        label_visibility="collapsed",
+        f"{faktor_name}_radio", labels, index=default_idx,
+        key=key_name, label_visibility="collapsed",
     )
     return values[labels.index(pilihan)]
 
@@ -720,9 +644,8 @@ def form_profil_siswa(prefix, default_nama="", default_kelas="IX-A", default_abs
     c1, c2 = st.columns([1.5, 1])
     with c1:
         nilai = st.number_input(
-            "Nilai Rata-rata Rapor",
-            min_value=60.0, max_value=100.0, value=default_nilai,
-            step=.01, format="%.2f",
+            "Nilai Rata-rata Rapor", min_value=60.0, max_value=100.0,
+            value=default_nilai, step=.01, format="%.2f",
             help=f"Rata-rata sekolah: {RATA_RATA_NILAI:.2f}",
             key=f"{prefix}_nilai",
         )
@@ -740,21 +663,18 @@ def form_profil_siswa(prefix, default_nama="", default_kelas="IX-A", default_abs
             '<div class="card card-blue">'
             '<div class="card-label">FAKTOR INTERNAL</div>'
             '<div style="color:#5C6B85;font-size:.72rem;margin-top:.25rem;">Kondisi dari dalam diri siswa.</div>'
-            '</div>',
-            unsafe_allow_html=True,
+            '</div>', unsafe_allow_html=True,
         )
         se = input_kategori(f"{prefix}_in_se", "Self-Efficacy Akademik")
         mot = input_kategori(f"{prefix}_in_mot", "Motivasi Belajar")
         cem = input_kategori(f"{prefix}_in_cem", "Kecemasan Akademik")
         mal = input_kategori(f"{prefix}_in_mal", "Kemalasan Belajar")
-
     with right:
         st.markdown(
             '<div class="card card-yellow">'
             '<div class="card-label">FAKTOR EKSTERNAL</div>'
             '<div style="color:#5C6B85;font-size:.72rem;margin-top:.25rem;">Lingkungan keluarga dan sekolah.</div>'
-            '</div>',
-            unsafe_allow_html=True,
+            '</div>', unsafe_allow_html=True,
         )
         ket = input_kategori(f"{prefix}_ex_ket", "Keterlibatan Orang Tua")
         har = input_kategori(f"{prefix}_ex_har", "Harapan Orang Tua")
@@ -762,19 +682,15 @@ def form_profil_siswa(prefix, default_nama="", default_kelas="IX-A", default_abs
         fas = input_kategori(f"{prefix}_ex_fas", "Fasilitas Sekolah")
 
     profil = {
-        "Self-Efficacy Akademik": se,
-        "Keterlibatan Orang Tua": ket,
-        "Harapan Orang Tua": har,
-        "Dukungan Sekolah": duk,
-        "Motivasi Belajar": mot,
-        "Kecemasan Akademik": cem,
-        "Fasilitas Sekolah": fas,
-        "Kemalasan Belajar": mal,
+        "Self-Efficacy Akademik": se, "Keterlibatan Orang Tua": ket,
+        "Harapan Orang Tua": har, "Dukungan Sekolah": duk,
+        "Motivasi Belajar": mot, "Kecemasan Akademik": cem,
+        "Fasilitas Sekolah": fas, "Kemalasan Belajar": mal,
     }
     return nama, kelas, absen, nilai, profil
 
 # ================================================================
-# HALAMAN LOGIN
+# HALAMAN LOGIN + REGISTRASI
 # ================================================================
 def halaman_login():
     st.markdown(
@@ -787,94 +703,153 @@ def halaman_login():
         '</div></div></div>',
         unsafe_allow_html=True,
     )
-
     st.markdown('<div class="login-content">', unsafe_allow_html=True)
 
     hari_ini = datetime.now()
-    hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"][hari_ini.weekday()]
-    bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
-             "Juli", "Agustus", "September", "Oktober", "November", "Desember"][hari_ini.month - 1]
+    hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"][hari_ini.weekday()]
+    bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus",
+             "September","Oktober","November","Desember"][hari_ini.month-1]
     tanggal_str = f"{hari}, {hari_ini.day} {bulan} {hari_ini.year}"
 
     st.markdown(
         f'<div class="login-date-logout">'
         f'<div class="login-date">{tanggal_str}</div>'
-        f'<div class="login-logout-link">Logout</div>'
         f'</div>',
         unsafe_allow_html=True,
     )
 
-    with st.form("login_form", clear_on_submit=False):
-        col1, col2 = st.columns([1, 3])
-        with col1:
-            st.markdown('<div class="siasat-label">Nama Pengguna</div>', unsafe_allow_html=True)
-        with col2:
-            username = st.text_input("username", placeholder="Masukkan nama pengguna",
-                                     label_visibility="collapsed", key="login_u")
+    tab_login, tab_daftar = st.tabs(["🔐 Masuk", "📝 Daftar Akun Baru"])
 
-        col1, col2 = st.columns([1, 3])
-        with col1:
-            st.markdown('<div class="siasat-label">Kata Sandi</div>', unsafe_allow_html=True)
-        with col2:
-            password = st.text_input("password", type="password",
-                                     placeholder="Masukkan kata sandi",
-                                     label_visibility="collapsed", key="login_p")
+    # --------- TAB LOGIN ---------
+    with tab_login:
+        with st.form("login_form", clear_on_submit=False):
+            c1, c2 = st.columns([1, 3])
+            with c1:
+                st.markdown('<div class="siasat-label">Nama Pengguna</div>', unsafe_allow_html=True)
+            with c2:
+                username = st.text_input("u", placeholder="Masukkan nama pengguna",
+                                         label_visibility="collapsed", key="login_u")
+            c1, c2 = st.columns([1, 3])
+            with c1:
+                st.markdown('<div class="siasat-label">Kata Sandi</div>', unsafe_allow_html=True)
+            with c2:
+                password = st.text_input("p", type="password", placeholder="Masukkan kata sandi",
+                                         label_visibility="collapsed", key="login_p")
+            _, b1, b2, _ = st.columns([1, 1, 1, 2])
+            with b1:
+                submit = st.form_submit_button("Masuk", use_container_width=True)
+            with b2:
+                lupa = st.form_submit_button("Lupa Password", use_container_width=True)
 
-        st.markdown('<div style="height:.5rem;"></div>', unsafe_allow_html=True)
+            if submit:
+                users = load_users()
+                if username in users:
+                    u = users[username]
+                    if u["password"] == hash_password(password):
+                        if u.get("status") == "pending":
+                            st.warning("Akun Anda belum disetujui. Silakan hubungi Administrator sekolah.")
+                        elif u.get("status") == "rejected":
+                            st.error("Akun Anda ditolak. Silakan hubungi Administrator untuk informasi lebih lanjut.")
+                        else:
+                            st.session_state.logged_in = True
+                            st.session_state.user_nama = u["nama"]
+                            st.session_state.user_role = u["role"]
+                            st.session_state.user_kelas = u.get("kelas_ampu")
+                            st.session_state.current_page = "home"
+                            add_log("Login", f"{u['nama']} ({u['role']})")
+                            st.rerun()
+                    else:
+                        st.error("Kata sandi salah. Silakan coba lagi.")
+                else:
+                    st.error("Nama pengguna tidak terdaftar. Silakan daftar terlebih dahulu.")
 
-        _, b1, b2, _ = st.columns([1, 1, 1, 2])
-        with b1:
-            submit = st.form_submit_button("Login", use_container_width=True)
-        with b2:
-            lupa = st.form_submit_button("Lupa Password", use_container_width=True)
+            if lupa:
+                st.info("Hubungi Administrator sekolah untuk reset password. Email: admin@smpn6salatiga.sch.id")
 
-        if submit:
-            if username in USERS and USERS[username]["password"] == hash_password(password):
-                st.session_state.logged_in = True
-                st.session_state.user_nama = USERS[username]["nama"]
-                st.session_state.user_role = USERS[username]["role"]
-                st.session_state.user_kelas = USERS[username]["kelas_ampu"]
-                st.session_state.current_page = "home"
-                add_log("Login", f"{USERS[username]['nama']} ({USERS[username]['role']})")
-                st.rerun()
-            else:
-                st.error("Nama pengguna atau kata sandi salah. Silakan coba lagi.")
+    # --------- TAB DAFTAR ---------
+    with tab_daftar:
+        st.markdown(
+            '<div class="info-box blue" style="margin-bottom:1rem;">'
+            '<div class="info-title">Pendaftaran Akun Baru</div>'
+            '<div class="info-text">Isi data di bawah ini. Akun akan ditinjau oleh Administrator sebelum dapat digunakan.</div>'
+            '</div>', unsafe_allow_html=True,
+        )
+        with st.form("register_form", clear_on_submit=True):
+            c1, c2 = st.columns(2)
+            with c1:
+                reg_nama = st.text_input("Nama Lengkap *", placeholder="Nama lengkap Anda")
+                reg_username = st.text_input("Nama Pengguna *", placeholder="huruf kecil, tanpa spasi")
+                reg_email = st.text_input("Email (opsional)", placeholder="nama@email.com")
+            with c2:
+                reg_password = st.text_input("Kata Sandi *", type="password",
+                                             placeholder="minimal 6 karakter")
+                reg_konfirmasi = st.text_input("Konfirmasi Kata Sandi *", type="password",
+                                               placeholder="ulangi kata sandi")
+                reg_role = st.selectbox(
+                    "Peran *",
+                    ["guru", "wali_kelas", "kepala_sekolah"],
+                    format_func=lambda x: ROLE_LABEL.get(x, x),
+                )
+            reg_kelas = st.text_input(
+                "Kelas Diampu (khusus Wali Kelas)",
+                placeholder="Contoh: IX-A, IX-B (pisah dengan koma)",
+            )
 
-        if lupa:
-            st.info("Hubungi Administrator sekolah untuk reset password. Email: admin@smpn6salatiga.sch.id")
+            reg_submit = st.form_submit_button("Daftar Sekarang", use_container_width=True)
+
+            if reg_submit:
+                users = load_users()
+                errors = []
+                if not reg_nama.strip(): errors.append("Nama lengkap wajib diisi.")
+                if not reg_username.strip(): errors.append("Nama pengguna wajib diisi.")
+                if len(reg_password) < 6: errors.append("Kata sandi minimal 6 karakter.")
+                if reg_password != reg_konfirmasi: errors.append("Konfirmasi kata sandi tidak cocok.")
+                if reg_username.strip() in users: errors.append("Nama pengguna sudah dipakai. Pilih yang lain.")
+                if reg_role == "wali_kelas" and not reg_kelas.strip():
+                    errors.append("Wali Kelas wajib mengisi kelas yang diampu.")
+
+                if errors:
+                    for e in errors:
+                        st.error(e)
+                else:
+                    kelas_ampu = None
+                    if reg_role == "wali_kelas":
+                        kelas_ampu = [k.strip() for k in reg_kelas.split(",") if k.strip()]
+                    users[reg_username.strip()] = {
+                        "password": hash_password(reg_password),
+                        "nama": reg_nama.strip(),
+                        "role": reg_role,
+                        "kelas_ampu": kelas_ampu,
+                        "email": reg_email.strip(),
+                        "status": "pending",
+                        "created": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    }
+                    save_users(users)
+                    reload_users()
+                    st.success(
+                        f"Pendaftaran berhasil, {reg_nama}. Akun Anda akan ditinjau oleh Administrator "
+                        "sebelum bisa digunakan. Silakan hubungi Administrator untuk mempercepat proses."
+                    )
 
     st.markdown(
         '<div class="siasat-info-box">'
         '<div class="siasat-info-header">'
         '<div class="siasat-info-icon">💡</div>'
-        '<div class="siasat-info-title">Informasi Login</div>'
+        '<div class="siasat-info-title">Informasi</div>'
         '</div>'
         '<div class="siasat-info-list">'
-        '<div><span class="num">1.</span><span>Gunakan akun resmi yang diberikan sekolah.</span></div>'
-        '<div><span class="num">2.</span><span>Setiap role memiliki hak akses berbeda.</span></div>'
-        '<div><span class="num">3.</span><span>Jangan bagikan akun kepada orang lain.</span></div>'
-        '<div><span class="num">4.</span><span>Logout setelah selesai menggunakan dashboard.</span></div>'
-        '<div><span class="num">5.</span><span>Semua aktivitas tercatat dalam log sistem.</span></div>'
+        '<div><span class="num">1.</span><span>Guru dapat mendaftar akun sendiri melalui tab "Daftar Akun Baru".</span></div>'
+        '<div><span class="num">2.</span><span>Akun yang sudah didaftarkan akan ditinjau oleh Administrator.</span></div>'
+        '<div><span class="num">3.</span><span>Setiap akun memiliki hak akses berbeda sesuai peran.</span></div>'
+        '<div><span class="num">4.</span><span>Jangan bagikan akun kepada orang lain.</span></div>'
+        '<div><span class="num">5.</span><span>Logout setelah selesai menggunakan dashboard.</span></div>'
         '</div></div>',
         unsafe_allow_html=True,
     )
 
-    if os.environ.get("SHOW_DEMO_ACCOUNTS", "true").lower() == "true":
-        with st.expander("Lihat Akun Demo (mode development)"):
-            st.markdown(
-                "| Username | Password | Role |\n"
-                "|----------|----------|------|\n"
-                "| `admin` | `admin123` | Administrator |\n"
-                "| `kepsek` | `kepsek123` | Kepala Sekolah |\n"
-                "| `wali` | `wali123` | Wali Kelas (IX-A) |\n"
-                "| `guru` | `guru123` | Guru |\n"
-                "| `regina` | `regina2026` | Peneliti |\n"
-            )
-
     st.markdown(
         '<div class="siasat-footer">'
         '<strong>Smart Academic Analytics (SAA)</strong> - Sub-brand: SIA.Prestasi<br>'
-        'Hilirisasi Penelitian Hybrid Causal-Explainable Machine Learning<br>'
         'Program Studi Magister Sains Data - Universitas Kristen Satya Wacana - 2026'
         '</div>',
         unsafe_allow_html=True,
@@ -883,7 +858,7 @@ def halaman_login():
 
 
 # ================================================================
-# ROUTING
+# ROUTING UTAMA
 # ================================================================
 if not st.session_state.logged_in:
     halaman_login()
@@ -897,14 +872,11 @@ if st.session_state.current_page == "home":
         '<div class="menu-hero">'
         '<div class="menu-hero-kicker">SMART ACADEMIC ANALYTICS</div>'
         '<h1 class="menu-hero-title">Data-driven education.<br><em>Bukan sekadar angka.</em></h1>'
-        '<p class="menu-hero-sub">SAA menggabungkan <b>causal inference</b> dan <b>explainable AI</b> '
-        'untuk membantu guru memahami faktor yang membentuk prestasi akademik siswa SMP Negeri 6 Salatiga.</p>'
+        '<p class="menu-hero-sub">SAA membantu guru memahami faktor yang membentuk prestasi akademik siswa '
+        'SMP Negeri 6 Salatiga dengan analisis sebab-akibat dan penjelasan yang mudah dipahami.</p>'
         '<div class="menu-hero-meta">'
-        '<span>DATA-DRIVEN</span>'
-        '<span>CAUSAL INFERENCE</span>'
-        '<span>EXPLAINABLE AI</span>'
-        '<span>6 MODUL</span>'
-        '<span>SMPN 6 SALATIGA</span>'
+        '<span>DATA-DRIVEN</span><span>SEBAB-AKIBAT</span><span>MUDAH DIPAHAMI</span>'
+        '<span>6 MODUL</span><span>SMPN 6 SALATIGA</span>'
         '</div></div>',
         unsafe_allow_html=True,
     )
@@ -928,16 +900,15 @@ if st.session_state.current_page == "home":
     section_header("*", "Modul Dashboard", "PILIH UNTUK MEMULAI")
 
     modules = [
-        ("MODUL 01", "Profil Siswa", "Input data dan lihat profil personal siswa berdasarkan 8 faktor.", "mc-blue", "👤", "analisis"),
-        ("MODUL 02", "Prediksi Prestasi", "Prediksi nilai akademik dan potensi maksimal siswa.", "mc-purple", "📈", "prediksi"),
-        ("MODUL 03", "Faktor Pengaruh", "Faktor apa yang secara sebab-akibat mempengaruhi prestasi?", "mc-mint", "🔬", "kausal"),
+        ("MODUL 01", "Profil Siswa", "Input data dan lihat profil personal siswa.", "mc-blue", "👤", "analisis"),
+        ("MODUL 02", "Prediksi Prestasi", "Prediksi nilai dan potensi maksimal siswa.", "mc-purple", "📈", "prediksi"),
+        ("MODUL 03", "Faktor Pengaruh", "Faktor apa yang mempengaruhi prestasi siswa.", "mc-mint", "🔬", "kausal"),
         ("MODUL 04", "Rekomendasi", "Rekomendasi intervensi tingkat sekolah dan personal.", "mc-pink", "💡", "rekomendasi"),
-        ("MODUL 05", "Monitoring Kelas", "Pantau perkembangan akademik per kelas.", "mc-yellow", "📊", "monitoring"),
-        ("MODUL 06", "Pengaturan", "Manajemen akun, konfigurasi sekolah, dan log aktivitas.", "mc-teal", "⚙️", "pengaturan"),
+        ("MODUL 05", "Monitoring & Data", "Pantau kelas, download data, dan kelola data siswa.", "mc-yellow", "📊", "monitoring"),
+        ("MODUL 06", "Pengaturan", "Manajemen akun, konfigurasi, dan log aktivitas.", "mc-teal", "⚙️", "pengaturan"),
     ]
 
-    row1 = st.columns(3)
-    row2 = st.columns(3)
+    row1 = st.columns(3); row2 = st.columns(3)
     for i, (num, title, desc, color, icon, page) in enumerate(modules):
         target_row = row1 if i < 3 else row2
         with target_row[i % 3]:
@@ -947,964 +918,11 @@ if st.session_state.current_page == "home":
                 f'<div class="menu-card-icon">{icon}</div>'
                 f'<div class="menu-card-title">{title}</div>'
                 f'<div class="menu-card-desc">{desc}</div>'
-                f'<div class="menu-card-cta">BUKA MODUL</div>'
-                f'</div>',
+                f'<div class="menu-card-cta">BUKA MODUL</div></div>',
                 unsafe_allow_html=True,
             )
             disabled = (page == "pengaturan" and not can_access_pengaturan(st.session_state.user_role))
             if st.button(f"Buka {title}", key=f"btn_{page}", use_container_width=True,
                          type="primary", disabled=disabled):
                 goto_page(page)
-
-# ================================================================
-# MODUL 01 - PROFIL SISWA
-# ================================================================
-elif st.session_state.current_page == "analisis":
-    top_bar("Profil Siswa", "Modul 01 - Input dan profil personal siswa")
-
-    hero_header(
-        "MODUL 01 - PROFIL SISWA",
-        "Kenali siswa.<br><span class='accent'>Pahami konteksnya.</span>",
-        "Input data siswa, lihat profil personal berdasarkan 8 faktor determinan, "
-        "dan bandingkan dengan rata-rata sekolah.",
-        [("8 FAKTOR", "blue"), ("PROFIL PERSONAL", "mint"), ("PER SISWA", "yellow")],
-    )
-
-    if st.session_state.last_saved:
-        notifikasi_simpan(st.session_state.last_saved["nama"], st.session_state.last_saved["kelas"])
-        st.stop()
-
-    section_header("01", "Input Data Siswa", "IDENTITAS DAN PROFIL 8 FAKTOR")
-
-    st.markdown(
-        '<div class="info-box blue" style="margin-bottom:1.5rem;">'
-        '<div class="info-title">Cara Mengisi</div>'
-        '<div class="info-text">Isi identitas siswa, nilai rapor, lalu pilih kondisi yang paling '
-        'menggambarkan siswa untuk masing-masing faktor.</div></div>',
-        unsafe_allow_html=True,
-    )
-
-    nama, kelas, absen, nilai, profil = form_profil_siswa("m1")
-    selisih, kontribusi = analisis_kausal(nilai, profil)
-    kategori, warna_kategori, simbol = kategori_nilai(nilai)
-
-    section_header("02", "Ringkasan Profil", "KONDISI SAAT INI")
-
-    if nama:
-        initials = "".join(x[0] for x in nama.split()[:2]).upper()
-        st.markdown(
-            f'<div class="profile-card">'
-            f'<div style="display:flex;align-items:center;gap:.85rem;">'
-            f'<div class="profile-avatar">{initials}</div>'
-            f'<div>'
-            f'<div class="profile-name">{nama}</div>'
-            f'<div class="profile-meta">{kelas} - No. Absen {absen:02d}</div>'
-            f'</div></div>'
-            f'<span class="pill blue">SUBJEK ANALISIS</span>'
-            f'</div>',
-            unsafe_allow_html=True,
-        )
-
-    a, b, c, d = st.columns(4)
-    with a:
-        stat_card("Nilai Akademik", f"{nilai:.2f}", "nilai rata-rata rapor", "blue")
-    with b:
-        stat_card("Selisih Rata-rata", f"{selisih:+.2f}", "poin dari rata-rata sekolah",
-                  "mint" if selisih >= 0 else "coral")
-    with c:
-        accent = "mint" if kategori == "Sangat Baik" else "blue" if kategori == "Baik" else "yellow" if kategori == "Cukup" else "coral"
-        st.markdown(
-            f'<div class="card stat-card"><div class="topline {accent}"></div>'
-            f'<div class="card-label">KATEGORI</div>'
-            f'<div class="card-value" style="font-size:1.55rem;color:{warna_kategori};">{kategori}</div>'
-            f'<div class="card-note">berdasarkan rentang nilai</div></div>',
-            unsafe_allow_html=True,
-        )
-    with d:
-        potensi = potensi_maksimal(profil)
-        st.markdown(
-            f'<div class="card stat-card"><div class="topline purple"></div>'
-            f'<div class="card-label">POTENSI MAKSIMAL</div>'
-            f'<div class="card-value" style="color:#7C5CFC;font-size:1.55rem;">{potensi:.2f}</div>'
-            f'<div class="card-note">jika semua faktor dioptimalkan</div></div>',
-            unsafe_allow_html=True,
-        )
-
-    section_header("03", "Profil vs Rata-rata Sekolah", "DETAIL PER FAKTOR")
-
-    df = pd.DataFrame([
-        {
-            "Aspek": k, "Kontribusi": v, "Nilai_Siswa": profil[k],
-            "Baseline": BASELINE_ASPEK[k],
-            "Selisih": profil[k] - BASELINE_ASPEK[k],
-        }
-        for k, v in kontribusi.items()
-    ]).sort_values("Kontribusi", key=abs, ascending=False)
-
-    tabel = df.copy()
-    tabel["Status"] = tabel["Selisih"].apply(
-        lambda x: "Di atas" if x > 0 else "Di bawah" if x < 0 else "Sama"
-    )
-    tabel = tabel[["Aspek", "Nilai_Siswa", "Baseline", "Selisih", "Kontribusi", "Status"]]
-    tabel.columns = ["Faktor", "Nilai Siswa", "Rata-rata", "Selisih", "Pengaruh (poin)", "Status"]
-
-    st.dataframe(
-        tabel, use_container_width=True, hide_index=True,
-        column_config={
-            "Nilai Siswa": st.column_config.NumberColumn(format="%.2f"),
-            "Rata-rata": st.column_config.NumberColumn(format="%.2f"),
-            "Selisih": st.column_config.NumberColumn(format="%+.2f"),
-            "Pengaruh (poin)": st.column_config.NumberColumn(format="%+.2f"),
-        },
-    )
-
-    section_header("04", "Simpan Data", "ARSIPKAN HASIL ANALISIS")
-
-    if not nama:
-        st.warning("Isi nama siswa terlebih dahulu.")
-    else:
-        dup = False
-        dup_absen = None
-        for s in st.session_state.database_siswa:
-            ns = s["Nama"].strip().lower() == nama.strip().lower()
-            ks = s["Kelas"] == kelas
-            abs_ = int(s["Absen"]) == int(absen)
-            if ns and ks and abs_:
-                dup = True
-                break
-            elif ks and abs_ and not ns:
-                dup_absen = s["Nama"]
-
-        if dup:
-            st.error(f"Siswa {nama} kelas {kelas} absen {absen:02d} sudah tersimpan.")
-        elif dup_absen:
-            st.error(f"Di kelas {kelas}, absen {absen:02d} sudah dipakai oleh {dup_absen}.")
-        else:
-            if st.button("Simpan Hasil Siswa", type="primary", use_container_width=True):
-                data = {
-                    "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                    "Nama": nama, "Kelas": kelas, "Absen": absen,
-                    "Nilai Akademik": round(nilai, 2),
-                    "Selisih": round(selisih, 2), "Kategori": kategori,
-                    "Self-Efficacy": profil["Self-Efficacy Akademik"],
-                    "Keterlibatan Ortu": profil["Keterlibatan Orang Tua"],
-                    "Harapan Ortu": profil["Harapan Orang Tua"],
-                    "Dukungan Sekolah": profil["Dukungan Sekolah"],
-                    "Motivasi": profil["Motivasi Belajar"],
-                    "Kecemasan": profil["Kecemasan Akademik"],
-                    "Fasilitas": profil["Fasilitas Sekolah"],
-                    "Kemalasan": profil["Kemalasan Belajar"],
-                    "Dicatat Oleh": st.session_state.user_nama,
-                }
-                st.session_state.database_siswa.append(data)
-                save_database(st.session_state.database_siswa)
-                add_log("Input siswa", f"{nama} ({kelas})")
-                st.session_state.last_saved = {"nama": nama, "kelas": kelas, "absen": absen}
-                st.rerun()
-
-# ================================================================
-# MODUL 02 - PREDIKSI PRESTASI
-# ================================================================
-elif st.session_state.current_page == "prediksi":
-    top_bar("Prediksi Prestasi", "Modul 02 - Prediksi nilai dan potensi siswa")
-
-    hero_header(
-        "MODUL 02 - PREDIKSI PRESTASI",
-        "Lihat ke depan.<br><span class='accent'>Bukan hanya saat ini.</span>",
-        "Prediksi nilai akademik siswa berdasarkan model kausal dan perbandingan "
-        "kondisi saat ini dengan potensi maksimalnya.",
-        [("PREDIKSI", "purple"), ("CAUSAL MODEL", "blue"), ("POTENSI", "mint")],
-    )
-
-    if len(st.session_state.database_siswa) == 0:
-        st.warning("Database masih kosong. Input siswa terlebih dahulu di Modul 01.")
-        st.stop()
-
-    section_header("01", "Pilih Siswa", "DARI DATABASE ATAU INPUT MANUAL")
-
-    opsi_sumber = st.radio("Sumber data siswa",
-                           ["Ambil dari database", "Input manual"], horizontal=True)
-
-    if opsi_sumber == "Ambil dari database":
-        df_db = pd.DataFrame(st.session_state.database_siswa)
-        opsi = df_db.apply(
-            lambda x: f"{x['Nama']} - {x['Kelas']} (Absen {x['Absen']})", axis=1
-        ).tolist()
-        pilihan = st.selectbox("Pilih Siswa", opsi, key="pred_pilih")
-        idx = opsi.index(pilihan)
-        b = df_db.iloc[idx]
-
-        nama = b["Nama"]
-        kelas = b["Kelas"]
-        absen = int(b["Absen"])
-        nilai = float(b["Nilai Akademik"])
-        profil = {
-            "Self-Efficacy Akademik": float(b["Self-Efficacy"]),
-            "Keterlibatan Orang Tua": float(b["Keterlibatan Ortu"]),
-            "Harapan Orang Tua": float(b["Harapan Ortu"]),
-            "Dukungan Sekolah": float(b["Dukungan Sekolah"]),
-            "Motivasi Belajar": float(b["Motivasi"]),
-            "Kecemasan Akademik": float(b["Kecemasan"]),
-            "Fasilitas Sekolah": float(b["Fasilitas"]),
-            "Kemalasan Belajar": float(b["Kemalasan"]),
-        }
-    else:
-        nama, kelas, absen, nilai, profil = form_profil_siswa("m2")
-
-    pred = prediksi_nilai(profil)
-    potensi = potensi_maksimal(profil)
-    kat_pred, warna_pred, _ = kategori_nilai(pred)
-
-    section_header("02", "Hasil Prediksi", "NILAI SAAT INI VS PREDIKSI VS POTENSI")
-
-    a, b_, c = st.columns(3)
-    with a:
-        st.markdown(
-            f'<div class="card stat-card"><div class="topline blue"></div>'
-            f'<div class="card-label">NILAI SAAT INI</div>'
-            f'<div class="card-value" style="color:#2563EB;">{nilai:.2f}</div>'
-            f'<div class="card-note">nilai rata-rata rapor</div></div>',
-            unsafe_allow_html=True,
-        )
-    with b_:
-        delta = pred - nilai
-        st.markdown(
-            f'<div class="card stat-card"><div class="topline purple"></div>'
-            f'<div class="card-label">PREDIKSI NILAI</div>'
-            f'<div class="card-value" style="color:#7C5CFC;">{pred:.2f}</div>'
-            f'<div class="card-note">{delta:+.2f} poin dari nilai saat ini</div></div>',
-            unsafe_allow_html=True,
-        )
-    with c:
-        gap = potensi - nilai
-        st.markdown(
-            f'<div class="card stat-card"><div class="topline mint"></div>'
-            f'<div class="card-label">POTENSI MAKSIMAL</div>'
-            f'<div class="card-value" style="color:#10B981;">{potensi:.2f}</div>'
-            f'<div class="card-note">{gap:+.2f} poin jika faktor dioptimalkan</div></div>',
-            unsafe_allow_html=True,
-        )
-
-    st.markdown("<div style='height:.8rem'></div>", unsafe_allow_html=True)
-    st.markdown(
-        f'<div class="card" style="border-left:5px solid {warna_pred};">'
-        f'<div class="card-label">INTERPRETASI PREDIKSI</div>'
-        f'<div style="font-family:Manrope;font-size:1.15rem;font-weight:800;margin-top:.5rem;">'
-        f'Nilai prediksi: <span style="color:{warna_pred};">{kat_pred}</span> ({pred:.2f})'
-        f'</div>'
-        f'<div style="font-size:.85rem;line-height:1.7;color:#475467;margin-top:.6rem;">'
-        f'Berdasarkan profil 8 faktor siswa, model kausal memprediksi nilai akademik sekitar '
-        f'<b>{pred:.2f}</b>. Estimasi ini berbasis backdoor linear regression (Structural Causal Model).<br><br>'
-        f'Rentang kepercayaan: <b>kurang lebih {STD_NILAI:.2f} poin</b>, yaitu sekitar '
-        f'<b>{max(0, pred - STD_NILAI):.2f} hingga {min(100, pred + STD_NILAI):.2f}</b>.<br><br>'
-        f'Jika seluruh faktor positif dimaksimalkan dan faktor negatif diminimalkan, '
-        f'siswa berpotensi mencapai <b style="color:#10B981;">{potensi:.2f}</b> '
-        f'(selisih <b>+{potensi - nilai:.2f}</b> dari nilai saat ini).'
-        f'</div></div>',
-        unsafe_allow_html=True,
-    )
-
-    section_header("03", "Visualisasi Trajectory", "POSISI RELATIF")
-
-    fig, ax = plt.subplots(figsize=(10, 3.6))
-    fig.patch.set_alpha(0)
-    ax.set_facecolor("none")
-    posisi = [nilai, pred, potensi]
-    labels = ["Nilai Sekarang", "Prediksi", "Potensi Max"]
-    colors = ["#2563EB", "#7C5CFC", "#10B981"]
-    bars = ax.barh([0, 1, 2], posisi, height=.5, color=colors, alpha=.85)
-    for i, (p, lab) in enumerate(zip(posisi, labels)):
-        ax.text(p + 0.5, i, f"{p:.2f}", va="center", fontsize=11,
-                fontweight="bold", color=colors[i])
-    ax.axvline(RATA_RATA_NILAI, color="#EF5B67", linestyle="--", alpha=.6, linewidth=1.5)
-    ax.text(RATA_RATA_NILAI, 2.6, f"Rata-rata sekolah ({RATA_RATA_NILAI:.2f})",
-            color="#EF5B67", fontsize=9, fontweight="bold", ha="center")
-    ax.set_yticks([0, 1, 2])
-    ax.set_yticklabels(labels, fontsize=10)
-    ax.set_xlim(60, 100)
-    ax.tick_params(axis="y", length=0)
-    ax.grid(axis="x", alpha=.15)
-    ax.set_axisbelow(True)
-    for s in ["top", "right", "left"]:
-        ax.spines[s].set_visible(False)
-    ax.spines["bottom"].set_color("#D8E0EB")
-    ax.set_xlabel("Nilai Akademik (skala 60-100)", fontsize=9.5, color="#5C6B85", labelpad=8)
-    plt.tight_layout()
-    st.pyplot(fig, use_container_width=True)
-    plt.close(fig)
-
-    with st.expander("Catatan Teknis Prediksi"):
-        st.markdown(
-            "**Bagaimana prediksi dihitung?**\n\n"
-            "Prediksi menggunakan Structural Causal Model dengan backdoor linear regression:\n\n"
-            "`Prediksi = Rata-rata + Sigma (nilai_faktor - baseline) x ATE_faktor x faktor_skala`\n\n"
-            "- ATE = Average Treatment Effect tiap faktor\n"
-            "- baseline = rata-rata sekolah per faktor\n"
-            "- faktor_skala = 0.35 (koefisien konservatif)\n\n"
-            f"Rentang kepercayaan kurang lebih {STD_NILAI:.2f} poin diambil dari simpangan baku "
-            "nilai akademik di penelitian (n=117 siswa)."
-        )
-
-# ================================================================
-# MODUL 03 - FAKTOR PENGARUH
-# ================================================================
-elif st.session_state.current_page == "kausal":
-    top_bar("Faktor Pengaruh", "Modul 03 - Sebab-akibat dan kepentingan prediktif")
-
-    hero_header(
-        "MODUL 03 - FAKTOR PENGARUH",
-        "Apa yang <em>menyebabkan</em><br>dan apa yang <em>memprediksi</em>?",
-        "Analisis sebab-akibat (ATE) dan tingkat kepentingan prediktif (SHAP) untuk 8 faktor.",
-        [("CAUSAL - ATE", "blue"), ("PREDICTIVE - SHAP", "purple"), ("TINGKAT SEKOLAH", "mint")],
-    )
-
-    section_header("01", "Apa Bedanya?", "DUA JENIS PENGARUH")
-    st.markdown(
-        '<div class="info-box blue" style="margin-bottom:1rem;">'
-        '<div class="info-title">Perbedaan Mendasar</div>'
-        '<div class="info-text">'
-        '<b>Sebab-Akibat (ATE)</b>: Jika faktor X diubah, apakah nilai siswa berubah?<br>'
-        '<b>Kepentingan Prediktif (SHAP)</b>: Faktor apa yang paling dipakai model untuk memprediksi?'
-        '<br><br>Keduanya berbeda: faktor bisa penting untuk prediksi tapi bukan penyebab (dan sebaliknya).'
-        '</div></div>',
-        unsafe_allow_html=True,
-    )
-
-    tab_ate, tab_shap = st.tabs(["Sebab-Akibat (ATE)", "Kepentingan Prediktif (SHAP)"])
-
-    with tab_ate:
-        df_ate = pd.DataFrame([{"Faktor": k, "Pengaruh": v} for k, v in PENGARUH_DATA.items()])
-        pos_ate = df_ate[df_ate["Pengaruh"] > 0].sort_values("Pengaruh", ascending=False)
-        neg_ate = df_ate[df_ate["Pengaruh"] < 0].sort_values("Pengaruh")
-
-        a, b_, c = st.columns(3)
-        with a:
-            t = pos_ate.iloc[0]
-            stat_card("Paling MENINGKATKAN", t["Faktor"], f"skor +{t['Pengaruh']:.2f}", "mint")
-        with b_:
-            t = neg_ate.iloc[0]
-            stat_card("Paling MENURUNKAN", t["Faktor"], f"skor {t['Pengaruh']:.2f}", "coral")
-        with c:
-            stat_card("Jumlah faktor", "8", "variabel dianalisis", "blue")
-
-        st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
-        fig = plot_pengaruh(df_ate)
-        st.pyplot(fig, use_container_width=True)
-        plt.close(fig)
-
-        tabel_ate = df_ate.copy()
-        tabel_ate["Penjelasan"] = tabel_ate["Pengaruh"].apply(lambda x: terjemah_ate(x)[0])
-        tabel_ate["Arah"] = tabel_ate["Pengaruh"].apply(
-            lambda x: "MENINGKATKAN" if x > 0 else "MENURUNKAN" if x < 0 else "NETRAL"
-        )
-        tabel_ate = tabel_ate.sort_values("Pengaruh", ascending=False)[
-            ["Faktor", "Penjelasan", "Arah", "Pengaruh"]
-        ]
-        tabel_ate.columns = ["Faktor", "Artinya untuk Nilai Siswa", "Arah", "Skor ATE"]
-        st.dataframe(
-            tabel_ate, use_container_width=True, hide_index=True,
-            column_config={"Skor ATE": st.column_config.NumberColumn(format="%+.4f")},
-        )
-
-    with tab_shap:
-        df_shap = pd.DataFrame([{"Faktor": k, "Kepentingan": v} for k, v in KEPENTINGAN_DATA.items()])
-        ranked = df_shap.sort_values("Kepentingan", ascending=False).reset_index(drop=True)
-
-        a, b_, c = st.columns(3)
-        with a:
-            stat_card("Faktor #1", ranked.iloc[0]["Faktor"], "Sangat menentukan", "purple")
-        with b_:
-            stat_card("Faktor #2", ranked.iloc[1]["Faktor"], "Cukup menentukan", "blue")
-        with c:
-            stat_card("Jumlah faktor", "8", "faktor dianalisis", "yellow")
-
-        st.markdown("<div style='height:.7rem'></div>", unsafe_allow_html=True)
-        fig = plot_kepentingan(df_shap)
-        st.pyplot(fig, use_container_width=True)
-        plt.close(fig)
-
-        for i, row in ranked.iterrows():
-            pct = row["Kepentingan"] / ranked["Kepentingan"].max() * 100
-            label = terjemah_shap(row["Kepentingan"])
-            st.markdown(
-                f'<div class="factor-card">'
-                f'<div class="factor-head">'
-                f'<div style="display:flex;align-items:center;gap:.7rem;">'
-                f'<div class="rank-num">{i + 1:02d}</div>'
-                f'<div><div class="factor-name">{row["Faktor"]}</div>'
-                f'<div style="font-size:.7rem;color:#5C6B85;margin-top:.2rem;">{label}</div>'
-                f'</div></div>'
-                f'<div class="factor-value" style="color:#7C5CFC;">{row["Kepentingan"]:.4f}</div>'
-                f'</div>'
-                f'<div class="factor-bar"><div class="factor-fill" style="width:{pct:.1f}%"></div></div>'
-                f'</div>',
-                unsafe_allow_html=True,
-            )
-
-    with st.expander("Catatan Teknis"):
-        st.markdown(
-            "**ATE (Average Treatment Effect)** dihitung dengan DoWhy library - Structural Causal Model "
-            "dengan backdoor linear regression.\n\n"
-            "**SHAP (SHapley Additive exPlanations)** menggunakan TreeExplainer pada model Random Forest "
-            "(n_estimators=100, max_depth=7).\n\n"
-            "**Catatan**: SHAP bukan kausal. Arah sebab-akibat tetap mengacu pada ATE dan DAG."
-        )
-
-# ================================================================
-# MODUL 04 - REKOMENDASI
-# ================================================================
-elif st.session_state.current_page == "rekomendasi":
-    top_bar("Rekomendasi", "Modul 04 - Intervensi tingkat sekolah dan personal")
-
-    hero_header(
-        "MODUL 04 - REKOMENDASI",
-        "Dari analisis<br><span class='accent'>menjadi tindakan.</span>",
-        "Rekomendasi intervensi tingkat sekolah dan catatan personal untuk guru per siswa.",
-        [("PRIORITAS", "yellow"), ("SEKOLAH", "mint"), ("PERSONAL", "blue")],
-    )
-
-    tab_umum, tab_personal = st.tabs(["Rekomendasi Umum (Tingkat Sekolah)", "Catatan untuk Guru (Personal)"])
-
-    with tab_umum:
-        section_header("01", "Prioritas Intervensi", "FAKTOR DENGAN PENGARUH TERKUAT")
-        c1, c2 = st.columns(2)
-
-        with c1:
-            st.markdown(
-                '<div class="card card-mint">'
-                '<div class="card-label">FAKTOR YANG PERLU DIPERKUAT</div>'
-                '<div style="font-family:Manrope;font-size:1.25rem;font-weight:800;margin-top:.45rem;">'
-                'Faktor pendorong prestasi</div></div>',
-                unsafe_allow_html=True,
-            )
-            pos_priority = [
-                ("Self-Efficacy Akademik", "Dorong kepercayaan diri akademik melalui mentoring dan apresiasi proses."),
-                ("Keterlibatan Orang Tua", "Perkuat komunikasi dan pendampingan belajar antara sekolah dan keluarga."),
-                ("Kemalasan Belajar", "Pantau agar siswa tidak terjebak pola belajar pasif."),
-            ]
-            for i, (name, desc) in enumerate(pos_priority, 1):
-                ate = PENGARUH_DATA[name]
-                label, _ = terjemah_ate(ate)
-                st.markdown(
-                    f'<div style="padding:1rem 0;border-bottom:1px solid #CBEBDD;">'
-                    f'<div style="display:flex;justify-content:space-between;gap:.7rem;">'
-                    f'<div style="font-weight:800;font-size:.88rem;">{i:02d} - {name}</div>'
-                    f'<div style="font-weight:800;color:#10B981;font-size:.78rem;">{label}</div>'
-                    f'</div>'
-                    f'<div style="font-size:.76rem;line-height:1.55;margin-top:.45rem;color:#475467;">{desc}</div>'
-                    f'</div>',
-                    unsafe_allow_html=True,
-                )
-
-        with c2:
-            st.markdown(
-                '<div class="card card-yellow">'
-                '<div class="card-label">FAKTOR YANG PERLU DIEVALUASI</div>'
-                '<div style="font-family:Manrope;font-size:1.25rem;font-weight:800;margin-top:.45rem;">'
-                'Faktor penghambat prestasi</div></div>',
-                unsafe_allow_html=True,
-            )
-            neg_priority = [
-                ("Motivasi Belajar", "Identifikasi hambatan belajar dan kaitkan materi dengan kehidupan nyata."),
-                ("Dukungan Sekolah", "Evaluasi bentuk pendampingan agar tidak mengurangi kemandirian siswa."),
-                ("Harapan Orang Tua", "Dorong target akademik realistis dan komunikasi tanpa tekanan berlebih."),
-            ]
-            for i, (name, desc) in enumerate(neg_priority, 1):
-                ate = PENGARUH_DATA[name]
-                label, _ = terjemah_ate(ate)
-                st.markdown(
-                    f'<div style="padding:1rem 0;border-bottom:1px solid #F1DF96;">'
-                    f'<div style="display:flex;justify-content:space-between;gap:.7rem;">'
-                    f'<div style="font-weight:800;font-size:.88rem;">{i:02d} - {name}</div>'
-                    f'<div style="font-weight:800;color:#EF5B67;font-size:.78rem;">{label}</div>'
-                    f'</div>'
-                    f'<div style="font-size:.76rem;line-height:1.55;margin-top:.45rem;color:#475467;">{desc}</div>'
-                    f'</div>',
-                    unsafe_allow_html=True,
-                )
-
-        st.markdown(
-            '<div class="card card-dark" style="margin-top:1rem;">'
-            '<div class="card-label">CATATAN PENELITIAN</div>'
-            '<div style="font-family:Manrope;font-size:1.35rem;line-height:1.25;font-weight:800;margin-top:.7rem;">'
-            'Gunakan hasil sebab-akibat untuk memahami apa yang perlu diubah, '
-            'dan hasil kepentingan prediktif untuk memahami apa yang paling menentukan.'
-            '</div></div>',
-            unsafe_allow_html=True,
-        )
-
-    with tab_personal:
-        if len(st.session_state.database_siswa) == 0:
-            st.warning("Database masih kosong. Input siswa terlebih dahulu di Modul 01.")
-        else:
-            df_db = pd.DataFrame(st.session_state.database_siswa)
-            opsi = df_db.apply(
-                lambda x: f"{x['Nama']} - {x['Kelas']} (Absen {x['Absen']})", axis=1
-            ).tolist()
-            pilihan = st.selectbox("Pilih Siswa", opsi, key="rek_pilih")
-            idx = opsi.index(pilihan)
-            b = df_db.iloc[idx]
-
-            nama = b["Nama"]
-            kelas = b["Kelas"]
-            absen = int(b["Absen"])
-            nilai = float(b["Nilai Akademik"])
-            profil = {
-                "Self-Efficacy Akademik": float(b["Self-Efficacy"]),
-                "Keterlibatan Orang Tua": float(b["Keterlibatan Ortu"]),
-                "Harapan Orang Tua": float(b["Harapan Ortu"]),
-                "Dukungan Sekolah": float(b["Dukungan Sekolah"]),
-                "Motivasi Belajar": float(b["Motivasi"]),
-                "Kecemasan Akademik": float(b["Kecemasan"]),
-                "Fasilitas Sekolah": float(b["Fasilitas"]),
-                "Kemalasan Belajar": float(b["Kemalasan"]),
-            }
-            selisih, kontribusi = analisis_kausal(nilai, profil)
-            kategori, warna_kategori, _ = kategori_nilai(nilai)
-
-            df_k = pd.DataFrame([
-                {
-                    "Aspek": k, "Kontribusi": v, "Nilai_Siswa": profil[k],
-                    "Baseline": BASELINE_ASPEK[k],
-                    "Selisih": profil[k] - BASELINE_ASPEK[k],
-                }
-                for k, v in kontribusi.items()
-            ]).sort_values("Kontribusi")
-            neg = df_k[df_k["Kontribusi"] < -0.2].sort_values("Kontribusi")
-            pos = df_k[df_k["Kontribusi"] > 0.2].sort_values("Kontribusi", ascending=False)
-
-            posisi = "di atas" if selisih >= 0 else "di bawah"
-            fn = neg.iloc[0] if len(neg) > 0 else None
-            fp = pos.iloc[0] if len(pos) > 0 else None
-
-            narasi_neg = (
-                f"Faktor yang paling menekan nilai <b>{nama}</b> adalah "
-                f"<b style='color:#EF5B67;'>{fn['Aspek']}</b> "
-                f"(kontribusi {fn['Kontribusi']:.2f} poin)."
-            ) if fn is not None else "Tidak ada faktor yang signifikan menekan nilai."
-
-            narasi_pos = (
-                f"Kekuatan utama terletak pada <b style='color:#10B981;'>{fp['Aspek']}</b> "
-                f"(kontribusi +{fp['Kontribusi']:.2f} poin)."
-            ) if fp is not None else "Belum ada faktor kekuatan dominan."
-
-            st.markdown(
-                f'<div class="card" style="border-left:5px solid {warna_kategori};margin-top:1rem;">'
-                f'<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">'
-                f'<div class="profile-avatar" style="width:56px;height:56px;font-size:1.2rem;">'
-                f'{"".join(x[0] for x in nama.split()[:2]).upper()}</div>'
-                f'<div>'
-                f'<div style="font-family:Manrope;font-weight:800;font-size:1.3rem;">{nama}</div>'
-                f'<div style="color:#5C6B85;font-size:.8rem;">{kelas} - Absen {absen:02d} - Nilai {nilai:.2f}</div>'
-                f'</div></div>'
-                f'<div style="font-size:.95rem;line-height:1.75;color:#1F2A44;">'
-                f'Nilai saat ini <b>{abs(selisih):.2f} poin {posisi} rata-rata sekolah</b> ({RATA_RATA_NILAI:.2f}).'
-                f'<br><br>{narasi_neg}<br><br>{narasi_pos}<br><br>'
-                f'<b>Kategori:</b> <span style="color:{warna_kategori};">{kategori}</span>'
-                f'</div></div>',
-                unsafe_allow_html=True,
-            )
-
-            section_header("02", "Prioritas Perbaikan", "FOKUSKAN PADA 3 HAL INI")
-            prioritas = neg.head(3)
-            if len(prioritas) == 0:
-                st.success("Tidak ada prioritas perbaikan mendesak.")
-            else:
-                cols = st.columns(len(prioritas))
-                for i, (_, row) in enumerate(prioritas.iterrows()):
-                    with cols[i]:
-                        gap_val = row["Selisih"]
-                        level = "Urgent" if gap_val < -1 else "Perhatian" if gap_val < -0.5 else "Monitor"
-                        st.markdown(
-                            f'<div class="card" style="border-top:4px solid #EF5B67;min-height:200px;">'
-                            f'<div style="font-size:.65rem;font-weight:800;letter-spacing:1.5px;color:#EF5B67;">PRIORITAS {i + 1}</div>'
-                            f'<div style="font-family:Manrope;font-weight:800;font-size:1rem;margin:.6rem 0 .3rem;">{row["Aspek"]}</div>'
-                            f'<div style="font-size:.7rem;color:#5C6B85;margin-bottom:.5rem;">{level}</div>'
-                            f'<div style="font-size:.75rem;line-height:1.6;color:#475467;">'
-                            f'Nilai siswa: <b>{row["Nilai_Siswa"]:.2f}</b><br>'
-                            f'Rata-rata: <b>{row["Baseline"]:.2f}</b><br>'
-                            f'<span style="color:#EF5B67;font-weight:700;">Selisih: {row["Selisih"]:+.2f}</span>'
-                            f'</div></div>',
-                            unsafe_allow_html=True,
-                        )
-
-            section_header("03", "Tindak Lanjut", "CHECKLIST GURU DAN SISWA")
-
-            TINDAK = {
-                "Self-Efficacy Akademik": {
-                    "guru": ["Berikan tugas bertahap", "Pujian spesifik atas usaha", "Ajak refleksi mingguan", "Pasangkan dengan peer-mentor"],
-                    "siswa": ["Jurnal harian 1 hal yang berhasil", "Tetapkan target kecil mingguan"],
-                },
-                "Keterlibatan Orang Tua": {
-                    "guru": ["Kirim kabar positif ke orang tua", "Ajak orang tua ikut sesi belajar", "Panduan mendampingi belajar 15 menit/hari", "Komunikasi rutin 2 minggu sekali"],
-                    "siswa": ["Ceritakan 1 hal yang dipelajari", "Minta orang tua periksa PR"],
-                },
-                "Harapan Orang Tua": {
-                    "guru": ["Pertemuan ekspektasi realistis", "Bantu pahami tahap perkembangan anak", "Sarankan fokus pada usaha", "Contoh memotivasi tanpa menekan"],
-                    "siswa": ["Belajar menyampaikan perasaan", "Fokus pada usaha yang bisa dikontrol"],
-                },
-                "Dukungan Sekolah": {
-                    "guru": ["Refleksi bantuan berlebih", "Kurangi bantuan yang bisa dilakukan sendiri", "Berikan kesempatan mencoba", "Fokus scaffolding, bukan taking over"],
-                    "siswa": ["Coba selesaikan tugas 10 menit sebelum bertanya", "Catat apa yang sudah dicoba"],
-                },
-                "Motivasi Belajar": {
-                    "guru": ["Kaitkan materi dengan kehidupan nyata", "Berikan pilihan tugas", "Apresiasi proses", "Ciptakan suasana kelas menyenangkan"],
-                    "siswa": ["Cari 1 hal menarik dari tiap pelajaran", "Belajar bersama teman"],
-                },
-                "Kecemasan Akademik": {
-                    "guru": ["Ajarkan teknik relaksasi", "Ubah suasana ujian lebih santai", "Ujian formatif yang tidak menakutkan", "Normalisasi cemas itu wajar"],
-                    "siswa": ["Latihan pernapasan 4-7-8", "Persiapan lebih awal"],
-                },
-                "Fasilitas Sekolah": {
-                    "guru": ["Informasikan fasilitas yang tersedia", "Bantu akses perpustakaan atau lab", "Cek hambatan akses"],
-                    "siswa": ["Manfaatkan perpustakaan", "Tanyakan ke guru jika butuh bantuan"],
-                },
-                "Kemalasan Belajar": {
-                    "guru": ["Cari akar kemalasan", "Beri tugas lebih menantang jika bosan", "Pecah tugas besar jadi langkah kecil", "Buat sistem reward sederhana"],
-                    "siswa": ["Mulai dari tugas 5 menit", "Gunakan teknik Pomodoro"],
-                },
-            }
-
-            if len(prioritas) == 0:
-                st.info("Tidak ada tindak lanjut khusus.")
-            else:
-                for i, (_, row) in enumerate(prioritas.iterrows()):
-                    aspek = row["Aspek"]
-                    tugas = TINDAK.get(aspek, {"guru": [], "siswa": []})
-                    with st.expander(f"Prioritas {i + 1}: {aspek}", expanded=(i == 0)):
-                        c1, c2 = st.columns(2)
-                        with c1:
-                            st.markdown("**Yang bisa dilakukan GURU:**")
-                            for j, t in enumerate(tugas["guru"], 1):
-                                st.markdown(
-                                    f'<div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">'
-                                    f'<div style="width:22px;height:22px;border-radius:6px;background:#EAF1FF;color:#2563EB;'
-                                    f'display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;">{j}</div>'
-                                    f'<div style="font-size:.82rem;line-height:1.55;color:#1F2A44;">{t}</div>'
-                                    f'</div>',
-                                    unsafe_allow_html=True,
-                                )
-                        with c2:
-                            st.markdown("**Yang bisa dilakukan SISWA:**")
-                            for j, s in enumerate(tugas["siswa"], 1):
-                                st.markdown(
-                                    f'<div style="display:flex;gap:.7rem;padding:.6rem 0;border-bottom:1px solid #EEF2F7;">'
-                                    f'<div style="width:22px;height:22px;border-radius:6px;background:#E8F8F1;color:#10B981;'
-                                    f'display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;">{j}</div>'
-                                    f'<div style="font-size:.82rem;line-height:1.55;color:#1F2A44;">{s}</div>'
-                                    f'</div>',
-                                    unsafe_allow_html=True,
-                                )
-
-            section_header("04", "Download Catatan", "ARSIP GURU")
-
-            faktor_utama = prioritas.iloc[0]["Aspek"] if len(prioritas) > 0 else "-"
-            faktor_kekuatan = pos.iloc[0]["Aspek"] if len(pos) > 0 else "-"
-            txt = (
-                "CATATAN KONSULTASI GURU - SAA\n"
-                "=================================\n"
-                f"Nama Siswa  : {nama}\n"
-                f"Kelas       : {kelas}\n"
-                f"Absen       : {absen}\n"
-                f"Nilai       : {nilai:.2f}\n"
-                f"Kategori    : {kategori}\n\n"
-                "KESIMPULAN\n"
-                "----------\n"
-                f"Nilai siswa {abs(selisih):.2f} poin {'di atas' if selisih >= 0 else 'di bawah'} rata-rata sekolah.\n\n"
-                f"Faktor paling menekan : {faktor_utama}\n"
-                f"Faktor kekuatan       : {faktor_kekuatan}\n\n"
-                "PRIORITAS PERBAIKAN\n"
-                "-------------------\n"
-            )
-            for i, (_, row) in enumerate(prioritas.iterrows(), 1):
-                txt += f"{i}. {row['Aspek']} (selisih {row['Selisih']:+.2f})\n"
-            txt += (
-                f"\nDibuat oleh : {st.session_state.user_nama}\n"
-                f"Tanggal     : {datetime.now().strftime('%d %B %Y, %H:%M')}\n"
-            )
-            st.download_button(
-                "Download Catatan (.txt)",
-                data=txt.encode("utf-8"),
-                file_name=f"catatan_{nama.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.txt",
-                mime="text/plain",
-                use_container_width=True,
-            )
-
-# ================================================================
-# MODUL 05 - MONITORING KELAS
-# ================================================================
-elif st.session_state.current_page == "monitoring":
-    top_bar("Monitoring Kelas", "Modul 05 - Pantau perkembangan akademik per kelas")
-
-    hero_header(
-        "MODUL 05 - MONITORING KELAS",
-        "Pantau kelas.<br><span class='accent'>Deteksi lebih awal.</span>",
-        "Monitoring agregat per kelas: distribusi nilai, siswa yang perlu perhatian, "
-        "dan perbandingan antar kelas.",
-        [("PER KELAS", "yellow"), ("AGREGAT", "blue"), ("EARLY WARNING", "coral")],
-    )
-
-    if len(st.session_state.database_siswa) == 0:
-        st.warning("Database masih kosong. Input siswa terlebih dahulu di Modul 01.")
-        st.stop()
-
-    df_db = pd.DataFrame(st.session_state.database_siswa)
-
-    if st.session_state.user_role == "wali_kelas" and st.session_state.user_kelas:
-        df_db = df_db[df_db["Kelas"].isin(st.session_state.user_kelas)]
-        st.info(f"Anda login sebagai Wali Kelas. Data hanya untuk kelas: {', '.join(st.session_state.user_kelas)}")
-
-    section_header("01", "Ringkasan Sekolah", "STATISTIK AGREGAT")
-    a, b_, c, d = st.columns(4)
-    with a:
-        stat_card("Total Siswa", len(df_db), "siswa terarsip", "blue")
-    with b_:
-        stat_card("Rata-rata", f"{df_db['Nilai Akademik'].mean():.2f}", "nilai seluruh siswa", "mint")
-    with c:
-        stat_card("Tertinggi", f"{df_db['Nilai Akademik'].max():.2f}", "nilai maksimum", "yellow")
-    with d:
-        stat_card("Terendah", f"{df_db['Nilai Akademik'].min():.2f}", "nilai minimum", "coral")
-
-    section_header("02", "Distribusi Kategori Nilai", "SEBARAN SELURUH SISWA")
-
-    dist = df_db["Kategori"].value_counts().to_dict()
-    kategori_list = ["Sangat Baik", "Baik", "Cukup", "Perlu Perhatian"]
-    warna_map = {
-        "Sangat Baik": "#10B981",
-        "Baik": "#2563EB",
-        "Cukup": "#F0B900",
-        "Perlu Perhatian": "#EF5B67",
-    }
-    cols = st.columns(4)
-    for i, kat in enumerate(kategori_list):
-        jml = dist.get(kat, 0)
-        pct = jml / len(df_db) * 100 if len(df_db) > 0 else 0
-        with cols[i]:
-            st.markdown(
-                f'<div class="card stat-card" style="border-left:5px solid {warna_map[kat]};">'
-                f'<div class="card-label" style="color:{warna_map[kat]};">{kat.upper()}</div>'
-                f'<div class="card-value" style="color:{warna_map[kat]};">{jml}</div>'
-                f'<div class="card-note">{pct:.1f}% dari {len(df_db)} siswa</div>'
-                f'</div>',
-                unsafe_allow_html=True,
-            )
-
-    section_header("03", "Perbandingan Antar Kelas", "RATA-RATA PER KELAS")
-
-    per_kelas = df_db.groupby("Kelas").agg(
-        Jumlah=("Nama", "count"),
-        Rata2=("Nilai Akademik", "mean"),
-        Tertinggi=("Nilai Akademik", "max"),
-        Terendah=("Nilai Akademik", "min"),
-    ).reset_index().sort_values("Rata2", ascending=False)
-    per_kelas["Rata2"] = per_kelas["Rata2"].round(2)
-    per_kelas["Tertinggi"] = per_kelas["Tertinggi"].round(2)
-    per_kelas["Terendah"] = per_kelas["Terendah"].round(2)
-
-    fig, ax = plt.subplots(figsize=(11, max(4, len(per_kelas) * 0.42)))
-    fig.patch.set_alpha(0)
-    ax.set_facecolor("none")
-    colors = ["#10B981" if x >= RATA_RATA_NILAI else "#EF5B67" for x in per_kelas["Rata2"]]
-    bars = ax.barh(per_kelas["Kelas"], per_kelas["Rata2"], color=colors, alpha=.85)
-    ax.axvline(RATA_RATA_NILAI, color="#2563EB", linestyle="--", alpha=.6, linewidth=1.5)
-    for bar, val in zip(bars, per_kelas["Rata2"]):
-        ax.text(val + 0.15, bar.get_y() + bar.get_height() / 2, f"{val:.2f}",
-                va="center", fontsize=9.5, fontweight="bold")
-    ax.set_xlim(70, 100)
-    ax.tick_params(axis="y", length=0)
-    ax.grid(axis="x", alpha=.15)
-    ax.set_axisbelow(True)
-    for s in ["top", "right", "left"]:
-        ax.spines[s].set_visible(False)
-    ax.spines["bottom"].set_color("#D8E0EB")
-    ax.set_xlabel(f"Rata-rata nilai (garis biru = rata-rata sekolah {RATA_RATA_NILAI:.2f})",
-                  fontsize=9.5, color="#5C6B85", labelpad=8)
-    plt.tight_layout()
-    st.pyplot(fig, use_container_width=True)
-    plt.close(fig)
-
-    st.dataframe(per_kelas, use_container_width=True, hide_index=True)
-
-    section_header("04", "Early Warning", "SISWA YANG PERLU PERHATIAN")
-    st.markdown(
-        '<div class="info-box coral" style="margin-bottom:1rem;">'
-        '<div class="info-title">Kriteria</div>'
-        '<div class="info-text">Siswa dengan nilai di bawah rata-rata sekolah lebih dari 1 standar deviasi.</div>'
-        '</div>',
-        unsafe_allow_html=True,
-    )
-
-    df_perhatian = df_db[df_db["Nilai Akademik"] < RATA_RATA_NILAI - STD_NILAI].copy()
-    df_perhatian = df_perhatian.sort_values("Nilai Akademik")
-
-    if len(df_perhatian) == 0:
-        st.success("Tidak ada siswa yang memerlukan perhatian khusus saat ini.")
-    else:
-        st.markdown(f"**{len(df_perhatian)} siswa** memerlukan perhatian:")
-        tabel_warn = df_perhatian[["Nama", "Kelas", "Absen", "Nilai Akademik", "Kategori", "Dicatat Oleh"]].copy()
-        tabel_warn.columns = ["Nama", "Kelas", "Absen", "Nilai", "Kategori", "Dicatat Oleh"]
-        st.dataframe(tabel_warn, use_container_width=True, hide_index=True)
-
-        csv = tabel_warn.to_csv(index=False).encode("utf-8")
-        st.download_button(
-            "Download Daftar Early Warning (CSV)",
-            data=csv,
-            file_name=f"early_warning_{datetime.now().strftime('%Y%m%d')}.csv",
-            mime="text/csv",
-            use_container_width=True,
-        )
-
-    section_header("05", "Distribusi Nilai Per Kelas", "SEBARAN")
-
-    kelas_pilih = st.selectbox("Pilih Kelas", sorted(df_db["Kelas"].unique().tolist()), key="mon_kelas")
-    df_k = df_db[df_db["Kelas"] == kelas_pilih]
-    if len(df_k) > 0:
-        fig, ax = plt.subplots(figsize=(11, 4))
-        fig.patch.set_alpha(0)
-        ax.set_facecolor("none")
-        ax.hist(df_k["Nilai Akademik"], bins=10, color="#2563EB", alpha=.7, edgecolor="white")
-        ax.axvline(df_k["Nilai Akademik"].mean(), color="#EF5B67", linestyle="--", linewidth=2,
-                   label=f"Rata-rata kelas: {df_k['Nilai Akademik'].mean():.2f}")
-        ax.axvline(RATA_RATA_NILAI, color="#10B981", linestyle=":", linewidth=2,
-                   label=f"Rata-rata sekolah: {RATA_RATA_NILAI:.2f}")
-        ax.legend(fontsize=9)
-        ax.grid(axis="y", alpha=.15)
-        ax.set_axisbelow(True)
-        for s in ["top", "right", "left"]:
-            ax.spines[s].set_visible(False)
-        ax.spines["bottom"].set_color("#D8E0EB")
-        ax.set_xlabel("Nilai Akademik", fontsize=9.5, color="#5C6B85")
-        ax.set_ylabel("Jumlah Siswa", fontsize=9.5, color="#5C6B85")
-        plt.tight_layout()
-        st.pyplot(fig, use_container_width=True)
-        plt.close(fig)
-
-        st.markdown(f"**Detail kelas {kelas_pilih}** - {len(df_k)} siswa")
-        st.dataframe(
-            df_k[["Nama", "Absen", "Nilai Akademik", "Kategori"]],
-            use_container_width=True, hide_index=True,
-        )
-
-# ================================================================
-# MODUL 06 - PENGATURAN
-# ================================================================
-elif st.session_state.current_page == "pengaturan":
-    top_bar("Pengaturan", "Modul 06 - Manajemen sistem dan konfigurasi")
-
-    if not can_access_pengaturan(st.session_state.user_role):
-        st.error("Akses ditolak. Modul Pengaturan hanya dapat diakses oleh Administrator.")
-        st.stop()
-
-    hero_header(
-        "MODUL 06 - PENGATURAN",
-        "Konfigurasi<br><span class='accent'>dan tata kelola.</span>",
-        "Kelola akun pengguna, konfigurasi sekolah, dan pantau log aktivitas sistem SAA.",
-        [("ADMIN ONLY", "coral"), ("KONFIGURASI", "blue"), ("AUDIT", "purple")],
-    )
-
-    tab1, tab2, tab3 = st.tabs(["Konfigurasi Sekolah", "Manajemen Pengguna", "Log Aktivitas"])
-
-    with tab1:
-        section_header("01", "Identitas Sekolah", "INFORMASI UMUM")
-        cfg = st.session_state.config
-        c1, c2 = st.columns(2)
-        with c1:
-            cfg["nama_sekolah"] = st.text_input("Nama Sekolah", value=cfg.get("nama_sekolah", ""))
-            cfg["tahun_ajaran"] = st.text_input("Tahun Ajaran", value=cfg.get("tahun_ajaran", ""))
-        with c2:
-            cfg["semester"] = st.selectbox(
-                "Semester", ["Ganjil", "Genap"],
-                index=0 if cfg.get("semester") == "Ganjil" else 1,
-            )
-            cfg["kepala_sekolah"] = st.text_input("Nama Kepala Sekolah", value=cfg.get("kepala_sekolah", ""))
-
-        if st.button("Simpan Konfigurasi", type="primary"):
-            st.session_state.config = cfg
-            save_config(cfg)
-            add_log("Update konfigurasi sekolah")
-            st.success("Konfigurasi berhasil disimpan.")
-            st.rerun()
-
-    with tab2:
-        section_header("01", "Daftar Pengguna", "AKUN AKTIF SISTEM")
-        df_users = pd.DataFrame([
-            {
-                "Username": u,
-                "Nama": d["nama"],
-                "Role": ROLE_LABEL.get(d["role"], d["role"]),
-                "Kelas Diampu": ", ".join(d["kelas_ampu"]) if d.get("kelas_ampu") else "-",
-            }
-            for u, d in USERS.items()
-        ])
-        st.dataframe(df_users, use_container_width=True, hide_index=True)
-
-        section_header("02", "Tambah Pengguna Baru", "USER BARU")
-        with st.form("form_user_baru"):
-            c1, c2 = st.columns(2)
-            with c1:
-                new_u = st.text_input("Username", placeholder="huruf kecil, tanpa spasi")
-                new_nama = st.text_input("Nama Lengkap")
-                new_role = st.selectbox(
-                    "Role", ["admin", "kepala_sekolah", "wali_kelas", "guru"],
-                    format_func=lambda x: ROLE_LABEL.get(x, x),
-                )
-            with c2:
-                new_pw = st.text_input("Password", type="password")
-                new_kelas = st.text_input(
-                    "Kelas Diampu (pisah koma)", placeholder="IX-A, IX-B"
-                )
-            submit_user = st.form_submit_button("Tambah Pengguna", use_container_width=True)
-
-            if submit_user:
-                if not new_u or not new_pw or not new_nama:
-                    st.error("Username, nama, dan password wajib diisi.")
-                elif new_u in USERS:
-                    st.error(f"Username '{new_u}' sudah ada.")
-                else:
-                    kelas_ampu = [k.strip() for k in new_kelas.split(",") if k.strip()] if new_kelas else None
-                    USERS[new_u] = {
-                        "password": hash_password(new_pw),
-                        "nama": new_nama,
-                        "role": new_role,
-                        "kelas_ampu": kelas_ampu,
-                    }
-                    add_log("Tambah pengguna", f"{new_u} ({new_role})")
-                    st.success(
-                        f"Pengguna '{new_u}' berhasil ditambahkan (bersifat sesi ini; "
-                        "untuk permanen, edit di kode sumber)."
-                    )
-                    st.rerun()
-
-    with tab3:
-        section_header("01", "Log Aktivitas", "AUDIT TRAIL")
-        st.markdown(
-            '<div class="info-box blue" style="margin-bottom:1rem;">'
-            '<div class="info-title">Info</div>'
-            '<div class="info-text">Log menampilkan 200 aktivitas terakhir.</div>'
-            '</div>',
-            unsafe_allow_html=True,
-        )
-
-        if len(st.session_state.log) == 0:
-            st.info("Belum ada aktivitas tercatat.")
-        else:
-            df_log = pd.DataFrame(st.session_state.log)
-            st.dataframe(df_log, use_container_width=True, hide_index=True)
-
-            csv_log = df_log.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                "Download Log (CSV)",
-                data=csv_log,
-                file_name=f"log_saa_{datetime.now().strftime('%Y%m%d')}.csv",
-                mime="text/csv",
-                use_container_width=True,
-            )
-
-            if st.button("Bersihkan Log"):
-                st.session_state.log = []
-                save_log([])
-                st.rerun()
-
-# ================================================================
-# END OF FILE
-# ================================================================
+                             
