@@ -1210,6 +1210,9 @@ elif st.session_state.current_page == "prediksi":
 
         Prediksi menggunakan **Structural Causal Model (SCM)** dengan pendekatan
         *backdoor linear regression*:
+Prediksi = Rata-rata + Sigma (nilai_faktor - baseline) x ATE_faktor x faktor_skala
+
+text
 
 - **ATE** = *Average Treatment Effect* (efek kausal) tiap faktor
 - **baseline** = rata-rata sekolah per faktor
