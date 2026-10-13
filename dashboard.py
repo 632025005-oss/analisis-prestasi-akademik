@@ -14,14 +14,29 @@ import json
 import os
 
 # ================================================================
-# KONFIGURASI FILE
+# KONFIGURASI FILE  # ⬅️ BERUBAH
 # ================================================================
-DB_FILE = "database_siswa.json"
-CONFIG_FILE = "config_school.json"
-LOG_FILE = "log_aktivitas.json"
-USERS_FILE = "users.json"
+DATA_DIR = "data"
+os.makedirs(DATA_DIR, exist_ok=True)
+
+DB_FILE     = os.path.join(DATA_DIR, "database_siswa.json")
+CONFIG_FILE = os.path.join(DATA_DIR, "config_school.json")
+LOG_FILE    = os.path.join(DATA_DIR, "log_aktivitas.json")
+USERS_FILE  = os.path.join(DATA_DIR, "users.json")
 
 SUPER_ADMIN = {"admin", "regina"}  # tidak bisa dihapus
+
+# ================================================================
+# AMBIL SECRETS (aman untuk GitHub)  # ⬅️ BERUBAH
+# ================================================================
+def get_secret(section, key=None, default=None):
+    """Ambil nilai dari st.secrets dengan aman."""
+    try:
+        if key is None:
+            return st.secrets[section]
+        return st.secrets[section][key]
+    except (KeyError, FileNotFoundError):
+        return default
 
 def _load_json(path, default):
     if os.path.exists(path):
@@ -55,24 +70,35 @@ def save_log(l): _save_json(LOG_FILE, l)
 def hash_password(p):
     return hashlib.sha256(p.encode()).hexdigest()
 
+def verify_password(p, hashed):
+    """Cek password cocok dengan hash yang tersimpan."""
+    return hash_password(p) == hashed
+
 def load_users():
-    """Load user database. Jika belum ada, inisialisasi dengan super admin."""
+    """Load user database. Jika belum ada, inisialisasi dari st.secrets."""  # ⬅️ BERUBAH
     users = _load_json(USERS_FILE, None)
     if users is None or not isinstance(users, dict) or len(users) == 0:
-        users = {
-            "admin": {
-                "password": hash_password("admin123"),
-                "nama": "Administrator", "role": "admin",
-                "kelas_ampu": None, "email": "admin@smpn6salatiga.sch.id",
-                "status": "approved", "created": datetime.now().strftime("%Y-%m-%d %H:%M"),
-            },
-            "regina": {
-                "password": hash_password("regina2026"),
-                "nama": "Regina Ria Aurellia", "role": "admin",
-                "kelas_ampu": None, "email": "regina@student.uksw.edu",
-                "status": "approved", "created": datetime.now().strftime("%Y-%m-%d %H:%M"),
-            },
-        }
+        # Ambil kredensial super admin dari secrets (BUKAN hardcode!)
+        super_admins = get_secret("super_admin", None, {})
+        if not super_admins:
+            raise RuntimeError(
+                "❌ Kredensial super admin tidak ditemukan.\n"
+                "Buka Settings → Secrets di Streamlit Cloud, lalu isi:\n"
+                "[super_admin.admin]\npassword = \"...\"\n"
+                "[super_admin.regina]\npassword = \"...\""
+            )
+
+        users = {}
+        for username, info in super_admins.items():
+            users[username] = {
+                "password": hash_password(info["password"]),
+                "nama":     info.get("nama", username.capitalize()),
+                "role":     "admin",
+                "kelas_ampu": None,
+                "email":    info.get("email", ""),
+                "status":   "approved",
+                "created":  datetime.now().strftime("%Y-%m-%d %H:%M"),
+            }
         _save_json(USERS_FILE, users)
     return users
 
@@ -421,7 +447,7 @@ SKALA_PILIHAN = {
 }
 
 # ================================================================
-# FUNGSI ANALITIK (internal - tidak ditampilkan istilah teknisnya ke guru)
+# FUNGSI ANALITIK
 # ================================================================
 def analisis_kausal(nilai_akademik, profil_siswa):
     selisih_nilai = nilai_akademik - RATA_RATA_NILAI
@@ -457,7 +483,6 @@ def kategori_nilai(nilai):
     return "Perlu Perhatian", "#EF5B67"
 
 def label_pengaruh(nilai):
-    """Bahasa guru - pengganti istilah teknis ATE."""
     if nilai > 2: return "Sangat kuat menaikkan nilai"
     if nilai > 1: return "Kuat menaikkan nilai"
     if nilai > 0.5: return "Sedikit menaikkan nilai"
@@ -467,7 +492,6 @@ def label_pengaruh(nilai):
     return "Kuat menurunkan nilai"
 
 def label_kepentingan(nilai):
-    """Bahasa guru - pengganti istilah teknis SHAP."""
     if nilai > 0.7: return "Paling menentukan prediksi"
     if nilai > 0.4: return "Cukup menentukan prediksi"
     if nilai > 0.15: return "Kurang menentukan prediksi"
@@ -493,7 +517,6 @@ def section_header(num, title, subtitle):
     )
 
 def top_bar(page_title, page_sub):
-    """Top bar dengan tombol Menu Utama dan Logout di setiap halaman."""
     c1, c2, c3 = st.columns([3, 1.2, 1])
     with c1:
         role_cls = st.session_state.user_role or "guru"
@@ -745,7 +768,7 @@ def halaman_login():
                 users = load_users()
                 if username in users:
                     u = users[username]
-                    if u["password"] == hash_password(password):
+                    if verify_password(password, u["password"]):  # ⬅️ BERUBAH
                         if u.get("status") == "pending":
                             st.warning("Akun Anda belum disetujui. Silakan hubungi Administrator sekolah.")
                         elif u.get("status") == "rejected":
@@ -1587,6 +1610,7 @@ elif st.session_state.current_page == "rekomendasi":
                 mime="text/plain",
                 use_container_width=True,
             )
+
 # ================================================================
 # MODUL 05 - MONITORING KELAS & KELOLA DATA
 # ================================================================
@@ -1751,7 +1775,6 @@ elif st.session_state.current_page == "monitoring":
             unsafe_allow_html=True,
         )
 
-        # Data asli (bukan yang difilter wali kelas)
         df_full = pd.DataFrame(st.session_state.database_siswa)
 
         col1, col2 = st.columns([2, 1])
@@ -1815,7 +1838,6 @@ elif st.session_state.current_page == "monitoring":
                     nama_hapus = row_hapus["Nama"]
                     kelas_hapus = row_hapus["Kelas"]
                     absen_hapus = int(row_hapus["Absen"])
-                    # Cari index di database asli
                     for i, s in enumerate(st.session_state.database_siswa):
                         if (s["Nama"] == nama_hapus and s["Kelas"] == kelas_hapus
                                 and int(s["Absen"]) == absen_hapus):
@@ -1860,7 +1882,6 @@ elif st.session_state.current_page == "monitoring":
 
         df_full = pd.DataFrame(st.session_state.database_siswa)
 
-        # Download semua
         st.markdown("**1. Download Semua Data**")
         csv_all = df_full.to_csv(index=False).encode("utf-8")
         st.download_button(
@@ -1957,7 +1978,6 @@ elif st.session_state.current_page == "pengaturan":
 
     # ---------- TAB USER MANAGEMENT ----------
     with tab_user:
-        # -- Sub-tab: Pengguna Aktif --
         section_header("01", "Pengguna Aktif", f"{len(approved)} akun aktif")
 
         if len(approved) == 0:
@@ -2020,7 +2040,6 @@ elif st.session_state.current_page == "pengaturan":
                                     st.success(f"Password {u} berhasil direset.")
                                     st.rerun()
 
-        # -- Sub-tab: Menunggu Approval --
         st.markdown("---")
         section_header("02", "Menunggu Persetujuan", f"{len(pending)} akun menunggu")
 
@@ -2065,7 +2084,6 @@ elif st.session_state.current_page == "pengaturan":
                         st.warning(f"Akun {d['nama']} ditolak.")
                         st.rerun()
 
-        # -- Sub-tab: Ditolak --
         if len(rejected) > 0:
             st.markdown("---")
             section_header("03", "Akun Ditolak", f"{len(rejected)} akun ditolak")
@@ -2101,7 +2119,6 @@ elif st.session_state.current_page == "pengaturan":
                         st.success(f"Akun {u} dihapus permanen.")
                         st.rerun()
 
-        # -- Form tambah user manual --
         st.markdown("---")
         section_header("04", "Tambah Pengguna Manual", "OPSIONAL")
         st.caption("Gunakan form ini jika ingin menambah pengguna langsung tanpa proses approval.")
