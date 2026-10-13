@@ -1,0 +1,28 @@
+# ============================================================
+# KREDENSIAL - JANGAN PERNAH DI-PUSH
+# ============================================================
+.streamlit/secrets.toml
+
+# Data runtime (berisi password user & data siswa)
+data/
+users.json
+database_siswa.json
+log_aktivitas.json
+config_school.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/secrets.toml
