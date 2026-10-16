@@ -2,7 +2,6 @@
 # ================================================================
 # SMART ACADEMIC ANALYTICS (SAA) - SMP Negeri 6 Salatiga
 # Sub-brand: SIA.Prestasi - Magister Sains Data UKSW
-# MongoDB Edition - Data tersimpan di MongoDB Atlas
 # ================================================================
 
 import streamlit as st
@@ -12,23 +11,23 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import hashlib
 import json
+import os
 
 # ================================================================
-# MONGODB STORAGE (Ganti sistem JSON)
+# KONFIGURASI FILE  # ⬅️ BERUBAH
 # ================================================================
-from db_storage import (
-    load_users as _db_load_users,
-    save_users as _db_save_users,
-    load_database, save_database,
-    load_config, save_config,
-    load_log, save_log, tambah_log,
-    ambil_semua_hasil, hapus_hasil,
-)
+DATA_DIR = "data"
+os.makedirs(DATA_DIR, exist_ok=True)
 
-SUPER_ADMIN = {"admin", "regina"}
+DB_FILE     = os.path.join(DATA_DIR, "database_siswa.json")
+CONFIG_FILE = os.path.join(DATA_DIR, "config_school.json")
+LOG_FILE    = os.path.join(DATA_DIR, "log_aktivitas.json")
+USERS_FILE  = os.path.join(DATA_DIR, "users.json")
+
+SUPER_ADMIN = {"admin", "regina"}  # tidak bisa dihapus
 
 # ================================================================
-# HELPER: SECRETS & PASSWORD
+# AMBIL SECRETS (aman untuk GitHub)  # ⬅️ BERUBAH
 # ================================================================
 def get_secret(section, key=None, default=None):
     """Ambil nilai dari st.secrets dengan aman."""
@@ -39,6 +38,35 @@ def get_secret(section, key=None, default=None):
     except (KeyError, FileNotFoundError):
         return default
 
+def _load_json(path, default):
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return default
+    return default
+
+def _save_json(path, data):
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
+def load_database(): return _load_json(DB_FILE, [])
+def save_database(d): _save_json(DB_FILE, d)
+def load_config():
+    return _load_json(CONFIG_FILE, {
+        "nama_sekolah": "SMP Negeri 6 Salatiga",
+        "tahun_ajaran": "2025/2026",
+        "semester": "Genap",
+        "kepala_sekolah": "Kepala SMPN 6 Salatiga",
+    })
+def save_config(c): _save_json(CONFIG_FILE, c)
+def load_log(): return _load_json(LOG_FILE, [])
+def save_log(l): _save_json(LOG_FILE, l)
+
 def hash_password(p):
     return hashlib.sha256(p.encode()).hexdigest()
 
@@ -47,15 +75,19 @@ def verify_password(p, hashed):
     return hash_password(p) == hashed
 
 def load_users():
-    """Load user dari MongoDB. Kalau kosong, inisialisasi dari secrets."""
-    users = _db_load_users()
-    if not users:
+    """Load user database. Jika belum ada, inisialisasi dari st.secrets."""  # ⬅️ BERUBAH
+    users = _load_json(USERS_FILE, None)
+    if users is None or not isinstance(users, dict) or len(users) == 0:
+        # Ambil kredensial super admin dari secrets (BUKAN hardcode!)
         super_admins = get_secret("super_admin", None, {})
         if not super_admins:
             raise RuntimeError(
                 "❌ Kredensial super admin tidak ditemukan.\n"
-                "Isi [super_admin.admin] dan [super_admin.regina] di secrets.toml"
+                "Buka Settings → Secrets di Streamlit Cloud, lalu isi:\n"
+                "[super_admin.admin]\npassword = \"...\"\n"
+                "[super_admin.regina]\npassword = \"...\""
             )
+
         users = {}
         for username, info in super_admins.items():
             users[username] = {
@@ -67,15 +99,11 @@ def load_users():
                 "status":   "approved",
                 "created":  datetime.now().strftime("%Y-%m-%d %H:%M"),
             }
-        _db_save_users(users)
+        _save_json(USERS_FILE, users)
     return users
 
-def save_users(u):
-    _db_save_users(u)
+def save_users(u): _save_json(USERS_FILE, u)
 
-# ================================================================
-# PAGE CONFIG
-# ================================================================
 st.set_page_config(
     page_title="SAA - Smart Academic Analytics",
     page_icon="🎓",
@@ -350,17 +378,17 @@ def reload_users():
     st.session_state.users = load_users()
 
 # ================================================================
-# DATA 8 FAKTOR — Baseline dari Tabel 4.2 thesis
+# DATA 8 FAKTOR
 # ================================================================
 BASELINE_ASPEK = {
-    "Self-Efficacy Akademik": 4.634,
-    "Keterlibatan Orang Tua": 4.348,
-    "Harapan Orang Tua": 3.450,
-    "Dukungan Sekolah": 4.600,
-    "Motivasi Belajar": 2.517,
-    "Kecemasan Akademik": 2.893,
-    "Kemalasan Belajar": 1.487,
-    "Fasilitas Sekolah": 4.880,
+    "Self-Efficacy Akademik": 4.63,
+    "Keterlibatan Orang Tua": 3.51,
+    "Harapan Orang Tua": 3.34,
+    "Dukungan Sekolah": 4.60,
+    "Motivasi Belajar": 3.34,
+    "Kecemasan Akademik": 2.89,
+    "Kemalasan Belajar": 1.49,
+    "Fasilitas Sekolah": 4.88,
 }
 PENGARUH_DATA = {
     "Self-Efficacy Akademik": 2.1995,
@@ -715,6 +743,7 @@ def halaman_login():
 
     tab_login, tab_daftar = st.tabs(["🔐 Masuk", "📝 Daftar Akun Baru"])
 
+    # --------- TAB LOGIN ---------
     with tab_login:
         with st.form("login_form", clear_on_submit=False):
             c1, c2 = st.columns([1, 3])
@@ -739,7 +768,7 @@ def halaman_login():
                 users = load_users()
                 if username in users:
                     u = users[username]
-                    if verify_password(password, u["password"]):
+                    if verify_password(password, u["password"]):  # ⬅️ BERUBAH
                         if u.get("status") == "pending":
                             st.warning("Akun Anda belum disetujui. Silakan hubungi Administrator sekolah.")
                         elif u.get("status") == "rejected":
@@ -760,6 +789,7 @@ def halaman_login():
             if lupa:
                 st.info("Hubungi Administrator sekolah untuk reset password. Email: admin@smpn6salatiga.sch.id")
 
+    # --------- TAB DAFTAR ---------
     with tab_daftar:
         st.markdown(
             '<div class="info-box blue" style="margin-bottom:1rem;">'
@@ -918,7 +948,7 @@ if st.session_state.current_page == "home":
             if st.button(f"Buka {title}", key=f"btn_{page}", use_container_width=True,
                          type="primary", disabled=disabled):
                 goto_page(page)
-
+                             
 # ================================================================
 # MODUL 01 - PROFIL SISWA
 # ================================================================
@@ -1608,6 +1638,7 @@ elif st.session_state.current_page == "monitoring":
         "📊 Monitoring Kelas", "⚠️ Early Warning", "🗑️ Kelola Data Siswa", "📥 Download Data"
     ])
 
+    # ---------- TAB MONITORING ----------
     with tab_monitoring:
         section_header("01", "Ringkasan Sekolah", "STATISTIK AGREGAT")
         a, b_, c, d = st.columns(4)
@@ -1701,6 +1732,7 @@ elif st.session_state.current_page == "monitoring":
             st.pyplot(fig, use_container_width=True)
             plt.close(fig)
 
+    # ---------- TAB EARLY WARNING ----------
     with tab_early:
         section_header("01", "Early Warning", "SISWA YANG PERLU PERHATIAN")
         st.markdown(
@@ -1730,6 +1762,7 @@ elif st.session_state.current_page == "monitoring":
                 mime="text/csv", use_container_width=True,
             )
 
+    # ---------- TAB KELOLA DATA ----------
     with tab_kelola:
         section_header("01", "Kelola Data Siswa", "HAPUS SATU PER SATU ATAU SEMUA")
 
@@ -1834,6 +1867,7 @@ elif st.session_state.current_page == "monitoring":
                 st.success(f"{jumlah} data siswa berhasil dihapus.")
                 st.rerun()
 
+    # ---------- TAB DOWNLOAD ----------
     with tab_download:
         section_header("01", "Download Data Siswa", "SEMUA DATA ATAU PER KELAS")
 
@@ -1919,6 +1953,7 @@ elif st.session_state.current_page == "pengaturan":
         f"📋 Log Aktivitas",
     ])
 
+    # ---------- TAB KONFIGURASI ----------
     with tab_konfig:
         section_header("01", "Identitas Sekolah", "INFORMASI UMUM")
         cfg = st.session_state.config
@@ -1941,6 +1976,7 @@ elif st.session_state.current_page == "pengaturan":
             st.success("Konfigurasi berhasil disimpan.")
             st.rerun()
 
+    # ---------- TAB USER MANAGEMENT ----------
     with tab_user:
         section_header("01", "Pengguna Aktif", f"{len(approved)} akun aktif")
 
@@ -2125,6 +2161,7 @@ elif st.session_state.current_page == "pengaturan":
                     st.success(f"Pengguna '{new_u}' berhasil ditambahkan.")
                     st.rerun()
 
+    # ---------- TAB LOG ----------
     with tab_log:
         section_header("01", "Log Aktivitas", "CATATAN SISTEM")
         st.markdown(
